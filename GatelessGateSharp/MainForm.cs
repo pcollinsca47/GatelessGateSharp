@@ -11,15 +11,16 @@ using System.Data.SQLite;
 
 namespace GatelessGateSharp
 {
-
     public partial class MainForm : Form
     {
         String databaseFileName = "GatelessGateSharp.sqlite";
         String logFileName = "GatelessGateSharp.log";
         const int richTextBoxLogMaxLines = 65536;
+        private static System.Threading.Mutex loggerMutex = new System.Threading.Mutex();
 
         public void Logger(String lines)
         {
+            loggerMutex.WaitOne();
             System.IO.StreamWriter file = new System.IO.StreamWriter(logFileName, true);
             file.WriteLine(lines);
             file.Close();
@@ -29,6 +30,7 @@ namespace GatelessGateSharp
                 richTextBoxLog.Select(0, richTextBoxLog.Text.IndexOf('\n') + 1);
                 richTextBoxLog.SelectedRtf = "{\\rtf1\\ansi\\ansicpg1252\\deff0\\deflang1053\\uc1 }";
             }
+            loggerMutex.ReleaseMutex();
         }
 
         public MainForm()
@@ -111,6 +113,10 @@ namespace GatelessGateSharp
             if (!System.IO.File.Exists(databaseFileName))
                 CreateNewDatabase();
             LoadDatabase();
+        }
+
+        private void UpdateDeviceList()
+        {
         }
 
         private void textBoxBitcoinAddress_TextChanged(object sender, EventArgs e)

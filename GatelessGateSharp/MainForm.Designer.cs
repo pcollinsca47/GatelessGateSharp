@@ -1289,7 +1289,7 @@
             // 
             this.richTextBoxLog.BackColor = System.Drawing.Color.Black;
             this.richTextBoxLog.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.richTextBoxLog.ForeColor = System.Drawing.Color.Green;
+            this.richTextBoxLog.ForeColor = System.Drawing.Color.Lime;
             this.richTextBoxLog.Location = new System.Drawing.Point(6, 105);
             this.richTextBoxLog.Name = "richTextBoxLog";
             this.richTextBoxLog.ReadOnly = true;
