@@ -22,6 +22,12 @@ namespace GatelessGateSharp
         private System.Threading.Mutex loggerMutex = new System.Threading.Mutex();
         private Control[] labelGPUVendorArray;
         private Control[] labelGPUNameArray;
+        private Control[] labelGPUIDArray;
+        private Control[] labelGPUSpeedArray;
+        private Control[] labelGPUTempArray;
+        private Control[] labelGPUActivityArray;
+        private Control[] labelGPUFanArray;
+        private Control[] checkBoxGPUEnabledArray;
         private ComputeDevice[] computeDeviceArray;
         private const int computeDeviceArrayMaxLength = 8; // This depends on MainForm.
 
@@ -46,6 +52,12 @@ namespace GatelessGateSharp
             Logger("Gateless Gate # started.");
             labelGPUVendorArray = new Control[] { labelGPU0Vendor, labelGPU1Vendor, labelGPU2Vendor, labelGPU3Vendor, labelGPU4Vendor, labelGPU5Vendor, labelGPU6Vendor, labelGPU7Vendor };
             labelGPUNameArray = new Control[] { labelGPU0Name, labelGPU1Name, labelGPU2Name, labelGPU3Name, labelGPU4Name, labelGPU5Name, labelGPU6Name, labelGPU7Name };
+            labelGPUIDArray = new Control[] { labelGPU0ID, labelGPU1ID, labelGPU2ID, labelGPU3ID, labelGPU4ID, labelGPU5ID, labelGPU6ID, labelGPU7ID };
+            labelGPUTempArray = new Control[] { labelGPU0Temp, labelGPU1Temp, labelGPU2Temp, labelGPU3Temp, labelGPU4Temp, labelGPU5Temp, labelGPU6Temp, labelGPU7Temp };
+            labelGPUActivityArray = new Control[] { labelGPU0Activity, labelGPU1Activity, labelGPU2Activity, labelGPU3Activity, labelGPU4Activity, labelGPU5Activity, labelGPU6Activity, labelGPU7Activity };
+            labelGPUFanArray = new Control[] { labelGPU0Fan, labelGPU1Fan, labelGPU2Fan, labelGPU3Fan, labelGPU4Fan, labelGPU5Fan, labelGPU6Fan, labelGPU7Fan };
+            labelGPUSpeedArray = new Control[] { labelGPU0Speed, labelGPU1Speed, labelGPU2Speed, labelGPU3Speed, labelGPU4Speed, labelGPU5Speed, labelGPU6Speed, labelGPU7Speed };
+            checkBoxGPUEnabledArray = new Control[] { checkBoxGPU0Enabled, checkBoxGPU1Enabled, checkBoxGPU2Enabled, checkBoxGPU3Enabled, checkBoxGPU4Enabled, checkBoxGPU5Enabled, checkBoxGPU6Enabled, checkBoxGPU7Enabled };
         }
 
         private void CreateNewDatabase()
@@ -156,9 +168,11 @@ namespace GatelessGateSharp
                                                   device.Vendor;
                 labelGPUNameArray[index].Text = device.Name;
 
-                labelGPUVendorArray[index].Visible = true;
-                labelGPUNameArray[index].Visible = true;
-
+                labelGPUSpeedArray[index].Text = "-";
+                labelGPUActivityArray[index].Text = "-";
+                labelGPUTempArray[index].Text = "-";
+                labelGPUFanArray[index].Text = "-";
+ 
                 ++index;
             }
 
@@ -166,6 +180,12 @@ namespace GatelessGateSharp
             {
                 labelGPUVendorArray[index].Visible = false;
                 labelGPUNameArray[index].Visible = false;
+                labelGPUIDArray[index].Visible = false;
+                labelGPUSpeedArray[index].Visible = false;
+                labelGPUActivityArray[index].Visible = false;
+                labelGPUTempArray[index].Visible = false;
+                labelGPUFanArray[index].Visible = false;
+                checkBoxGPUEnabledArray[index].Visible = false;
             }
 
         }
