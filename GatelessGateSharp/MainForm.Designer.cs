@@ -30,6 +30,7 @@
         {
             this.tabControlPools = new System.Windows.Forms.TabControl();
             this.tabPageHome = new System.Windows.Forms.TabPage();
+            this.richTextBoxLog = new System.Windows.Forms.RichTextBox();
             this.label69 = new System.Windows.Forms.Label();
             this.label70 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
@@ -55,10 +56,10 @@
             this.label36 = new System.Windows.Forms.Label();
             this.label65 = new System.Windows.Forms.Label();
             this.label37 = new System.Windows.Forms.Label();
-            this.label64 = new System.Windows.Forms.Label();
-            this.label38 = new System.Windows.Forms.Label();
-            this.label63 = new System.Windows.Forms.Label();
-            this.label39 = new System.Windows.Forms.Label();
+            this.labelGPU7Name = new System.Windows.Forms.Label();
+            this.labelGPU3Name = new System.Windows.Forms.Label();
+            this.labelGPU7Vendor = new System.Windows.Forms.Label();
+            this.labelGPU3Vendor = new System.Windows.Forms.Label();
             this.label62 = new System.Windows.Forms.Label();
             this.label40 = new System.Windows.Forms.Label();
             this.checkBox5 = new System.Windows.Forms.CheckBox();
@@ -71,10 +72,10 @@
             this.label29 = new System.Windows.Forms.Label();
             this.label58 = new System.Windows.Forms.Label();
             this.label30 = new System.Windows.Forms.Label();
-            this.label57 = new System.Windows.Forms.Label();
-            this.label31 = new System.Windows.Forms.Label();
-            this.label56 = new System.Windows.Forms.Label();
-            this.label32 = new System.Windows.Forms.Label();
+            this.labelGPU6Name = new System.Windows.Forms.Label();
+            this.labelGPU2Name = new System.Windows.Forms.Label();
+            this.labelGPU6Vendor = new System.Windows.Forms.Label();
+            this.labelGPU2Vendor = new System.Windows.Forms.Label();
             this.label55 = new System.Windows.Forms.Label();
             this.label33 = new System.Windows.Forms.Label();
             this.checkBox4 = new System.Windows.Forms.CheckBox();
@@ -87,9 +88,9 @@
             this.labelGPU1Temp = new System.Windows.Forms.Label();
             this.label51 = new System.Windows.Forms.Label();
             this.labelGPU1Fan = new System.Windows.Forms.Label();
-            this.label50 = new System.Windows.Forms.Label();
+            this.labelGPU5Name = new System.Windows.Forms.Label();
             this.labelGPU1Name = new System.Windows.Forms.Label();
-            this.label49 = new System.Windows.Forms.Label();
+            this.labelGPU5Vendor = new System.Windows.Forms.Label();
             this.labelGPU1Vendor = new System.Windows.Forms.Label();
             this.label48 = new System.Windows.Forms.Label();
             this.labelGPU1ID = new System.Windows.Forms.Label();
@@ -103,9 +104,9 @@
             this.labelGPU0Temp = new System.Windows.Forms.Label();
             this.label44 = new System.Windows.Forms.Label();
             this.labelGPU0Fan = new System.Windows.Forms.Label();
-            this.label43 = new System.Windows.Forms.Label();
+            this.labelGPU4Name = new System.Windows.Forms.Label();
             this.labelGPU0Name = new System.Windows.Forms.Label();
-            this.label42 = new System.Windows.Forms.Label();
+            this.labelGPU4Vendor = new System.Windows.Forms.Label();
             this.label41 = new System.Windows.Forms.Label();
             this.labelGPU0Vendor = new System.Windows.Forms.Label();
             this.labelGPU0ID = new System.Windows.Forms.Label();
@@ -142,7 +143,6 @@
             this.tabPageMisc = new System.Windows.Forms.TabPage();
             this.button1 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
-            this.richTextBoxLog = new System.Windows.Forms.RichTextBox();
             this.tabControlPools.SuspendLayout();
             this.tabPageHome.SuspendLayout();
             this.tabPageDevices.SuspendLayout();
@@ -187,6 +187,18 @@
             this.tabPageHome.TabIndex = 2;
             this.tabPageHome.Text = "Home";
             this.tabPageHome.UseVisualStyleBackColor = true;
+            // 
+            // richTextBoxLog
+            // 
+            this.richTextBoxLog.BackColor = System.Drawing.Color.Black;
+            this.richTextBoxLog.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.richTextBoxLog.ForeColor = System.Drawing.Color.Lime;
+            this.richTextBoxLog.Location = new System.Drawing.Point(6, 105);
+            this.richTextBoxLog.Name = "richTextBoxLog";
+            this.richTextBoxLog.ReadOnly = true;
+            this.richTextBoxLog.Size = new System.Drawing.Size(469, 199);
+            this.richTextBoxLog.TabIndex = 24;
+            this.richTextBoxLog.Text = "";
             // 
             // label69
             // 
@@ -326,10 +338,10 @@
             this.tabPageDevices.Controls.Add(this.label36);
             this.tabPageDevices.Controls.Add(this.label65);
             this.tabPageDevices.Controls.Add(this.label37);
-            this.tabPageDevices.Controls.Add(this.label64);
-            this.tabPageDevices.Controls.Add(this.label38);
-            this.tabPageDevices.Controls.Add(this.label63);
-            this.tabPageDevices.Controls.Add(this.label39);
+            this.tabPageDevices.Controls.Add(this.labelGPU7Name);
+            this.tabPageDevices.Controls.Add(this.labelGPU3Name);
+            this.tabPageDevices.Controls.Add(this.labelGPU7Vendor);
+            this.tabPageDevices.Controls.Add(this.labelGPU3Vendor);
             this.tabPageDevices.Controls.Add(this.label62);
             this.tabPageDevices.Controls.Add(this.label40);
             this.tabPageDevices.Controls.Add(this.checkBox5);
@@ -342,10 +354,10 @@
             this.tabPageDevices.Controls.Add(this.label29);
             this.tabPageDevices.Controls.Add(this.label58);
             this.tabPageDevices.Controls.Add(this.label30);
-            this.tabPageDevices.Controls.Add(this.label57);
-            this.tabPageDevices.Controls.Add(this.label31);
-            this.tabPageDevices.Controls.Add(this.label56);
-            this.tabPageDevices.Controls.Add(this.label32);
+            this.tabPageDevices.Controls.Add(this.labelGPU6Name);
+            this.tabPageDevices.Controls.Add(this.labelGPU2Name);
+            this.tabPageDevices.Controls.Add(this.labelGPU6Vendor);
+            this.tabPageDevices.Controls.Add(this.labelGPU2Vendor);
             this.tabPageDevices.Controls.Add(this.label55);
             this.tabPageDevices.Controls.Add(this.label33);
             this.tabPageDevices.Controls.Add(this.checkBox4);
@@ -358,9 +370,9 @@
             this.tabPageDevices.Controls.Add(this.labelGPU1Temp);
             this.tabPageDevices.Controls.Add(this.label51);
             this.tabPageDevices.Controls.Add(this.labelGPU1Fan);
-            this.tabPageDevices.Controls.Add(this.label50);
+            this.tabPageDevices.Controls.Add(this.labelGPU5Name);
             this.tabPageDevices.Controls.Add(this.labelGPU1Name);
-            this.tabPageDevices.Controls.Add(this.label49);
+            this.tabPageDevices.Controls.Add(this.labelGPU5Vendor);
             this.tabPageDevices.Controls.Add(this.labelGPU1Vendor);
             this.tabPageDevices.Controls.Add(this.label48);
             this.tabPageDevices.Controls.Add(this.labelGPU1ID);
@@ -374,9 +386,9 @@
             this.tabPageDevices.Controls.Add(this.labelGPU0Temp);
             this.tabPageDevices.Controls.Add(this.label44);
             this.tabPageDevices.Controls.Add(this.labelGPU0Fan);
-            this.tabPageDevices.Controls.Add(this.label43);
+            this.tabPageDevices.Controls.Add(this.labelGPU4Name);
             this.tabPageDevices.Controls.Add(this.labelGPU0Name);
-            this.tabPageDevices.Controls.Add(this.label42);
+            this.tabPageDevices.Controls.Add(this.labelGPU4Vendor);
             this.tabPageDevices.Controls.Add(this.label41);
             this.tabPageDevices.Controls.Add(this.labelGPU0Vendor);
             this.tabPageDevices.Controls.Add(this.labelGPU0ID);
@@ -434,18 +446,18 @@
             // 
             // label67
             // 
-            this.label67.Location = new System.Drawing.Point(242, 185);
+            this.label67.Location = new System.Drawing.Point(258, 185);
             this.label67.Name = "label67";
-            this.label67.Size = new System.Drawing.Size(78, 13);
+            this.label67.Size = new System.Drawing.Size(62, 13);
             this.label67.TabIndex = 38;
             this.label67.Text = "0 Mh/s";
             this.label67.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // label35
             // 
-            this.label35.Location = new System.Drawing.Point(242, 98);
+            this.label35.Location = new System.Drawing.Point(258, 98);
             this.label35.Name = "label35";
-            this.label35.Size = new System.Drawing.Size(78, 13);
+            this.label35.Size = new System.Drawing.Size(62, 13);
             this.label35.TabIndex = 38;
             this.label35.Text = "0 Mh/s";
             this.label35.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -486,37 +498,37 @@
             this.label37.Text = "100%";
             this.label37.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // label64
+            // labelGPU7Name
             // 
-            this.label64.Location = new System.Drawing.Point(126, 185);
-            this.label64.Name = "label64";
-            this.label64.Size = new System.Drawing.Size(110, 14);
-            this.label64.TabIndex = 35;
-            this.label64.Text = "Radeon RX 480";
+            this.labelGPU7Name.Location = new System.Drawing.Point(139, 185);
+            this.labelGPU7Name.Name = "labelGPU7Name";
+            this.labelGPU7Name.Size = new System.Drawing.Size(110, 14);
+            this.labelGPU7Name.TabIndex = 35;
+            this.labelGPU7Name.Text = "Radeon RX 480";
             // 
-            // label38
+            // labelGPU3Name
             // 
-            this.label38.Location = new System.Drawing.Point(126, 98);
-            this.label38.Name = "label38";
-            this.label38.Size = new System.Drawing.Size(110, 14);
-            this.label38.TabIndex = 35;
-            this.label38.Text = "Radeon RX 480";
+            this.labelGPU3Name.Location = new System.Drawing.Point(139, 98);
+            this.labelGPU3Name.Name = "labelGPU3Name";
+            this.labelGPU3Name.Size = new System.Drawing.Size(110, 14);
+            this.labelGPU3Name.TabIndex = 35;
+            this.labelGPU3Name.Text = "Radeon RX 480";
             // 
-            // label63
+            // labelGPU7Vendor
             // 
-            this.label63.Location = new System.Drawing.Point(79, 185);
-            this.label63.Name = "label63";
-            this.label63.Size = new System.Drawing.Size(41, 13);
-            this.label63.TabIndex = 34;
-            this.label63.Text = "AMD";
+            this.labelGPU7Vendor.Location = new System.Drawing.Point(79, 185);
+            this.labelGPU7Vendor.Name = "labelGPU7Vendor";
+            this.labelGPU7Vendor.Size = new System.Drawing.Size(54, 13);
+            this.labelGPU7Vendor.TabIndex = 34;
+            this.labelGPU7Vendor.Text = "AMD";
             // 
-            // label39
+            // labelGPU3Vendor
             // 
-            this.label39.Location = new System.Drawing.Point(79, 98);
-            this.label39.Name = "label39";
-            this.label39.Size = new System.Drawing.Size(41, 13);
-            this.label39.TabIndex = 34;
-            this.label39.Text = "AMD";
+            this.labelGPU3Vendor.Location = new System.Drawing.Point(79, 98);
+            this.labelGPU3Vendor.Name = "labelGPU3Vendor";
+            this.labelGPU3Vendor.Size = new System.Drawing.Size(54, 13);
+            this.labelGPU3Vendor.TabIndex = 34;
+            this.labelGPU3Vendor.Text = "AMD";
             // 
             // label62
             // 
@@ -574,18 +586,18 @@
             // 
             // label60
             // 
-            this.label60.Location = new System.Drawing.Point(242, 163);
+            this.label60.Location = new System.Drawing.Point(258, 163);
             this.label60.Name = "label60";
-            this.label60.Size = new System.Drawing.Size(78, 13);
+            this.label60.Size = new System.Drawing.Size(62, 13);
             this.label60.TabIndex = 30;
             this.label60.Text = "0 Mh/s";
             this.label60.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // label28
             // 
-            this.label28.Location = new System.Drawing.Point(242, 76);
+            this.label28.Location = new System.Drawing.Point(258, 76);
             this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(78, 13);
+            this.label28.Size = new System.Drawing.Size(62, 13);
             this.label28.TabIndex = 30;
             this.label28.Text = "0 Mh/s";
             this.label28.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -626,37 +638,37 @@
             this.label30.Text = "100%";
             this.label30.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // label57
+            // labelGPU6Name
             // 
-            this.label57.Location = new System.Drawing.Point(126, 163);
-            this.label57.Name = "label57";
-            this.label57.Size = new System.Drawing.Size(110, 14);
-            this.label57.TabIndex = 27;
-            this.label57.Text = "Radeon RX 480";
+            this.labelGPU6Name.Location = new System.Drawing.Point(139, 163);
+            this.labelGPU6Name.Name = "labelGPU6Name";
+            this.labelGPU6Name.Size = new System.Drawing.Size(110, 14);
+            this.labelGPU6Name.TabIndex = 27;
+            this.labelGPU6Name.Text = "Radeon RX 480";
             // 
-            // label31
+            // labelGPU2Name
             // 
-            this.label31.Location = new System.Drawing.Point(126, 76);
-            this.label31.Name = "label31";
-            this.label31.Size = new System.Drawing.Size(110, 14);
-            this.label31.TabIndex = 27;
-            this.label31.Text = "Radeon RX 480";
+            this.labelGPU2Name.Location = new System.Drawing.Point(139, 76);
+            this.labelGPU2Name.Name = "labelGPU2Name";
+            this.labelGPU2Name.Size = new System.Drawing.Size(110, 14);
+            this.labelGPU2Name.TabIndex = 27;
+            this.labelGPU2Name.Text = "Radeon RX 480";
             // 
-            // label56
+            // labelGPU6Vendor
             // 
-            this.label56.Location = new System.Drawing.Point(79, 163);
-            this.label56.Name = "label56";
-            this.label56.Size = new System.Drawing.Size(41, 13);
-            this.label56.TabIndex = 26;
-            this.label56.Text = "AMD";
+            this.labelGPU6Vendor.Location = new System.Drawing.Point(79, 163);
+            this.labelGPU6Vendor.Name = "labelGPU6Vendor";
+            this.labelGPU6Vendor.Size = new System.Drawing.Size(54, 13);
+            this.labelGPU6Vendor.TabIndex = 26;
+            this.labelGPU6Vendor.Text = "AMD";
             // 
-            // label32
+            // labelGPU2Vendor
             // 
-            this.label32.Location = new System.Drawing.Point(79, 76);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(41, 13);
-            this.label32.TabIndex = 26;
-            this.label32.Text = "AMD";
+            this.labelGPU2Vendor.Location = new System.Drawing.Point(79, 76);
+            this.labelGPU2Vendor.Name = "labelGPU2Vendor";
+            this.labelGPU2Vendor.Size = new System.Drawing.Size(54, 13);
+            this.labelGPU2Vendor.TabIndex = 26;
+            this.labelGPU2Vendor.Text = "AMD";
             // 
             // label55
             // 
@@ -714,18 +726,18 @@
             // 
             // label53
             // 
-            this.label53.Location = new System.Drawing.Point(242, 142);
+            this.label53.Location = new System.Drawing.Point(258, 142);
             this.label53.Name = "label53";
-            this.label53.Size = new System.Drawing.Size(78, 13);
+            this.label53.Size = new System.Drawing.Size(62, 13);
             this.label53.TabIndex = 22;
             this.label53.Text = "0 Mh/s";
             this.label53.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // labelGPU1Speed
             // 
-            this.labelGPU1Speed.Location = new System.Drawing.Point(242, 55);
+            this.labelGPU1Speed.Location = new System.Drawing.Point(258, 55);
             this.labelGPU1Speed.Name = "labelGPU1Speed";
-            this.labelGPU1Speed.Size = new System.Drawing.Size(78, 13);
+            this.labelGPU1Speed.Size = new System.Drawing.Size(62, 13);
             this.labelGPU1Speed.TabIndex = 22;
             this.labelGPU1Speed.Text = "0 Mh/s";
             this.labelGPU1Speed.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -766,35 +778,35 @@
             this.labelGPU1Fan.Text = "100%";
             this.labelGPU1Fan.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // label50
+            // labelGPU5Name
             // 
-            this.label50.Location = new System.Drawing.Point(126, 142);
-            this.label50.Name = "label50";
-            this.label50.Size = new System.Drawing.Size(110, 14);
-            this.label50.TabIndex = 19;
-            this.label50.Text = "Radeon RX 480";
+            this.labelGPU5Name.Location = new System.Drawing.Point(139, 142);
+            this.labelGPU5Name.Name = "labelGPU5Name";
+            this.labelGPU5Name.Size = new System.Drawing.Size(110, 14);
+            this.labelGPU5Name.TabIndex = 19;
+            this.labelGPU5Name.Text = "Radeon RX 480";
             // 
             // labelGPU1Name
             // 
-            this.labelGPU1Name.Location = new System.Drawing.Point(126, 55);
+            this.labelGPU1Name.Location = new System.Drawing.Point(139, 55);
             this.labelGPU1Name.Name = "labelGPU1Name";
             this.labelGPU1Name.Size = new System.Drawing.Size(110, 14);
             this.labelGPU1Name.TabIndex = 19;
             this.labelGPU1Name.Text = "Radeon RX 480";
             // 
-            // label49
+            // labelGPU5Vendor
             // 
-            this.label49.Location = new System.Drawing.Point(79, 142);
-            this.label49.Name = "label49";
-            this.label49.Size = new System.Drawing.Size(41, 13);
-            this.label49.TabIndex = 18;
-            this.label49.Text = "AMD";
+            this.labelGPU5Vendor.Location = new System.Drawing.Point(79, 142);
+            this.labelGPU5Vendor.Name = "labelGPU5Vendor";
+            this.labelGPU5Vendor.Size = new System.Drawing.Size(54, 13);
+            this.labelGPU5Vendor.TabIndex = 18;
+            this.labelGPU5Vendor.Text = "AMD";
             // 
             // labelGPU1Vendor
             // 
             this.labelGPU1Vendor.Location = new System.Drawing.Point(79, 55);
             this.labelGPU1Vendor.Name = "labelGPU1Vendor";
-            this.labelGPU1Vendor.Size = new System.Drawing.Size(41, 13);
+            this.labelGPU1Vendor.Size = new System.Drawing.Size(54, 13);
             this.labelGPU1Vendor.TabIndex = 18;
             this.labelGPU1Vendor.Text = "AMD";
             // 
@@ -854,18 +866,18 @@
             // 
             // label46
             // 
-            this.label46.Location = new System.Drawing.Point(242, 120);
+            this.label46.Location = new System.Drawing.Point(258, 120);
             this.label46.Name = "label46";
-            this.label46.Size = new System.Drawing.Size(78, 13);
+            this.label46.Size = new System.Drawing.Size(62, 13);
             this.label46.TabIndex = 14;
             this.label46.Text = "0 Mh/s";
             this.label46.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // labelGPU0Speed
             // 
-            this.labelGPU0Speed.Location = new System.Drawing.Point(242, 33);
+            this.labelGPU0Speed.Location = new System.Drawing.Point(258, 33);
             this.labelGPU0Speed.Name = "labelGPU0Speed";
-            this.labelGPU0Speed.Size = new System.Drawing.Size(78, 13);
+            this.labelGPU0Speed.Size = new System.Drawing.Size(62, 13);
             this.labelGPU0Speed.TabIndex = 14;
             this.labelGPU0Speed.Text = "0 Mh/s";
             this.labelGPU0Speed.TextAlign = System.Drawing.ContentAlignment.TopRight;
@@ -906,29 +918,29 @@
             this.labelGPU0Fan.Text = "100%";
             this.labelGPU0Fan.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
-            // label43
+            // labelGPU4Name
             // 
-            this.label43.Location = new System.Drawing.Point(126, 120);
-            this.label43.Name = "label43";
-            this.label43.Size = new System.Drawing.Size(110, 14);
-            this.label43.TabIndex = 10;
-            this.label43.Text = "Radeon RX 480";
+            this.labelGPU4Name.Location = new System.Drawing.Point(139, 120);
+            this.labelGPU4Name.Name = "labelGPU4Name";
+            this.labelGPU4Name.Size = new System.Drawing.Size(110, 14);
+            this.labelGPU4Name.TabIndex = 10;
+            this.labelGPU4Name.Text = "Radeon RX 480";
             // 
             // labelGPU0Name
             // 
-            this.labelGPU0Name.Location = new System.Drawing.Point(126, 33);
+            this.labelGPU0Name.Location = new System.Drawing.Point(139, 33);
             this.labelGPU0Name.Name = "labelGPU0Name";
             this.labelGPU0Name.Size = new System.Drawing.Size(110, 14);
             this.labelGPU0Name.TabIndex = 10;
             this.labelGPU0Name.Text = "Radeon RX 480";
             // 
-            // label42
+            // labelGPU4Vendor
             // 
-            this.label42.Location = new System.Drawing.Point(79, 120);
-            this.label42.Name = "label42";
-            this.label42.Size = new System.Drawing.Size(41, 13);
-            this.label42.TabIndex = 9;
-            this.label42.Text = "AMD";
+            this.labelGPU4Vendor.Location = new System.Drawing.Point(79, 120);
+            this.labelGPU4Vendor.Name = "labelGPU4Vendor";
+            this.labelGPU4Vendor.Size = new System.Drawing.Size(54, 13);
+            this.labelGPU4Vendor.TabIndex = 9;
+            this.labelGPU4Vendor.Text = "AMD";
             // 
             // label41
             // 
@@ -943,7 +955,7 @@
             // 
             this.labelGPU0Vendor.Location = new System.Drawing.Point(79, 33);
             this.labelGPU0Vendor.Name = "labelGPU0Vendor";
-            this.labelGPU0Vendor.Size = new System.Drawing.Size(41, 13);
+            this.labelGPU0Vendor.Size = new System.Drawing.Size(54, 13);
             this.labelGPU0Vendor.TabIndex = 9;
             this.labelGPU0Vendor.Text = "AMD";
             // 
@@ -970,7 +982,7 @@
             // 
             this.label25.AutoSize = true;
             this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label25.Location = new System.Drawing.Point(242, 7);
+            this.label25.Location = new System.Drawing.Point(250, 7);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(43, 13);
             this.label25.TabIndex = 6;
@@ -1010,7 +1022,7 @@
             // 
             this.label21.AutoSize = true;
             this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label21.Location = new System.Drawing.Point(126, 7);
+            this.label21.Location = new System.Drawing.Point(139, 7);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(39, 13);
             this.label21.TabIndex = 2;
@@ -1285,18 +1297,6 @@
             this.button6.Text = "Benchmark";
             this.button6.UseVisualStyleBackColor = true;
             // 
-            // richTextBoxLog
-            // 
-            this.richTextBoxLog.BackColor = System.Drawing.Color.Black;
-            this.richTextBoxLog.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.richTextBoxLog.ForeColor = System.Drawing.Color.Lime;
-            this.richTextBoxLog.Location = new System.Drawing.Point(6, 105);
-            this.richTextBoxLog.Name = "richTextBoxLog";
-            this.richTextBoxLog.ReadOnly = true;
-            this.richTextBoxLog.Size = new System.Drawing.Size(469, 199);
-            this.richTextBoxLog.TabIndex = 24;
-            this.richTextBoxLog.Text = "";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1390,48 +1390,48 @@
         private System.Windows.Forms.Label label35;
         private System.Windows.Forms.Label label36;
         private System.Windows.Forms.Label label37;
-        private System.Windows.Forms.Label label38;
-        private System.Windows.Forms.Label label39;
+        private System.Windows.Forms.Label labelGPU3Name;
+        private System.Windows.Forms.Label labelGPU3Vendor;
         private System.Windows.Forms.Label label40;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.Label label27;
         private System.Windows.Forms.Label label28;
         private System.Windows.Forms.Label label29;
         private System.Windows.Forms.Label label30;
-        private System.Windows.Forms.Label label31;
-        private System.Windows.Forms.Label label32;
+        private System.Windows.Forms.Label labelGPU2Name;
+        private System.Windows.Forms.Label labelGPU2Vendor;
         private System.Windows.Forms.Label label33;
         private System.Windows.Forms.CheckBox checkBox6;
         private System.Windows.Forms.Label label68;
         private System.Windows.Forms.Label label67;
         private System.Windows.Forms.Label label66;
         private System.Windows.Forms.Label label65;
-        private System.Windows.Forms.Label label64;
-        private System.Windows.Forms.Label label63;
+        private System.Windows.Forms.Label labelGPU7Name;
+        private System.Windows.Forms.Label labelGPU7Vendor;
         private System.Windows.Forms.Label label62;
         private System.Windows.Forms.CheckBox checkBox5;
         private System.Windows.Forms.Label label61;
         private System.Windows.Forms.Label label60;
         private System.Windows.Forms.Label label59;
         private System.Windows.Forms.Label label58;
-        private System.Windows.Forms.Label label57;
-        private System.Windows.Forms.Label label56;
+        private System.Windows.Forms.Label labelGPU6Name;
+        private System.Windows.Forms.Label labelGPU6Vendor;
         private System.Windows.Forms.Label label55;
         private System.Windows.Forms.CheckBox checkBox4;
         private System.Windows.Forms.Label label54;
         private System.Windows.Forms.Label label53;
         private System.Windows.Forms.Label label52;
         private System.Windows.Forms.Label label51;
-        private System.Windows.Forms.Label label50;
-        private System.Windows.Forms.Label label49;
+        private System.Windows.Forms.Label labelGPU5Name;
+        private System.Windows.Forms.Label labelGPU5Vendor;
         private System.Windows.Forms.Label label48;
         private System.Windows.Forms.CheckBox checkBox3;
         private System.Windows.Forms.Label label47;
         private System.Windows.Forms.Label label46;
         private System.Windows.Forms.Label label45;
         private System.Windows.Forms.Label label44;
-        private System.Windows.Forms.Label label43;
-        private System.Windows.Forms.Label label42;
+        private System.Windows.Forms.Label labelGPU4Name;
+        private System.Windows.Forms.Label labelGPU4Vendor;
         private System.Windows.Forms.Label label41;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RadioButton radioButton4;

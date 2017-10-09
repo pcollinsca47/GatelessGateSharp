@@ -8,6 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SQLite;
+using System.Collections;
+using Cloo;
+
 
 namespace GatelessGateSharp
 {
@@ -16,7 +19,11 @@ namespace GatelessGateSharp
         String databaseFileName = "GatelessGateSharp.sqlite";
         String logFileName = "GatelessGateSharp.log";
         const int richTextBoxLogMaxLines = 65536;
-        private static System.Threading.Mutex loggerMutex = new System.Threading.Mutex();
+        private System.Threading.Mutex loggerMutex = new System.Threading.Mutex();
+        private Control[] labelGPUVendorArray;
+        private Control[] labelGPUNameArray;
+        private ComputeDevice[] computeDeviceArray;
+        private const int computeDeviceArrayMaxLength = 8; // This depends on MainForm.
 
         public void Logger(String lines)
         {
@@ -37,6 +44,8 @@ namespace GatelessGateSharp
         {
             InitializeComponent();
             Logger("Gateless Gate # started.");
+            labelGPUVendorArray = new Control[] { labelGPU0Vendor, labelGPU1Vendor, labelGPU2Vendor, labelGPU3Vendor, labelGPU4Vendor, labelGPU5Vendor, labelGPU6Vendor, labelGPU7Vendor };
+            labelGPUNameArray = new Control[] { labelGPU0Name, labelGPU1Name, labelGPU2Name, labelGPU3Name, labelGPU4Name, labelGPU5Name, labelGPU6Name, labelGPU7Name };
         }
 
         private void CreateNewDatabase()
@@ -113,10 +122,52 @@ namespace GatelessGateSharp
             if (!System.IO.File.Exists(databaseFileName))
                 CreateNewDatabase();
             LoadDatabase();
+            InitializeDevices();
         }
 
-        private void UpdateDeviceList()
+        private void InitializeDevices()
         {
+            ArrayList computeDeviceArrayList = new ArrayList();
+
+            foreach (ComputePlatform platform in ComputePlatform.Platforms)
+            {
+                IList<ComputeDevice> devices = platform.Devices;
+                ComputeContextPropertyList properties = new ComputeContextPropertyList(platform);
+                ComputeContext context = new ComputeContext(devices, properties, null, IntPtr.Zero);
+
+                foreach (ComputeDevice device in context.Devices)
+                {
+                    if (device.Vendor == "Intel Corporation"
+                        || device.Vendor == "GenuineIntel"
+                        || device.Type == ComputeDeviceTypes.Cpu)
+                        continue;
+                    computeDeviceArrayList.Add(device);
+                }
+            }
+            computeDeviceArray = Array.ConvertAll(computeDeviceArrayList.ToArray(), item => (Cloo.ComputeDevice)item);
+
+            int index = 0;
+            foreach (ComputeDevice device in computeDeviceArray)
+            {
+                labelGPUVendorArray[index].Text = (device.Vendor == "Advanced Micro Devices, Inc.") ? "AMD" :
+                                                  (device.Vendor == "NVIDIA Corporation") ? "NVIDIA" :
+                                                  (device.Vendor == "Intel Corporation") ? "Intel" :
+                                                  (device.Vendor == "GenuineIntel") ? "Intel" :
+                                                  device.Vendor;
+                labelGPUNameArray[index].Text = device.Name;
+
+                labelGPUVendorArray[index].Visible = true;
+                labelGPUNameArray[index].Visible = true;
+
+                ++index;
+            }
+
+            for (; index < computeDeviceArrayMaxLength; ++index)
+            {
+                labelGPUVendorArray[index].Visible = false;
+                labelGPUNameArray[index].Visible = false;
+            }
+
         }
 
         private void textBoxBitcoinAddress_TextChanged(object sender, EventArgs e)
