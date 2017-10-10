@@ -101,9 +101,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Cloo\Cloo.VS2010.csproj">
+    <ProjectReference Include="..\Cloo\Cloo.csproj">
       <Project>{656e96ce-2587-4ccc-a4db-06d36267133a}</Project>
-      <Name>Cloo.VS2010</Name>
+      <Name>Cloo</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
