@@ -1,0 +1,65 @@
+;
+; phymem.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171}
+Provider=%ManufacturerName%
+CatalogFile=phymem.cat
+DriverVer= 1.0.0
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SampleClassReg
+
+[SampleClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+phymem.sys  = 1,,
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%phymem.DeviceDesc%=phymem_Device, Root\phymem
+
+[phymem_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+phymem.sys
+
+
+
+; -------------- phymem driver install sections
+[phymem_Service_Inst]
+DisplayName    = %phymem.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\phymem.sys
+
+
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="Zawawa Software LLC"
+ClassName="Samples"
+DiskName = "phymem Installation Disk"
+phymem.DeviceDesc = "phymem Device"
+phymem.SVCDESC = "phymem Service"
