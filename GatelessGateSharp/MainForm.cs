@@ -22,6 +22,33 @@ namespace GatelessGateSharp
         [DllImport("phymem_wrapper.dll")]
         extern public static void UnloadPhyMemDriver();
 
+        [DllImport("phymem_wrapper.dll")]
+        extern public static int ADL_Main_Control_Create_Wrapper(int i);
+        [DllImport("atiadlxx.dll")]
+        extern public static int ADL_Main_Control_Destroy();
+        [DllImport("atiadlxx.dll")]
+        extern public static int ADL_Adapter_NumberOfAdapters_Get(ref Int32 num);
+        /*
+        ttypedef int(*ADL_ADAPTER_NUMBEROFADAPTERS_GET) (int*);
+        typedef int(*ADL_ADAPTER_ADAPTERINFO_GET) (LPAdapterInfo, int);
+        typedef int(*ADL_ADAPTER_ACTIVE_GET) (int, int*);
+        typedef int(*ADL_OVERDRIVE_CAPS) (int iAdapterIndex, int *iSupported, int *iEnabled, int *iVersion);
+        typedef int(*ADL_OVERDRIVE5_THERMALDEVICES_ENUM) (int iAdapterIndex, int iThermalControllerIndex, ADLThermalControllerInfo *lpThermalControllerInfo);
+        typedef int(*ADL_OVERDRIVE5_ODPARAMETERS_GET) (int  iAdapterIndex, ADLODParameters *  lpOdParameters);
+        typedef int(*ADL_OVERDRIVE5_TEMPERATURE_GET) (int iAdapterIndex, int iThermalControllerIndex, ADLTemperature *lpTemperature);
+        typedef int(*ADL_OVERDRIVE5_FANSPEED_GET) (int iAdapterIndex, int iThermalControllerIndex, ADLFanSpeedValue *lpFanSpeedValue);
+        typedef int(*ADL_OVERDRIVE5_FANSPEEDINFO_GET) (int iAdapterIndex, int iThermalControllerIndex, ADLFanSpeedInfo *lpFanSpeedInfo);
+        typedef int(*ADL_OVERDRIVE5_FANSPEEDTODEFAULT_SET)(int iAdapterIndex, int  iThermalControllerIndex);
+        typedef int(*ADL_OVERDRIVE5_ODPERFORMANCELEVELS_GET) (int iAdapterIndex, int iDefault, ADLODPerformanceLevels *lpOdPerformanceLevels);
+        typedef int(*ADL_OVERDRIVE5_ODPARAMETERS_GET) (int iAdapterIndex, ADLODParameters *lpOdParameters);
+        typedef int(*ADL_OVERDRIVE5_CURRENTACTIVITY_GET) (int iAdapterIndex, ADLPMActivity *lpActivity);
+        typedef int(*ADL_OVERDRIVE5_FANSPEED_SET)(int iAdapterIndex, int iThermalControllerIndex, ADLFanSpeedValue *lpFanSpeedValue);
+        typedef int(*ADL_OVERDRIVE5_ODPERFORMANCELEVELS_SET) (int iAdapterIndex, ADLODPerformanceLevels *lpOdPerformanceLevels);
+        typedef int(*ADL_OVERDRIVE5_POWERCONTROL_CAPS)(int iAdapterIndex, int *lpSupported);
+        typedef int(*ADL_OVERDRIVE5_POWERCONTROLINFO_GET)(int iAdapterIndex, ADLPowerControlInfo *lpPowerControlInfo);
+        typedef int(*ADL_OVERDRIVE5_POWERCONTROL_GET)(int iAdapterIndex, int *lpCurrentValue, int *lpDefaultValue);
+        typedef int(*ADL_OVERDRIVE5_POWERCONTROL_SET)(int iAdapterIndex, int iValue);
+        */
         public static String appName = "Gateless Gate #";
         String databaseFileName = "GatelessGateSharp.sqlite";
         String logFileName = "GatelessGateSharp.log";
@@ -37,6 +64,7 @@ namespace GatelessGateSharp
         private Control[] checkBoxGPUEnabledArray;
         private ComputeDevice[] computeDeviceArray;
         private const int computeDeviceArrayMaxLength = 8; // This depends on MainForm.
+        private Boolean ADLInitialized = false;
 
         public void Logger(String lines)
         {
@@ -74,7 +102,20 @@ namespace GatelessGateSharp
             {
                 Logger("Failed to load phymem.");
                 MessageBox.Show("Failed to load phymem.", appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Application.Exit();
+                System.Environment.Exit(1);
+            }
+
+            if (ADL_Main_Control_Create_Wrapper(1) == 0)
+            {
+                Logger("Successfully initialized AMD Display Library.");
+                ADLInitialized = true;
+                Int32 num = 0;
+                if (ADL_Adapter_NumberOfAdapters_Get(ref num) == 0)
+                    Logger("# of ADL Adapters: " + num);
+            }
+            else
+            {
+                Logger("Failed to initialize AMD Display Library.");
             }
         }
 
@@ -227,7 +268,12 @@ namespace GatelessGateSharp
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             UpdateDatabase();
-            //UnloadPhyMemDriver();
+            UnloadPhyMemDriver();
+            if (ADLInitialized)
+            {
+                ADL_Main_Control_Destroy();
+                ADLInitialized = false;
+            }
         }
     }
 }
