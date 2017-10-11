@@ -152,8 +152,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
-    <IntDir>$(ProjectDir)intermediate\$(Platform)\$(Configuration)\</IntDir>
-    <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>intermediate\$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>bin\$(Platform)\$(ConfigurationName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWDbg|x64'">
     <DebuggerFlavor>DbgengKernelDebugger</DebuggerFlavor>
@@ -171,7 +171,7 @@
     </ClCompile>
     <Link />
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)$(ProjectName)\bin\$(Platform)\$(ConfigurationName)\phymem.sys $(SolutionDir)GatelessGateSharp\bin\$(ConfigurationName)</Command>
+      <Command>copy $(ProjectDir)\phymem.sys $(SolutionDir)GatelessGateSharp\bin\$(ConfigurationName)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -181,7 +181,7 @@
     </ClCompile>
     <Link />
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)$(ProjectName)\bin\$(Platform)\$(ConfigurationName)\phymem.sys $(SolutionDir)GatelessGateSharp\bin\$(ConfigurationName)</Command>
+      <Command>copy $(ProjectDir)\phymem.sys $(SolutionDir)GatelessGateSharp\bin\$(ConfigurationName)</Command>
     </PostBuildEvent>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -194,7 +194,7 @@
     </ClCompile>
     <Link />
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)$(ProjectName)\bin\$(Platform)\$(ConfigurationName)\phymem.sys $(SolutionDir)GatelessGateSharp\bin\$(ConfigurationName)</Command>
+      <Command>copy $(ProjectDir)\phymem.sys $(SolutionDir)GatelessGateSharp\bin\$(ConfigurationName)</Command>
     </PostBuildEvent>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -206,7 +206,7 @@
     </ClCompile>
     <Link />
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)$(ProjectName)\bin\$(Platform)\$(ConfigurationName)\phymem.sys $(SolutionDir)GatelessGateSharp\bin\$(ConfigurationName)</Command>
+      <Command>copy $(ProjectDir)\phymem.sys $(SolutionDir)GatelessGateSharp\bin\$(ConfigurationName)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -215,7 +215,7 @@
     </ClCompile>
     <Link />
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)$(ProjectName)\bin\$(Platform)\$(ConfigurationName)\phymem.sys $(SolutionDir)GatelessGateSharp\bin\$(ConfigurationName)</Command>
+      <Command>copy $(ProjectDir)\phymem.sys $(SolutionDir)GatelessGateSharp\bin\$(ConfigurationName)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -225,7 +225,7 @@
     </ClCompile>
     <Link />
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)$(ProjectName)\bin\$(Platform)\$(ConfigurationName)\phymem.sys $(SolutionDir)GatelessGateSharp\bin\$(ConfigurationName)</Command>
+      <Command>copy $(ProjectDir)\phymem.sys $(SolutionDir)GatelessGateSharp\bin\$(ConfigurationName)</Command>
     </PostBuildEvent>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -238,7 +238,7 @@
     </ClCompile>
     <Link />
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)$(ProjectName)\bin\$(Platform)\$(ConfigurationName)\phymem.sys $(SolutionDir)GatelessGateSharp\bin\$(ConfigurationName)</Command>
+      <Command>copy $(ProjectDir)\phymem.sys $(SolutionDir)GatelessGateSharp\bin\$(ConfigurationName)</Command>
     </PostBuildEvent>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -250,7 +250,7 @@
     </ClCompile>
     <Link />
     <PostBuildEvent>
-      <Command>copy $(SolutionDir)$(ProjectName)\bin\$(Platform)\$(ConfigurationName)\phymem.sys $(SolutionDir)GatelessGateSharp\bin\$(ConfigurationName)</Command>
+      <Command>copy $(ProjectDir)\phymem.sys $(SolutionDir)GatelessGateSharp\bin\$(ConfigurationName)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

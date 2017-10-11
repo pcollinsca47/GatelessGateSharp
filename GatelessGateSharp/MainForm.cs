@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SQLite;
 using System.Collections;
+using System.Runtime.InteropServices;
 using Cloo;
 
 
@@ -16,6 +17,12 @@ namespace GatelessGateSharp
 {
     public partial class MainForm : Form
     {
+        [DllImport("phymem_wrapper.dll")]
+        extern public static int LoadPhyMemDriver();
+        [DllImport("phymem_wrapper.dll")]
+        extern public static void UnloadPhyMemDriver();
+
+        public static String appName = "Gateless Gate #";
         String databaseFileName = "GatelessGateSharp.sqlite";
         String logFileName = "GatelessGateSharp.log";
         const int richTextBoxLogMaxLines = 65536;
@@ -49,7 +56,7 @@ namespace GatelessGateSharp
         public MainForm()
         {
             InitializeComponent();
-            Logger("Gateless Gate # started.");
+            Logger(appName + " started.");
             labelGPUVendorArray = new Control[] { labelGPU0Vendor, labelGPU1Vendor, labelGPU2Vendor, labelGPU3Vendor, labelGPU4Vendor, labelGPU5Vendor, labelGPU6Vendor, labelGPU7Vendor };
             labelGPUNameArray = new Control[] { labelGPU0Name, labelGPU1Name, labelGPU2Name, labelGPU3Name, labelGPU4Name, labelGPU5Name, labelGPU6Name, labelGPU7Name };
             labelGPUIDArray = new Control[] { labelGPU0ID, labelGPU1ID, labelGPU2ID, labelGPU3ID, labelGPU4ID, labelGPU5ID, labelGPU6ID, labelGPU7ID };
@@ -58,6 +65,17 @@ namespace GatelessGateSharp
             labelGPUFanArray = new Control[] { labelGPU0Fan, labelGPU1Fan, labelGPU2Fan, labelGPU3Fan, labelGPU4Fan, labelGPU5Fan, labelGPU6Fan, labelGPU7Fan };
             labelGPUSpeedArray = new Control[] { labelGPU0Speed, labelGPU1Speed, labelGPU2Speed, labelGPU3Speed, labelGPU4Speed, labelGPU5Speed, labelGPU6Speed, labelGPU7Speed };
             checkBoxGPUEnabledArray = new Control[] { checkBoxGPU0Enabled, checkBoxGPU1Enabled, checkBoxGPU2Enabled, checkBoxGPU3Enabled, checkBoxGPU4Enabled, checkBoxGPU5Enabled, checkBoxGPU6Enabled, checkBoxGPU7Enabled };
+
+            if (LoadPhyMemDriver() != 0)
+            {
+                Logger("Successfully loaded phymem.");
+            }
+            else
+            {
+                Logger("Failed to load phymem.");
+                MessageBox.Show("Failed to load phymem.", appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Application.Exit();
+            }
         }
 
         private void CreateNewDatabase()
@@ -209,6 +227,7 @@ namespace GatelessGateSharp
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             UpdateDatabase();
+            //UnloadPhyMemDriver();
         }
     }
 }
