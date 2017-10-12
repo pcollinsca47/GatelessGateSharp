@@ -23,26 +23,6 @@ namespace GatelessGateSharp
         [DllImport("phymem_wrapper.dll")]
         extern public static void UnloadPhyMemDriver();
 
-        static public int ADL_MAX_PATH = 256;
-        [StructLayout(LayoutKind.Sequential)]
-        public unsafe struct AdapterInfo {
-            public int iSize;
-            public int iAdapterIndex;
-            fixed char strUDID[256];
-            public int iBusNumber;
-            public int iDeviceNumber;
-            public int iFunctionNumber;
-            public int iVendorID;
-            public fixed char strAdapterName[256];
-            public fixed char strDisplayName[256];
-            public int iPresent;
-
-            public int iExist;
-            public fixed char strDriverPath[256];
-            public fixed char strDriverPathExt[256];
-            public fixed char strPNPString[256];
-            public int iOSDisplayIndex;
-        }
         public static String appName = "Gateless Gate #";
         String databaseFileName = "GatelessGateSharp.sqlite";
         String logFileName = "GatelessGateSharp.log";
@@ -61,6 +41,7 @@ namespace GatelessGateSharp
         private Boolean ADLInitialized = false;
         private Int32 numADLAdapters = 0;
         private Int32[] ADLAdapterIndexArray;
+        private System.Threading.Mutex ADLMutex = new System.Threading.Mutex();
 
         public void Logger(String lines)
         {
@@ -307,6 +288,44 @@ namespace GatelessGateSharp
             {
                 Logger("Failed to initialize AMD Display Library.");
             }
+
+            timerDeviceStatusUpdates.Enabled = true;
+        }
+
+        private void UpdateDeviceStatus()
+        {
+            ADLMutex.WaitOne();
+            int deviceIndex = 0;
+            foreach (ComputeDevice device in computeDeviceArray)
+            {
+                if (ADLAdapterIndexArray[deviceIndex] >= 0)
+                {
+                    // temperature
+                    ADLTemperature OSADLTemperatureData;
+                    OSADLTemperatureData = new ADLTemperature();
+                    if (null != ADL.ADL_Adapter_AdapterInfo_Get)
+                    {
+                        IntPtr tempBuffer = IntPtr.Zero;
+                        int size = Marshal.SizeOf(OSADLTemperatureData);
+                        tempBuffer = Marshal.AllocCoTaskMem((int)size);
+                        Marshal.StructureToPtr(OSADLTemperatureData, tempBuffer, false);
+
+                        if (null != ADL.ADL_Overdrive5_Temperature_Get)
+                        {
+                            int ADLRet = ADL.ADL_Overdrive5_Temperature_Get(ADLAdapterIndexArray[deviceIndex], 0, tempBuffer);
+                            if (ADL.ADL_SUCCESS == ADLRet)
+                            {
+                                OSADLTemperatureData = (ADLTemperature)Marshal.PtrToStructure(tempBuffer, OSADLTemperatureData.GetType());
+                                labelGPUTempArray[deviceIndex].Text = (OSADLTemperatureData.Temperature / 1000).ToString() + "℃";
+                            }
+                        }
+                    }
+
+                    // activity
+                }
+                ++deviceIndex;
+            }
+            ADLMutex.ReleaseMutex();
         }
 
         private void DumpADLInfo()
@@ -447,6 +466,11 @@ namespace GatelessGateSharp
             UnloadPhyMemDriver();
             if (ADLInitialized && null != ADL.ADL_Main_Control_Destroy)
                 ADL.ADL_Main_Control_Destroy();
+        }
+
+        private void timerDeviceStatusUpdates_Tick(object sender, EventArgs e)
+        {
+            UpdateDeviceStatus();
         }
     }
 }

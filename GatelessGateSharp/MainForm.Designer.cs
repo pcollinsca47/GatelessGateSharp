@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.tabControlPools = new System.Windows.Forms.TabControl();
             this.tabPageHome = new System.Windows.Forms.TabPage();
             this.richTextBoxLog = new System.Windows.Forms.RichTextBox();
@@ -143,6 +144,7 @@
             this.tabPageMisc = new System.Windows.Forms.TabPage();
             this.button1 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
+            this.timerDeviceStatusUpdates = new System.Windows.Forms.Timer(this.components);
             this.tabControlPools.SuspendLayout();
             this.tabPageHome.SuspendLayout();
             this.tabPageDevices.SuspendLayout();
@@ -1297,6 +1299,11 @@
             this.button6.Text = "Benchmark";
             this.button6.UseVisualStyleBackColor = true;
             // 
+            // timerDeviceStatusUpdates
+            // 
+            this.timerDeviceStatusUpdates.Interval = 1000;
+            this.timerDeviceStatusUpdates.Tick += new System.EventHandler(this.timerDeviceStatusUpdates_Tick);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1443,6 +1450,7 @@
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.ListBox listBoxPoolPriorities;
         private System.Windows.Forms.RichTextBox richTextBoxLog;
+        private System.Windows.Forms.Timer timerDeviceStatusUpdates;
     }
 }
 

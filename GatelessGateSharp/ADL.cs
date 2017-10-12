@@ -78,6 +78,11 @@ namespace ATI.ADL
     /// <returns>return ADL Error Code</returns>
     internal delegate int ADL_Display_DisplayInfo_Get(int adapterIndex, ref int numDisplays, out IntPtr displayInfoArray, int forceDetect);
 
+    /// <summary>Retrieve thermal controller temperatures.</summary>
+    /// <param name="adapterIndex">Adapter Index</param>
+    /// <returns>return ADL Error Code</returns>
+    internal delegate int ADL_Overdrive5_Temperature_Get(int adapterIndex, int iThermalControllerIndex, IntPtr temperature);
+
     #endregion Export Delegates
 
     #region Export Struct
@@ -179,6 +184,16 @@ namespace ATI.ADL
     }
     #endregion ADLDisplayInfo
 
+    /// <summary> ADLTemperature Structure</summary>
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct ADLTemperature
+    {
+        /// <summary>The size of the structure</summary>
+        int Size;
+        /// <summary> Adapter UDID</summary>
+        internal int Temperature;
+    }
+
     #endregion Export Struct
 
     #region ADL Class
@@ -248,6 +263,9 @@ namespace ATI.ADL
             [DllImport(Atiadlxx_FileName)]
             internal static extern int ADL_Display_DisplayInfo_Get(int adapterIndex, ref int numDisplays, out IntPtr displayInfoArray, int forceDetect);
 
+            [DllImport(Atiadlxx_FileName)]
+            internal static extern int ADL_Overdrive5_Temperature_Get(int adapterIndex, int thermalControllerIndex, IntPtr temperature);
+            
             #endregion DLLImport
         }
         #endregion Class ADLImport
@@ -492,6 +510,29 @@ namespace ATI.ADL
         /// <summary> check flag to indicate the delegate has been checked</summary>
         private static bool ADL_Display_DisplayInfo_Get_Check = false;
         #endregion ADL_Display_DisplayInfo_Get
+
+        #region ADL_Overdrive5_Temperature_Get
+        /// <summary> ADL_Overdrive5_Temperature_Get Delegates</summary>
+        internal static ADL_Overdrive5_Temperature_Get ADL_Overdrive5_Temperature_Get
+        {
+            get
+            {
+                if (!ADL_Overdrive5_Temperature_Get_Check && null == ADL_Overdrive5_Temperature_Get_)
+                {
+                    ADL_Overdrive5_Temperature_Get_Check = true;
+                    if (ADLCheckLibrary.IsFunctionValid("ADL_Overdrive5_Temperature_Get"))
+                    {
+                        ADL_Overdrive5_Temperature_Get_ = ADLImport.ADL_Overdrive5_Temperature_Get;
+                    }
+                }
+                return ADL_Overdrive5_Temperature_Get_;
+            }
+        }
+        /// <summary> Private Delegate</summary>
+        private static ADL_Overdrive5_Temperature_Get ADL_Overdrive5_Temperature_Get_ = null;
+        /// <summary> check flag to indicate the delegate has been checked</summary>
+        private static bool ADL_Overdrive5_Temperature_Get_Check = false;
+        #endregion ADL_Overdrive5_Temperature_Get
 
         #endregion Export Functions
     }
