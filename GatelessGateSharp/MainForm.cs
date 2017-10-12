@@ -35,11 +35,12 @@ namespace GatelessGateSharp
         private Control[] labelGPUTempArray;
         private Control[] labelGPUActivityArray;
         private Control[] labelGPUFanArray;
+        private Control[] labelGPUCoreClockArray;
+        private Control[] labelGPUMemoryClockArray;
         private Control[] checkBoxGPUEnabledArray;
         private ComputeDevice[] computeDeviceArray;
         private const int computeDeviceArrayMaxLength = 8; // This depends on MainForm.
         private Boolean ADLInitialized = false;
-        private Int32 numADLAdapters = 0;
         private Int32[] ADLAdapterIndexArray;
         private System.Threading.Mutex ADLMutex = new System.Threading.Mutex();
 
@@ -69,6 +70,8 @@ namespace GatelessGateSharp
             labelGPUActivityArray = new Control[] { labelGPU0Activity, labelGPU1Activity, labelGPU2Activity, labelGPU3Activity, labelGPU4Activity, labelGPU5Activity, labelGPU6Activity, labelGPU7Activity };
             labelGPUFanArray = new Control[] { labelGPU0Fan, labelGPU1Fan, labelGPU2Fan, labelGPU3Fan, labelGPU4Fan, labelGPU5Fan, labelGPU6Fan, labelGPU7Fan };
             labelGPUSpeedArray = new Control[] { labelGPU0Speed, labelGPU1Speed, labelGPU2Speed, labelGPU3Speed, labelGPU4Speed, labelGPU5Speed, labelGPU6Speed, labelGPU7Speed };
+            labelGPUCoreClockArray = new Control[] { labelGPU0CoreClock, labelGPU1CoreClock, labelGPU2CoreClock, labelGPU3CoreClock, labelGPU4CoreClock, labelGPU5CoreClock, labelGPU6CoreClock, labelGPU7CoreClock };
+            labelGPUMemoryClockArray = new Control[] { labelGPU0MemoryClock, labelGPU1MemoryClock, labelGPU2MemoryClock, labelGPU3MemoryClock, labelGPU4MemoryClock, labelGPU5MemoryClock, labelGPU6MemoryClock, labelGPU7MemoryClock };
             checkBoxGPUEnabledArray = new Control[] { checkBoxGPU0Enabled, checkBoxGPU1Enabled, checkBoxGPU2Enabled, checkBoxGPU3Enabled, checkBoxGPU4Enabled, checkBoxGPU5Enabled, checkBoxGPU6Enabled, checkBoxGPU7Enabled };
 
             if (LoadPhyMemDriver() != 0)
@@ -209,6 +212,8 @@ namespace GatelessGateSharp
                 labelGPUActivityArray[index].Visible = false;
                 labelGPUTempArray[index].Visible = false;
                 labelGPUFanArray[index].Visible = false;
+                labelGPUCoreClockArray[index].Visible = false;
+                labelGPUMemoryClockArray[index].Visible = false;
                 checkBoxGPUEnabledArray[index].Visible = false;
             }
 
@@ -303,25 +308,59 @@ namespace GatelessGateSharp
                     // temperature
                     ADLTemperature OSADLTemperatureData;
                     OSADLTemperatureData = new ADLTemperature();
-                    if (null != ADL.ADL_Adapter_AdapterInfo_Get)
-                    {
-                        IntPtr tempBuffer = IntPtr.Zero;
-                        int size = Marshal.SizeOf(OSADLTemperatureData);
-                        tempBuffer = Marshal.AllocCoTaskMem((int)size);
-                        Marshal.StructureToPtr(OSADLTemperatureData, tempBuffer, false);
+                    IntPtr tempBuffer = IntPtr.Zero;
+                    int size = Marshal.SizeOf(OSADLTemperatureData);
+                    tempBuffer = Marshal.AllocCoTaskMem((int)size);
+                    Marshal.StructureToPtr(OSADLTemperatureData, tempBuffer, false);
 
-                        if (null != ADL.ADL_Overdrive5_Temperature_Get)
+                    if (null != ADL.ADL_Overdrive5_Temperature_Get)
+                    {
+                        int ADLRet = ADL.ADL_Overdrive5_Temperature_Get(ADLAdapterIndexArray[deviceIndex], 0, tempBuffer);
+                        if (ADL.ADL_SUCCESS == ADLRet)
                         {
-                            int ADLRet = ADL.ADL_Overdrive5_Temperature_Get(ADLAdapterIndexArray[deviceIndex], 0, tempBuffer);
-                            if (ADL.ADL_SUCCESS == ADLRet)
-                            {
-                                OSADLTemperatureData = (ADLTemperature)Marshal.PtrToStructure(tempBuffer, OSADLTemperatureData.GetType());
-                                labelGPUTempArray[deviceIndex].Text = (OSADLTemperatureData.Temperature / 1000).ToString() + "℃";
-                            }
+                            OSADLTemperatureData = (ADLTemperature)Marshal.PtrToStructure(tempBuffer, OSADLTemperatureData.GetType());
+                            labelGPUTempArray[deviceIndex].Text = (OSADLTemperatureData.Temperature / 1000).ToString() + "℃";
                         }
                     }
 
                     // activity
+                    ADLPMActivity OSADLPMActivityData;
+                    OSADLPMActivityData = new ADLPMActivity();
+                    IntPtr activityBuffer = IntPtr.Zero;
+                    size = Marshal.SizeOf(OSADLPMActivityData);
+                    activityBuffer = Marshal.AllocCoTaskMem((int)size);
+                    Marshal.StructureToPtr(OSADLPMActivityData, activityBuffer, false);
+
+                    if (null != ADL.ADL_Overdrive5_CurrentActivity_Get)
+                    {
+                        int ADLRet = ADL.ADL_Overdrive5_CurrentActivity_Get(ADLAdapterIndexArray[deviceIndex], activityBuffer);
+                        if (ADL.ADL_SUCCESS == ADLRet)
+                        {
+                            OSADLPMActivityData = (ADLPMActivity)Marshal.PtrToStructure(activityBuffer, OSADLPMActivityData.GetType());
+                            labelGPUActivityArray[deviceIndex].Text = OSADLPMActivityData.iActivityPercent.ToString() + "%";
+                            labelGPUCoreClockArray[deviceIndex].Text = (OSADLPMActivityData.iEngineClock / 100).ToString() + " MHz";
+                            labelGPUMemoryClockArray[deviceIndex].Text = (OSADLPMActivityData.iMemoryClock / 100).ToString() + " MHz";
+                        }
+                    }
+
+                    // fan speed
+                    ADLFanSpeedValue OSADLFanSpeedValueData;
+                    OSADLFanSpeedValueData = new ADLFanSpeedValue();
+                    IntPtr fanSpeedValueBuffer = IntPtr.Zero;
+                    size = Marshal.SizeOf(OSADLFanSpeedValueData);
+                    OSADLFanSpeedValueData.iSpeedType = 1;
+                    fanSpeedValueBuffer = Marshal.AllocCoTaskMem((int)size);
+                    Marshal.StructureToPtr(OSADLFanSpeedValueData, fanSpeedValueBuffer, false);
+
+                    if (null != ADL.ADL_Overdrive5_FanSpeed_Get)
+                    {
+                        int ADLRet = ADL.ADL_Overdrive5_FanSpeed_Get(ADLAdapterIndexArray[deviceIndex], 0, fanSpeedValueBuffer);
+                        if (ADL.ADL_SUCCESS == ADLRet)
+                        {
+                            OSADLFanSpeedValueData = (ADLFanSpeedValue)Marshal.PtrToStructure(fanSpeedValueBuffer, OSADLFanSpeedValueData.GetType());
+                            labelGPUFanArray[deviceIndex].Text = OSADLFanSpeedValueData.iFanSpeed.ToString() + "%";
+                        }
+                    }
                 }
                 ++deviceIndex;
             }

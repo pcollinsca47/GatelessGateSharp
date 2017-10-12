@@ -47,6 +47,24 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPageDevices = new System.Windows.Forms.TabPage();
+            this.labelGPU7MemoryClock = new System.Windows.Forms.Label();
+            this.labelGPU3MemoryClock = new System.Windows.Forms.Label();
+            this.labelGPU6MemoryClock = new System.Windows.Forms.Label();
+            this.labelGPU2MemoryClock = new System.Windows.Forms.Label();
+            this.labelGPU5MemoryClock = new System.Windows.Forms.Label();
+            this.labelGPU1MemoryClock = new System.Windows.Forms.Label();
+            this.labelGPU4MemoryClock = new System.Windows.Forms.Label();
+            this.labelGPU0MemoryClock = new System.Windows.Forms.Label();
+            this.label44 = new System.Windows.Forms.Label();
+            this.labelGPU7CoreClock = new System.Windows.Forms.Label();
+            this.labelGPU3CoreClock = new System.Windows.Forms.Label();
+            this.labelGPU6CoreClock = new System.Windows.Forms.Label();
+            this.labelGPU2CoreClock = new System.Windows.Forms.Label();
+            this.labelGPU5CoreClock = new System.Windows.Forms.Label();
+            this.labelGPU1CoreClock = new System.Windows.Forms.Label();
+            this.labelGPU4CoreClock = new System.Windows.Forms.Label();
+            this.labelGPU0CoreClock = new System.Windows.Forms.Label();
+            this.label35 = new System.Windows.Forms.Label();
             this.checkBoxGPU7Enabled = new System.Windows.Forms.CheckBox();
             this.checkBoxGPU3Enabled = new System.Windows.Forms.CheckBox();
             this.labelGPU7Activity = new System.Windows.Forms.Label();
@@ -163,7 +181,7 @@
             this.tabControlPools.Location = new System.Drawing.Point(11, 8);
             this.tabControlPools.Name = "tabControlPools";
             this.tabControlPools.SelectedIndex = 0;
-            this.tabControlPools.Size = new System.Drawing.Size(486, 333);
+            this.tabControlPools.Size = new System.Drawing.Size(620, 333);
             this.tabControlPools.TabIndex = 0;
             // 
             // tabPageHome
@@ -185,7 +203,7 @@
             this.tabPageHome.Controls.Add(this.label1);
             this.tabPageHome.Location = new System.Drawing.Point(4, 22);
             this.tabPageHome.Name = "tabPageHome";
-            this.tabPageHome.Size = new System.Drawing.Size(478, 307);
+            this.tabPageHome.Size = new System.Drawing.Size(612, 307);
             this.tabPageHome.TabIndex = 2;
             this.tabPageHome.Text = "Home";
             this.tabPageHome.UseVisualStyleBackColor = true;
@@ -198,7 +216,7 @@
             this.richTextBoxLog.Location = new System.Drawing.Point(6, 105);
             this.richTextBoxLog.Name = "richTextBoxLog";
             this.richTextBoxLog.ReadOnly = true;
-            this.richTextBoxLog.Size = new System.Drawing.Size(469, 199);
+            this.richTextBoxLog.Size = new System.Drawing.Size(603, 199);
             this.richTextBoxLog.TabIndex = 24;
             this.richTextBoxLog.Text = "";
             // 
@@ -330,6 +348,24 @@
             // 
             // tabPageDevices
             // 
+            this.tabPageDevices.Controls.Add(this.labelGPU7MemoryClock);
+            this.tabPageDevices.Controls.Add(this.labelGPU3MemoryClock);
+            this.tabPageDevices.Controls.Add(this.labelGPU6MemoryClock);
+            this.tabPageDevices.Controls.Add(this.labelGPU2MemoryClock);
+            this.tabPageDevices.Controls.Add(this.labelGPU5MemoryClock);
+            this.tabPageDevices.Controls.Add(this.labelGPU1MemoryClock);
+            this.tabPageDevices.Controls.Add(this.labelGPU4MemoryClock);
+            this.tabPageDevices.Controls.Add(this.labelGPU0MemoryClock);
+            this.tabPageDevices.Controls.Add(this.label44);
+            this.tabPageDevices.Controls.Add(this.labelGPU7CoreClock);
+            this.tabPageDevices.Controls.Add(this.labelGPU3CoreClock);
+            this.tabPageDevices.Controls.Add(this.labelGPU6CoreClock);
+            this.tabPageDevices.Controls.Add(this.labelGPU2CoreClock);
+            this.tabPageDevices.Controls.Add(this.labelGPU5CoreClock);
+            this.tabPageDevices.Controls.Add(this.labelGPU1CoreClock);
+            this.tabPageDevices.Controls.Add(this.labelGPU4CoreClock);
+            this.tabPageDevices.Controls.Add(this.labelGPU0CoreClock);
+            this.tabPageDevices.Controls.Add(this.label35);
             this.tabPageDevices.Controls.Add(this.checkBoxGPU7Enabled);
             this.tabPageDevices.Controls.Add(this.checkBoxGPU3Enabled);
             this.tabPageDevices.Controls.Add(this.labelGPU7Activity);
@@ -405,10 +441,174 @@
             this.tabPageDevices.Location = new System.Drawing.Point(4, 22);
             this.tabPageDevices.Name = "tabPageDevices";
             this.tabPageDevices.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageDevices.Size = new System.Drawing.Size(478, 307);
+            this.tabPageDevices.Size = new System.Drawing.Size(612, 307);
             this.tabPageDevices.TabIndex = 1;
             this.tabPageDevices.Text = "Devices";
             this.tabPageDevices.UseVisualStyleBackColor = true;
+            // 
+            // labelGPU7MemoryClock
+            // 
+            this.labelGPU7MemoryClock.Location = new System.Drawing.Point(527, 184);
+            this.labelGPU7MemoryClock.Name = "labelGPU7MemoryClock";
+            this.labelGPU7MemoryClock.Size = new System.Drawing.Size(70, 14);
+            this.labelGPU7MemoryClock.TabIndex = 57;
+            this.labelGPU7MemoryClock.Text = "0 MHz";
+            this.labelGPU7MemoryClock.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelGPU3MemoryClock
+            // 
+            this.labelGPU3MemoryClock.Location = new System.Drawing.Point(527, 97);
+            this.labelGPU3MemoryClock.Name = "labelGPU3MemoryClock";
+            this.labelGPU3MemoryClock.Size = new System.Drawing.Size(70, 14);
+            this.labelGPU3MemoryClock.TabIndex = 58;
+            this.labelGPU3MemoryClock.Text = "0 MHz";
+            this.labelGPU3MemoryClock.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelGPU6MemoryClock
+            // 
+            this.labelGPU6MemoryClock.Location = new System.Drawing.Point(527, 162);
+            this.labelGPU6MemoryClock.Name = "labelGPU6MemoryClock";
+            this.labelGPU6MemoryClock.Size = new System.Drawing.Size(70, 14);
+            this.labelGPU6MemoryClock.TabIndex = 55;
+            this.labelGPU6MemoryClock.Text = "0 MHz";
+            this.labelGPU6MemoryClock.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelGPU2MemoryClock
+            // 
+            this.labelGPU2MemoryClock.Location = new System.Drawing.Point(527, 75);
+            this.labelGPU2MemoryClock.Name = "labelGPU2MemoryClock";
+            this.labelGPU2MemoryClock.Size = new System.Drawing.Size(70, 14);
+            this.labelGPU2MemoryClock.TabIndex = 56;
+            this.labelGPU2MemoryClock.Text = "0 MHz";
+            this.labelGPU2MemoryClock.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelGPU5MemoryClock
+            // 
+            this.labelGPU5MemoryClock.Location = new System.Drawing.Point(527, 141);
+            this.labelGPU5MemoryClock.Name = "labelGPU5MemoryClock";
+            this.labelGPU5MemoryClock.Size = new System.Drawing.Size(70, 14);
+            this.labelGPU5MemoryClock.TabIndex = 53;
+            this.labelGPU5MemoryClock.Text = "0 MHz";
+            this.labelGPU5MemoryClock.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelGPU1MemoryClock
+            // 
+            this.labelGPU1MemoryClock.Location = new System.Drawing.Point(527, 54);
+            this.labelGPU1MemoryClock.Name = "labelGPU1MemoryClock";
+            this.labelGPU1MemoryClock.Size = new System.Drawing.Size(70, 14);
+            this.labelGPU1MemoryClock.TabIndex = 54;
+            this.labelGPU1MemoryClock.Text = "0 MHz";
+            this.labelGPU1MemoryClock.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelGPU4MemoryClock
+            // 
+            this.labelGPU4MemoryClock.Location = new System.Drawing.Point(527, 120);
+            this.labelGPU4MemoryClock.Name = "labelGPU4MemoryClock";
+            this.labelGPU4MemoryClock.Size = new System.Drawing.Size(70, 14);
+            this.labelGPU4MemoryClock.TabIndex = 51;
+            this.labelGPU4MemoryClock.Text = "0 MHz";
+            this.labelGPU4MemoryClock.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelGPU0MemoryClock
+            // 
+            this.labelGPU0MemoryClock.Location = new System.Drawing.Point(527, 33);
+            this.labelGPU0MemoryClock.Name = "labelGPU0MemoryClock";
+            this.labelGPU0MemoryClock.Size = new System.Drawing.Size(70, 14);
+            this.labelGPU0MemoryClock.TabIndex = 52;
+            this.labelGPU0MemoryClock.Text = "0 MHz";
+            this.labelGPU0MemoryClock.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // label44
+            // 
+            this.label44.AutoSize = true;
+            this.label44.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label44.Location = new System.Drawing.Point(527, 7);
+            this.label44.Name = "label44";
+            this.label44.Size = new System.Drawing.Size(73, 13);
+            this.label44.TabIndex = 50;
+            this.label44.Text = "Mem. Clock";
+            // 
+            // labelGPU7CoreClock
+            // 
+            this.labelGPU7CoreClock.Location = new System.Drawing.Point(456, 184);
+            this.labelGPU7CoreClock.Name = "labelGPU7CoreClock";
+            this.labelGPU7CoreClock.Size = new System.Drawing.Size(70, 14);
+            this.labelGPU7CoreClock.TabIndex = 48;
+            this.labelGPU7CoreClock.Text = "0 MHz";
+            this.labelGPU7CoreClock.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelGPU3CoreClock
+            // 
+            this.labelGPU3CoreClock.Location = new System.Drawing.Point(456, 97);
+            this.labelGPU3CoreClock.Name = "labelGPU3CoreClock";
+            this.labelGPU3CoreClock.Size = new System.Drawing.Size(70, 14);
+            this.labelGPU3CoreClock.TabIndex = 49;
+            this.labelGPU3CoreClock.Text = "0 MHz";
+            this.labelGPU3CoreClock.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelGPU6CoreClock
+            // 
+            this.labelGPU6CoreClock.Location = new System.Drawing.Point(456, 162);
+            this.labelGPU6CoreClock.Name = "labelGPU6CoreClock";
+            this.labelGPU6CoreClock.Size = new System.Drawing.Size(70, 14);
+            this.labelGPU6CoreClock.TabIndex = 46;
+            this.labelGPU6CoreClock.Text = "0 MHz";
+            this.labelGPU6CoreClock.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelGPU2CoreClock
+            // 
+            this.labelGPU2CoreClock.Location = new System.Drawing.Point(456, 75);
+            this.labelGPU2CoreClock.Name = "labelGPU2CoreClock";
+            this.labelGPU2CoreClock.Size = new System.Drawing.Size(70, 14);
+            this.labelGPU2CoreClock.TabIndex = 47;
+            this.labelGPU2CoreClock.Text = "0 MHz";
+            this.labelGPU2CoreClock.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelGPU5CoreClock
+            // 
+            this.labelGPU5CoreClock.Location = new System.Drawing.Point(456, 141);
+            this.labelGPU5CoreClock.Name = "labelGPU5CoreClock";
+            this.labelGPU5CoreClock.Size = new System.Drawing.Size(70, 14);
+            this.labelGPU5CoreClock.TabIndex = 44;
+            this.labelGPU5CoreClock.Text = "0 MHz";
+            this.labelGPU5CoreClock.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelGPU1CoreClock
+            // 
+            this.labelGPU1CoreClock.Location = new System.Drawing.Point(456, 54);
+            this.labelGPU1CoreClock.Name = "labelGPU1CoreClock";
+            this.labelGPU1CoreClock.Size = new System.Drawing.Size(70, 14);
+            this.labelGPU1CoreClock.TabIndex = 45;
+            this.labelGPU1CoreClock.Text = "0 MHz";
+            this.labelGPU1CoreClock.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelGPU4CoreClock
+            // 
+            this.labelGPU4CoreClock.Location = new System.Drawing.Point(456, 120);
+            this.labelGPU4CoreClock.Name = "labelGPU4CoreClock";
+            this.labelGPU4CoreClock.Size = new System.Drawing.Size(70, 14);
+            this.labelGPU4CoreClock.TabIndex = 42;
+            this.labelGPU4CoreClock.Text = "0 MHz";
+            this.labelGPU4CoreClock.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // labelGPU0CoreClock
+            // 
+            this.labelGPU0CoreClock.Location = new System.Drawing.Point(456, 33);
+            this.labelGPU0CoreClock.Name = "labelGPU0CoreClock";
+            this.labelGPU0CoreClock.Size = new System.Drawing.Size(70, 14);
+            this.labelGPU0CoreClock.TabIndex = 43;
+            this.labelGPU0CoreClock.Text = "0 MHz";
+            this.labelGPU0CoreClock.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // label35
+            // 
+            this.label35.AutoSize = true;
+            this.label35.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label35.Location = new System.Drawing.Point(456, 7);
+            this.label35.Name = "label35";
+            this.label35.Size = new System.Drawing.Size(69, 13);
+            this.label35.TabIndex = 41;
+            this.label35.Text = "Core Clock";
             // 
             // checkBoxGPU7Enabled
             // 
@@ -1069,7 +1269,7 @@
             this.tabPageCoins.Location = new System.Drawing.Point(4, 22);
             this.tabPageCoins.Name = "tabPageCoins";
             this.tabPageCoins.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageCoins.Size = new System.Drawing.Size(478, 307);
+            this.tabPageCoins.Size = new System.Drawing.Size(612, 307);
             this.tabPageCoins.TabIndex = 0;
             this.tabPageCoins.Text = "Coins";
             this.tabPageCoins.UseVisualStyleBackColor = true;
@@ -1250,7 +1450,7 @@
             this.tabPagePools.Controls.Add(this.listBoxPoolPriorities);
             this.tabPagePools.Location = new System.Drawing.Point(4, 22);
             this.tabPagePools.Name = "tabPagePools";
-            this.tabPagePools.Size = new System.Drawing.Size(478, 307);
+            this.tabPagePools.Size = new System.Drawing.Size(612, 307);
             this.tabPagePools.TabIndex = 3;
             this.tabPagePools.Text = "Pools";
             this.tabPagePools.UseVisualStyleBackColor = true;
@@ -1276,14 +1476,14 @@
             // 
             this.tabPageMisc.Location = new System.Drawing.Point(4, 22);
             this.tabPageMisc.Name = "tabPageMisc";
-            this.tabPageMisc.Size = new System.Drawing.Size(478, 307);
+            this.tabPageMisc.Size = new System.Drawing.Size(612, 307);
             this.tabPageMisc.TabIndex = 4;
             this.tabPageMisc.Text = "Misc";
             this.tabPageMisc.UseVisualStyleBackColor = true;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(422, 347);
+            this.button1.Location = new System.Drawing.Point(556, 347);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 1;
@@ -1292,7 +1492,7 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(341, 347);
+            this.button6.Location = new System.Drawing.Point(475, 347);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(75, 23);
             this.button6.TabIndex = 2;
@@ -1308,7 +1508,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(509, 382);
+            this.ClientSize = new System.Drawing.Size(643, 382);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.tabControlPools);
@@ -1451,6 +1651,24 @@
         private System.Windows.Forms.ListBox listBoxPoolPriorities;
         private System.Windows.Forms.RichTextBox richTextBoxLog;
         private System.Windows.Forms.Timer timerDeviceStatusUpdates;
+        private System.Windows.Forms.Label labelGPU7MemoryClock;
+        private System.Windows.Forms.Label labelGPU3MemoryClock;
+        private System.Windows.Forms.Label labelGPU6MemoryClock;
+        private System.Windows.Forms.Label labelGPU2MemoryClock;
+        private System.Windows.Forms.Label labelGPU5MemoryClock;
+        private System.Windows.Forms.Label labelGPU1MemoryClock;
+        private System.Windows.Forms.Label labelGPU4MemoryClock;
+        private System.Windows.Forms.Label labelGPU0MemoryClock;
+        private System.Windows.Forms.Label label44;
+        private System.Windows.Forms.Label labelGPU7CoreClock;
+        private System.Windows.Forms.Label labelGPU3CoreClock;
+        private System.Windows.Forms.Label labelGPU6CoreClock;
+        private System.Windows.Forms.Label labelGPU2CoreClock;
+        private System.Windows.Forms.Label labelGPU5CoreClock;
+        private System.Windows.Forms.Label labelGPU1CoreClock;
+        private System.Windows.Forms.Label labelGPU4CoreClock;
+        private System.Windows.Forms.Label labelGPU0CoreClock;
+        private System.Windows.Forms.Label label35;
     }
 }
 
