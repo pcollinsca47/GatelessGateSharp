@@ -60,6 +60,7 @@ namespace GatelessGateSharp
         private const int computeDeviceArrayMaxLength = 8; // This depends on MainForm.
         private Boolean ADLInitialized = false;
         private Int32 numADLAdapters = 0;
+        private Int32[] ADLAdapterIndexArray;
 
         public void Logger(String lines)
         {
@@ -231,7 +232,9 @@ namespace GatelessGateSharp
 
             int ADLRet = -1;
             int NumberOfAdapters = 0;
- 
+            ADLAdapterIndexArray = new Int32[computeDeviceArray.Length];
+            for (int i = 0; i < computeDeviceArray.Length; i++)
+                ADLAdapterIndexArray[i] = -1;
             if (null != ADL.ADL_Main_Control_Create)
                 ADLRet = ADL.ADL_Main_Control_Create(ADL.ADL_Main_Memory_Alloc, 1);
             if (ADL.ADL_SUCCESS == ADLRet)
@@ -242,10 +245,17 @@ namespace GatelessGateSharp
                 {
                     ADL.ADL_Adapter_NumberOfAdapters_Get(ref NumberOfAdapters);
                 }
-                Logger("Number Of ADL Adapters: " + NumberOfAdapters.ToString());
+                Logger("Number of ADL Adapters: " + NumberOfAdapters.ToString());
 
                 if (0 < NumberOfAdapters)
                 {
+                    index = 0;
+                    foreach (ComputeDevice device in computeDeviceArray) 
+                    {
+                        ComputeDevice.cl_device_topology_amd topology = device.TopologyAMD;
+                        Logger("Topology AMD: " + topology.bus);
+                        ++index;
+                    }
                 }
             }
             else

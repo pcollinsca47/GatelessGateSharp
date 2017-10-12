@@ -44,7 +44,7 @@ namespace Cloo
     /// <seealso cref="ComputeKernel"/>
     /// <seealso cref="ComputeMemory"/>
     /// <seealso cref="ComputePlatform"/>
-    public class ComputeDevice : ComputeObject
+    unsafe public class ComputeDevice : ComputeObject
     {
         #region Fields
 
@@ -537,6 +537,30 @@ namespace Cloo
         /// <value> The OpenCL C version string supported by the <see cref="ComputeDevice"/>. The version string has the following format: <c>OpenCL[space]C[space][major_version].[minor_version][space][vendor-specific information]</c>. </value>
         /// <remarks> Requires OpenCL 1.1. </remarks>
         public string OpenCLCVersionString { get { return GetStringInfo(ComputeDeviceInfo.OpenCLCVersion); } }
+
+
+
+        /// <summary>
+        /// Gets the topology of the <see cref="ComputeDevice"/>.
+        /// </summary>
+        [System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
+        [CLSCompliant(false)]
+        public struct cl_device_topology_amd
+        {
+            /// <summary></summary>
+            public UInt32 type;
+            /// <summary></summary>
+            public fixed Byte unused[17];
+            /// <summary></summary>
+            public Byte bus;
+            /// <summary></summary>
+            public Byte device;
+            /// <summary></summary>
+            public Byte function;
+        };
+        /// <summary></summary>
+        [CLSCompliant(false)]
+        public cl_device_topology_amd TopologyAMD { get { return GetInfo<cl_device_topology_amd>(ComputeDeviceInfo.CL_DEVICE_TOPOLOGY_AMD); } }
 
         #endregion
 

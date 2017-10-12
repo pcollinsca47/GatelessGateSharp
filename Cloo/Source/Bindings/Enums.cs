@@ -336,6 +336,42 @@ namespace Cloo
         NativeVectorWidthHalf = 0x103C,
         /// <summary> </summary>
         OpenCLCVersion = 0x103D,
+
+        /// <summary></summary>
+        CL_DEVICE_PROFILING_TIMER_OFFSET_AMD = 0x4036,
+        /// <summary></summary>
+        CL_DEVICE_TOPOLOGY_AMD = 0x4037,
+        /// <summary></summary>
+        CL_DEVICE_BOARD_NAME_AMD = 0x4038,
+        /// <summary></summary>
+        CL_DEVICE_GLOBAL_FREE_MEMORY_AMD = 0x4039,
+        /// <summary></summary>
+        CL_DEVICE_SIMD_PER_COMPUTE_UNIT_AMD = 0x4040,
+        /// <summary></summary>
+        CL_DEVICE_SIMD_WIDTH_AMD = 0x4041,
+        /// <summary></summary>
+        CL_DEVICE_SIMD_INSTRUCTION_WIDTH_AMD = 0x4042,
+        /// <summary></summary>
+        CL_DEVICE_WAVEFRONT_WIDTH_AMD = 0x4043,
+        /// <summary></summary>
+        CL_DEVICE_GLOBAL_MEM_CHANNELS_AMD = 0x4044,
+        /// <summary></summary>
+        CL_DEVICE_GLOBAL_MEM_CHANNEL_BANKS_AMD = 0x4045,
+        /// <summary></summary>
+        CL_DEVICE_GLOBAL_MEM_CHANNEL_BANK_WIDTH_AMD = 0x4046,
+        /// <summary></summary>
+        CL_DEVICE_LOCAL_MEM_SIZE_PER_COMPUTE_UNIT_AMD = 0x4047,
+        /// <summary></summary>
+        CL_DEVICE_LOCAL_MEM_BANKS_AMD = 0x4048,
+        /// <summary></summary>
+        CL_DEVICE_THREAD_TRACE_SUPPORTED_AMD = 0x4049,
+        /// <summary></summary>
+        CL_DEVICE_GFXIP_MAJOR_AMD = 0x404A,
+        /// <summary></summary>
+        CL_DEVICE_GFXIP_MINOR_AMD = 0x404B,
+        /// <summary></summary>
+        CL_DEVICE_AVAILABLE_ASYNC_QUEUES_AMD = 0x404C,
+
         /// <summary> </summary>
         CL_DEVICE_PARENT_DEVICE_EXT = 0x4054,
         /// <summary> </summary>

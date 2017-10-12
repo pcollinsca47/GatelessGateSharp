@@ -2386,6 +2386,29 @@
             <value> The OpenCL C version string supported by the <see cref="T:Cloo.ComputeDevice"/>. The version string has the following format: <c>OpenCL[space]C[space][major_version].[minor_version][space][vendor-specific information]</c>. </value>
             <remarks> Requires OpenCL 1.1. </remarks>
         </member>
+        <member name="P:Cloo.ComputeDevice.TopologyAMD">
+            <summary></summary>
+        </member>
+        <member name="T:Cloo.ComputeDevice.cl_device_topology_amd">
+            <summary>
+            Gets the topology of the <see cref="T:Cloo.ComputeDevice"/>.
+            </summary>
+        </member>
+        <member name="F:Cloo.ComputeDevice.cl_device_topology_amd.type">
+            <summary></summary>
+        </member>
+        <member name="F:Cloo.ComputeDevice.cl_device_topology_amd.unused">
+            <summary></summary>
+        </member>
+        <member name="F:Cloo.ComputeDevice.cl_device_topology_amd.bus">
+            <summary></summary>
+        </member>
+        <member name="F:Cloo.ComputeDevice.cl_device_topology_amd.device">
+            <summary></summary>
+        </member>
+        <member name="F:Cloo.ComputeDevice.cl_device_topology_amd.function">
+            <summary></summary>
+        </member>
         <member name="T:Cloo.ComputeEvent">
             <summary>
             Represents an OpenCL event.
@@ -3796,6 +3819,57 @@
         </member>
         <member name="F:Cloo.ComputeDeviceInfo.OpenCLCVersion">
             <summary> </summary>
+        </member>
+        <member name="F:Cloo.ComputeDeviceInfo.CL_DEVICE_PROFILING_TIMER_OFFSET_AMD">
+            <summary></summary>
+        </member>
+        <member name="F:Cloo.ComputeDeviceInfo.CL_DEVICE_TOPOLOGY_AMD">
+            <summary></summary>
+        </member>
+        <member name="F:Cloo.ComputeDeviceInfo.CL_DEVICE_BOARD_NAME_AMD">
+            <summary></summary>
+        </member>
+        <member name="F:Cloo.ComputeDeviceInfo.CL_DEVICE_GLOBAL_FREE_MEMORY_AMD">
+            <summary></summary>
+        </member>
+        <member name="F:Cloo.ComputeDeviceInfo.CL_DEVICE_SIMD_PER_COMPUTE_UNIT_AMD">
+            <summary></summary>
+        </member>
+        <member name="F:Cloo.ComputeDeviceInfo.CL_DEVICE_SIMD_WIDTH_AMD">
+            <summary></summary>
+        </member>
+        <member name="F:Cloo.ComputeDeviceInfo.CL_DEVICE_SIMD_INSTRUCTION_WIDTH_AMD">
+            <summary></summary>
+        </member>
+        <member name="F:Cloo.ComputeDeviceInfo.CL_DEVICE_WAVEFRONT_WIDTH_AMD">
+            <summary></summary>
+        </member>
+        <member name="F:Cloo.ComputeDeviceInfo.CL_DEVICE_GLOBAL_MEM_CHANNELS_AMD">
+            <summary></summary>
+        </member>
+        <member name="F:Cloo.ComputeDeviceInfo.CL_DEVICE_GLOBAL_MEM_CHANNEL_BANKS_AMD">
+            <summary></summary>
+        </member>
+        <member name="F:Cloo.ComputeDeviceInfo.CL_DEVICE_GLOBAL_MEM_CHANNEL_BANK_WIDTH_AMD">
+            <summary></summary>
+        </member>
+        <member name="F:Cloo.ComputeDeviceInfo.CL_DEVICE_LOCAL_MEM_SIZE_PER_COMPUTE_UNIT_AMD">
+            <summary></summary>
+        </member>
+        <member name="F:Cloo.ComputeDeviceInfo.CL_DEVICE_LOCAL_MEM_BANKS_AMD">
+            <summary></summary>
+        </member>
+        <member name="F:Cloo.ComputeDeviceInfo.CL_DEVICE_THREAD_TRACE_SUPPORTED_AMD">
+            <summary></summary>
+        </member>
+        <member name="F:Cloo.ComputeDeviceInfo.CL_DEVICE_GFXIP_MAJOR_AMD">
+            <summary></summary>
+        </member>
+        <member name="F:Cloo.ComputeDeviceInfo.CL_DEVICE_GFXIP_MINOR_AMD">
+            <summary></summary>
+        </member>
+        <member name="F:Cloo.ComputeDeviceInfo.CL_DEVICE_AVAILABLE_ASYNC_QUEUES_AMD">
+            <summary></summary>
         </member>
         <member name="F:Cloo.ComputeDeviceInfo.CL_DEVICE_PARENT_DEVICE_EXT">
             <summary> </summary>
