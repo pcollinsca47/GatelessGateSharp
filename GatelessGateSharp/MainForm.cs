@@ -11,44 +11,38 @@ using System.Data.SQLite;
 using System.Collections;
 using System.Runtime.InteropServices;
 using Cloo;
+using ATI.ADL;
 
 
 namespace GatelessGateSharp
 {
-    public partial class MainForm : Form
+    unsafe public partial class MainForm : Form
     {
         [DllImport("phymem_wrapper.dll")]
         extern public static int LoadPhyMemDriver();
         [DllImport("phymem_wrapper.dll")]
         extern public static void UnloadPhyMemDriver();
 
-        [DllImport("phymem_wrapper.dll")]
-        extern public static int ADL_Main_Control_Create_Wrapper(int i);
-        [DllImport("atiadlxx.dll")]
-        extern public static int ADL_Main_Control_Destroy();
-        [DllImport("atiadlxx.dll")]
-        extern public static int ADL_Adapter_NumberOfAdapters_Get(ref Int32 num);
-        /*
-        ttypedef int(*ADL_ADAPTER_NUMBEROFADAPTERS_GET) (int*);
-        typedef int(*ADL_ADAPTER_ADAPTERINFO_GET) (LPAdapterInfo, int);
-        typedef int(*ADL_ADAPTER_ACTIVE_GET) (int, int*);
-        typedef int(*ADL_OVERDRIVE_CAPS) (int iAdapterIndex, int *iSupported, int *iEnabled, int *iVersion);
-        typedef int(*ADL_OVERDRIVE5_THERMALDEVICES_ENUM) (int iAdapterIndex, int iThermalControllerIndex, ADLThermalControllerInfo *lpThermalControllerInfo);
-        typedef int(*ADL_OVERDRIVE5_ODPARAMETERS_GET) (int  iAdapterIndex, ADLODParameters *  lpOdParameters);
-        typedef int(*ADL_OVERDRIVE5_TEMPERATURE_GET) (int iAdapterIndex, int iThermalControllerIndex, ADLTemperature *lpTemperature);
-        typedef int(*ADL_OVERDRIVE5_FANSPEED_GET) (int iAdapterIndex, int iThermalControllerIndex, ADLFanSpeedValue *lpFanSpeedValue);
-        typedef int(*ADL_OVERDRIVE5_FANSPEEDINFO_GET) (int iAdapterIndex, int iThermalControllerIndex, ADLFanSpeedInfo *lpFanSpeedInfo);
-        typedef int(*ADL_OVERDRIVE5_FANSPEEDTODEFAULT_SET)(int iAdapterIndex, int  iThermalControllerIndex);
-        typedef int(*ADL_OVERDRIVE5_ODPERFORMANCELEVELS_GET) (int iAdapterIndex, int iDefault, ADLODPerformanceLevels *lpOdPerformanceLevels);
-        typedef int(*ADL_OVERDRIVE5_ODPARAMETERS_GET) (int iAdapterIndex, ADLODParameters *lpOdParameters);
-        typedef int(*ADL_OVERDRIVE5_CURRENTACTIVITY_GET) (int iAdapterIndex, ADLPMActivity *lpActivity);
-        typedef int(*ADL_OVERDRIVE5_FANSPEED_SET)(int iAdapterIndex, int iThermalControllerIndex, ADLFanSpeedValue *lpFanSpeedValue);
-        typedef int(*ADL_OVERDRIVE5_ODPERFORMANCELEVELS_SET) (int iAdapterIndex, ADLODPerformanceLevels *lpOdPerformanceLevels);
-        typedef int(*ADL_OVERDRIVE5_POWERCONTROL_CAPS)(int iAdapterIndex, int *lpSupported);
-        typedef int(*ADL_OVERDRIVE5_POWERCONTROLINFO_GET)(int iAdapterIndex, ADLPowerControlInfo *lpPowerControlInfo);
-        typedef int(*ADL_OVERDRIVE5_POWERCONTROL_GET)(int iAdapterIndex, int *lpCurrentValue, int *lpDefaultValue);
-        typedef int(*ADL_OVERDRIVE5_POWERCONTROL_SET)(int iAdapterIndex, int iValue);
-        */
+        static public int ADL_MAX_PATH = 256;
+        [StructLayout(LayoutKind.Sequential)]
+        public unsafe struct AdapterInfo {
+            public int iSize;
+            public int iAdapterIndex;
+            fixed char strUDID[256];
+            public int iBusNumber;
+            public int iDeviceNumber;
+            public int iFunctionNumber;
+            public int iVendorID;
+            public fixed char strAdapterName[256];
+            public fixed char strDisplayName[256];
+            public int iPresent;
+
+            public int iExist;
+            public fixed char strDriverPath[256];
+            public fixed char strDriverPathExt[256];
+            public fixed char strPNPString[256];
+            public int iOSDisplayIndex;
+        }
         public static String appName = "Gateless Gate #";
         String databaseFileName = "GatelessGateSharp.sqlite";
         String logFileName = "GatelessGateSharp.log";
@@ -65,6 +59,7 @@ namespace GatelessGateSharp
         private ComputeDevice[] computeDeviceArray;
         private const int computeDeviceArrayMaxLength = 8; // This depends on MainForm.
         private Boolean ADLInitialized = false;
+        private Int32 numADLAdapters = 0;
 
         public void Logger(String lines)
         {
@@ -81,7 +76,7 @@ namespace GatelessGateSharp
             loggerMutex.ReleaseMutex();
         }
 
-        public MainForm()
+        unsafe public MainForm()
         {
             InitializeComponent();
             Logger(appName + " started.");
@@ -103,19 +98,6 @@ namespace GatelessGateSharp
                 Logger("Failed to load phymem.");
                 MessageBox.Show("Failed to load phymem.", appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 System.Environment.Exit(1);
-            }
-
-            if (ADL_Main_Control_Create_Wrapper(1) == 0)
-            {
-                Logger("Successfully initialized AMD Display Library.");
-                ADLInitialized = true;
-                Int32 num = 0;
-                if (ADL_Adapter_NumberOfAdapters_Get(ref num) == 0)
-                    Logger("# of ADL Adapters: " + num);
-            }
-            else
-            {
-                Logger("Failed to initialize AMD Display Library.");
             }
         }
 
@@ -247,6 +229,145 @@ namespace GatelessGateSharp
                 checkBoxGPUEnabledArray[index].Visible = false;
             }
 
+            int ADLRet = -1;
+            int NumberOfAdapters = 0;
+ 
+            if (null != ADL.ADL_Main_Control_Create)
+                ADLRet = ADL.ADL_Main_Control_Create(ADL.ADL_Main_Memory_Alloc, 1);
+            if (ADL.ADL_SUCCESS == ADLRet)
+            {
+                Logger("Successfully initialized AMD Display Library.");
+                ADLInitialized = true;
+                if (null != ADL.ADL_Adapter_NumberOfAdapters_Get)
+                {
+                    ADL.ADL_Adapter_NumberOfAdapters_Get(ref NumberOfAdapters);
+                }
+                Logger("Number Of ADL Adapters: " + NumberOfAdapters.ToString());
+
+                if (0 < NumberOfAdapters)
+                {
+                }
+            }
+            else
+            {
+                Logger("Failed to initialize AMD Display Library.");
+            }
+        }
+
+        private void DumpADLInfo()
+        {
+            int ADLRet = -1;
+            int NumberOfAdapters = 0;
+            int NumberOfDisplays = 0;
+
+            if (null != ADL.ADL_Adapter_NumberOfAdapters_Get)
+            {
+                ADL.ADL_Adapter_NumberOfAdapters_Get(ref NumberOfAdapters);
+            }
+
+            // Get OS adpater info from ADL
+            ADLAdapterInfoArray OSAdapterInfoData;
+            OSAdapterInfoData = new ADLAdapterInfoArray();
+
+            if (null != ADL.ADL_Adapter_AdapterInfo_Get)
+            {
+                IntPtr AdapterBuffer = IntPtr.Zero;
+                int size = Marshal.SizeOf(OSAdapterInfoData);
+                AdapterBuffer = Marshal.AllocCoTaskMem((int)size);
+                Marshal.StructureToPtr(OSAdapterInfoData, AdapterBuffer, false);
+
+                if (null != ADL.ADL_Adapter_AdapterInfo_Get)
+                {
+                    ADLRet = ADL.ADL_Adapter_AdapterInfo_Get(AdapterBuffer, size);
+                    if (ADL.ADL_SUCCESS == ADLRet)
+                    {
+                        OSAdapterInfoData = (ADLAdapterInfoArray)Marshal.PtrToStructure(AdapterBuffer, OSAdapterInfoData.GetType());
+                        int IsActive = 0;
+
+                        for (int i = 0; i < NumberOfAdapters; i++)
+                        {
+                            // Check if the adapter is active
+                            if (null != ADL.ADL_Adapter_Active_Get)
+                                ADLRet = ADL.ADL_Adapter_Active_Get(OSAdapterInfoData.ADLAdapterInfo[i].AdapterIndex, ref IsActive);
+
+                            if (ADL.ADL_SUCCESS == ADLRet)
+                            {
+                                Logger("Adapter is   : " + (0 == IsActive ? "DISABLED" : "ENABLED"));
+                                Logger("Adapter Index: " + OSAdapterInfoData.ADLAdapterInfo[i].AdapterIndex.ToString());
+                                Logger("Adapter UDID : " + OSAdapterInfoData.ADLAdapterInfo[i].UDID);
+                                Logger("Bus No       : " + OSAdapterInfoData.ADLAdapterInfo[i].BusNumber.ToString());
+                                Logger("Driver No    : " + OSAdapterInfoData.ADLAdapterInfo[i].DriverNumber.ToString());
+                                Logger("Function No  : " + OSAdapterInfoData.ADLAdapterInfo[i].FunctionNumber.ToString());
+                                Logger("Vendor ID    : " + OSAdapterInfoData.ADLAdapterInfo[i].VendorID.ToString());
+                                Logger("Adapter Name : " + OSAdapterInfoData.ADLAdapterInfo[i].AdapterName);
+                                Logger("Display Name : " + OSAdapterInfoData.ADLAdapterInfo[i].DisplayName);
+                                Logger("Present      : " + (0 == OSAdapterInfoData.ADLAdapterInfo[i].Present ? "No" : "Yes"));
+                                Logger("Exist        : " + (0 == OSAdapterInfoData.ADLAdapterInfo[i].Exist ? "No" : "Yes"));
+                                Logger("Driver Path  : " + OSAdapterInfoData.ADLAdapterInfo[i].DriverPath);
+                                Logger("Driver Path X: " + OSAdapterInfoData.ADLAdapterInfo[i].DriverPathExt);
+                                Logger("PNP String   : " + OSAdapterInfoData.ADLAdapterInfo[i].PNPString);
+
+                                // Obtain information about displays
+                                ADLDisplayInfo oneDisplayInfo = new ADLDisplayInfo();
+
+                                if (null != ADL.ADL_Display_DisplayInfo_Get)
+                                {
+                                    IntPtr DisplayBuffer = IntPtr.Zero;
+                                    int j = 0;
+
+                                    // Force the display detection and get the Display Info. Use 0 as last parameter to NOT force detection
+                                    ADLRet = ADL.ADL_Display_DisplayInfo_Get(OSAdapterInfoData.ADLAdapterInfo[i].AdapterIndex, ref NumberOfDisplays, out DisplayBuffer, 1);
+                                    if (ADL.ADL_SUCCESS == ADLRet)
+                                    {
+                                        List<ADLDisplayInfo> DisplayInfoData = new List<ADLDisplayInfo>();
+                                        for (j = 0; j < NumberOfDisplays; j++)
+                                        {
+                                            oneDisplayInfo = (ADLDisplayInfo)Marshal.PtrToStructure(new IntPtr(DisplayBuffer.ToInt64() + j * Marshal.SizeOf(oneDisplayInfo)), oneDisplayInfo.GetType());
+                                            DisplayInfoData.Add(oneDisplayInfo);
+                                        }
+                                        Logger("\nTotal Number of Displays supported: " + NumberOfDisplays.ToString());
+                                        Logger("\nDispID  AdpID  Type OutType  CnctType Connected  Mapped  InfoValue DisplayName ");
+
+                                        for (j = 0; j < NumberOfDisplays; j++)
+                                        {
+                                            int InfoValue = DisplayInfoData[j].DisplayInfoValue;
+                                            string StrConnected = (1 == (InfoValue & 1)) ? "Yes" : "No ";
+                                            string StrMapped = (2 == (InfoValue & 2)) ? "Yes" : "No ";
+                                            int AdpID = DisplayInfoData[j].DisplayID.DisplayLogicalAdapterIndex;
+                                            string StrAdpID = (AdpID < 0) ? "--" : AdpID.ToString("d2");
+
+                                            Logger(DisplayInfoData[j].DisplayID.DisplayLogicalIndex.ToString() + "        " +
+                                                                 StrAdpID + "      " +
+                                                                 DisplayInfoData[j].DisplayType.ToString() + "      " +
+                                                                 DisplayInfoData[j].DisplayOutputType.ToString() + "      " +
+                                                                 DisplayInfoData[j].DisplayConnector.ToString() + "        " +
+                                                                 StrConnected + "        " +
+                                                                 StrMapped + "      " +
+                                                                 InfoValue.ToString("x4") + "   " +
+                                                                 DisplayInfoData[j].DisplayName.ToString());
+                                        }
+                                        Logger("");
+                                    }
+                                    else
+                                    {
+                                        Logger("ADL_Display_DisplayInfo_Get() returned error code " + ADLRet.ToString());
+                                    }
+                                    // Release the memory for the DisplayInfo structure
+                                    if (IntPtr.Zero != DisplayBuffer)
+                                        Marshal.FreeCoTaskMem(DisplayBuffer);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Logger("ADL_Adapter_AdapterInfo_Get() returned error code " + ADLRet.ToString());
+                    }
+                }
+                // Release the memory for the AdapterInfo structure
+                if (IntPtr.Zero != AdapterBuffer)
+                    Marshal.FreeCoTaskMem(AdapterBuffer);
+            }
         }
 
         private void textBoxBitcoinAddress_TextChanged(object sender, EventArgs e)
@@ -269,11 +390,8 @@ namespace GatelessGateSharp
         {
             UpdateDatabase();
             UnloadPhyMemDriver();
-            if (ADLInitialized)
-            {
-                ADL_Main_Control_Destroy();
-                ADLInitialized = false;
-            }
+            if (ADLInitialized && null != ADL.ADL_Main_Control_Destroy)
+                ADL.ADL_Main_Control_Destroy();
         }
     }
 }

@@ -85,6 +85,7 @@ extern "C" {
 			if (hService)
 			{
 				SERVICE_STATUS status;
+				ControlService(hService, SERVICE_CONTROL_STOP, &status);
 				bResult = DeleteService(hService);
 
 				CloseServiceHandle(hSCManager);
@@ -595,49 +596,5 @@ extern "C" {
 
 		LeaveCriticalSection(&phymem_mutex);;
 		return TRUE;
-	}
-
-
-
-#include <stdio.h>
-#include <stdlib.h>
-
-#define ADL_OK  0
-#define ADL_ERR -1
-
-	typedef void* (__stdcall *ADL_MAIN_MALLOC_CALLBACK)(int);
-	typedef int(*ADL_MAIN_CONTROL_CREATE)(ADL_MAIN_MALLOC_CALLBACK, int);
-	ADL_MAIN_CONTROL_CREATE	ADL_Main_Control_Create = NULL;
-	HMODULE adl_dll = NULL;
-
-	void* __stdcall adl_main_memory_alloc(int iSize)
-	{
-		void* adl_buffer = malloc(iSize);
-		return adl_buffer;
-	}
-
-	void __stdcall adl_main_memory_free(void** adl_buffer)
-	{
-		if (NULL != *adl_buffer) {
-			free(*adl_buffer);
-			*adl_buffer = NULL;
-		}
-	}
-
-	__declspec(dllexport)
-		int ADL_Main_Control_Create_Wrapper(int i)
-	{
-		if (!ADL_Main_Control_Create) {
-			adl_dll = LoadLibrary(TEXT("atiadlxx.dll"));
-			//if (adl_dll == NULL)
-			//	adl_dll = LoadLibrary(TEXT("atiadlxy.dll"));
-			if (NULL == adl_dll)
-				return ADL_ERR;
-			ADL_Main_Control_Create = (ADL_MAIN_CONTROL_CREATE)GetProcAddress(adl_dll, "ADL_Main_Control_Create");
-			if (!ADL_Main_Control_Create)
-				return ADL_ERR;
-		}
-
-		return ADL_Main_Control_Create(adl_main_memory_alloc, i);
 	}
 }
