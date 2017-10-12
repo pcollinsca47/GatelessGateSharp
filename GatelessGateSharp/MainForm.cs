@@ -199,6 +199,7 @@ namespace GatelessGateSharp
                 }
             }
             computeDeviceArray = Array.ConvertAll(computeDeviceArrayList.ToArray(), item => (Cloo.ComputeDevice)item);
+            Logger("Number of Devices: " + computeDeviceArray.Length);
 
             int index = 0;
             foreach (ComputeDevice device in computeDeviceArray)
@@ -249,13 +250,57 @@ namespace GatelessGateSharp
 
                 if (0 < NumberOfAdapters)
                 {
-                    index = 0;
-                    foreach (ComputeDevice device in computeDeviceArray) 
+                    ADLAdapterInfoArray OSAdapterInfoData;
+                    OSAdapterInfoData = new ADLAdapterInfoArray();
+
+                    if (null != ADL.ADL_Adapter_AdapterInfo_Get)
                     {
-                        ComputeDevice.cl_device_topology_amd topology = device.TopologyAMD;
-                        Logger("Topology AMD: " + topology.bus);
-                        ++index;
-                    }
+                        IntPtr AdapterBuffer = IntPtr.Zero;
+                        int size = Marshal.SizeOf(OSAdapterInfoData);
+                        AdapterBuffer = Marshal.AllocCoTaskMem((int)size);
+                        Marshal.StructureToPtr(OSAdapterInfoData, AdapterBuffer, false);
+
+                        if (null != ADL.ADL_Adapter_AdapterInfo_Get)
+                        {
+                            ADLRet = ADL.ADL_Adapter_AdapterInfo_Get(AdapterBuffer, size);
+                            if (ADL.ADL_SUCCESS == ADLRet)
+                            {
+                                OSAdapterInfoData = (ADLAdapterInfoArray)Marshal.PtrToStructure(AdapterBuffer, OSAdapterInfoData.GetType());
+                                int IsActive = 0;
+
+                                int deviceIndex = 0;
+                                foreach (ComputeDevice device in computeDeviceArray)
+                                {
+                                    if (device.Vendor == "Advanced Micro Devices, Inc.")
+                                    {
+                                        ComputeDevice.cl_device_topology_amd topology = device.TopologyAMD;
+                                        for (int i = 0; i < NumberOfAdapters; i++)
+                                        {
+                                            if (null != ADL.ADL_Adapter_Active_Get)
+                                                ADLRet = ADL.ADL_Adapter_Active_Get(OSAdapterInfoData.ADLAdapterInfo[i].AdapterIndex, ref IsActive);
+                                            if (OSAdapterInfoData.ADLAdapterInfo[i].BusNumber == topology.bus
+                                                && (ADLAdapterIndexArray[deviceIndex] < 0 || IsActive != 0))
+                                            {
+                                                ADLAdapterIndexArray[deviceIndex] = OSAdapterInfoData.ADLAdapterInfo[i].AdapterIndex;
+                                                String adapterName = OSAdapterInfoData.ADLAdapterInfo[i].AdapterName;
+                                                adapterName = adapterName.Replace("(TM)", "");
+                                                adapterName = adapterName.Replace(" Series", "");
+                                                labelGPUNameArray[deviceIndex].Text = adapterName;
+                                            }
+                                        }
+                                    }
+                                    ++deviceIndex;
+                                }
+                            }
+                            else
+                            {
+                                Logger("ADL_Adapter_AdapterInfo_Get() returned error code " + ADLRet.ToString());
+                            }
+                        }
+                        // Release the memory for the AdapterInfo structure
+                        if (IntPtr.Zero != AdapterBuffer)
+                            Marshal.FreeCoTaskMem(AdapterBuffer);
+                    } 
                 }
             }
             else
