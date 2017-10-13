@@ -67,6 +67,48 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ADL.cs" />
+    <Compile Include="Cloo\Bindings\CL10.cs" />
+    <Compile Include="Cloo\Bindings\CL11.cs" />
+    <Compile Include="Cloo\Bindings\CLCommandQueueHandle.cs" />
+    <Compile Include="Cloo\Bindings\CLContextHandle.cs" />
+    <Compile Include="Cloo\Bindings\CLDeviceHandle.cs" />
+    <Compile Include="Cloo\Bindings\CLEventHandle.cs" />
+    <Compile Include="Cloo\Bindings\CLKernelHandle.cs" />
+    <Compile Include="Cloo\Bindings\CLMemoryHandle.cs" />
+    <Compile Include="Cloo\Bindings\CLPlatformHandle.cs" />
+    <Compile Include="Cloo\Bindings\CLProgramHandle.cs" />
+    <Compile Include="Cloo\Bindings\CLSamplerHandle.cs" />
+    <Compile Include="Cloo\Bindings\Clx.cs" />
+    <Compile Include="Cloo\Bindings\Enums.cs" />
+    <Compile Include="Cloo\ComputeBuffer.cs" />
+    <Compile Include="Cloo\ComputeBufferBase.cs" />
+    <Compile Include="Cloo\ComputeCommandQueue.Added.cs" />
+    <Compile Include="Cloo\ComputeCommandQueue.cs" />
+    <Compile Include="Cloo\ComputeCompiler.cs" />
+    <Compile Include="Cloo\ComputeContext.cs" />
+    <Compile Include="Cloo\ComputeContextProperty.cs" />
+    <Compile Include="Cloo\ComputeContextPropertyList.cs" />
+    <Compile Include="Cloo\ComputeDevice.cs" />
+    <Compile Include="Cloo\ComputeEvent.cs" />
+    <Compile Include="Cloo\ComputeEventBase.cs" />
+    <Compile Include="Cloo\ComputeEventList.cs" />
+    <Compile Include="Cloo\ComputeException.cs" />
+    <Compile Include="Cloo\ComputeImage.cs" />
+    <Compile Include="Cloo\ComputeImage2D.cs" />
+    <Compile Include="Cloo\ComputeImage3D.cs" />
+    <Compile Include="Cloo\ComputeImageFormat.cs" />
+    <Compile Include="Cloo\ComputeKernel.cs" />
+    <Compile Include="Cloo\ComputeMemory.cs" />
+    <Compile Include="Cloo\ComputeObject.cs" />
+    <Compile Include="Cloo\ComputePlatform.cs" />
+    <Compile Include="Cloo\ComputeProgram.cs" />
+    <Compile Include="Cloo\ComputeResource.cs" />
+    <Compile Include="Cloo\ComputeSampler.cs" />
+    <Compile Include="Cloo\ComputeSubBuffer.cs" />
+    <Compile Include="Cloo\ComputeTools.cs" />
+    <Compile Include="Cloo\ComputeUserEvent.cs" />
+    <Compile Include="Cloo\SysIntX2.cs" />
+    <Compile Include="Cloo\SysIntX3.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -101,12 +143,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Cloo\Cloo.csproj">
-      <Project>{656e96ce-2587-4ccc-a4db-06d36267133a}</Project>
-      <Name>Cloo</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

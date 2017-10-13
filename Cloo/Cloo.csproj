@@ -67,49 +67,7 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Source\Bindings\CL10.cs" />
-    <Compile Include="Source\Bindings\CL11.cs" />
-    <Compile Include="Source\Bindings\CLCommandQueueHandle.cs" />
-    <Compile Include="Source\Bindings\CLContextHandle.cs" />
-    <Compile Include="Source\Bindings\CLDeviceHandle.cs" />
-    <Compile Include="Source\Bindings\CLEventHandle.cs" />
-    <Compile Include="Source\Bindings\CLKernelHandle.cs" />
-    <Compile Include="Source\Bindings\CLMemoryHandle.cs" />
-    <Compile Include="Source\Bindings\CLPlatformHandle.cs" />
-    <Compile Include="Source\Bindings\CLProgramHandle.cs" />
-    <Compile Include="Source\Bindings\CLSamplerHandle.cs" />
-    <Compile Include="Source\Bindings\CLx.cs" />
-    <Compile Include="Source\ComputeBuffer.cs" />
-    <Compile Include="Source\ComputeBufferBase.cs" />
-    <Compile Include="Source\ComputeCommandQueue.Added.cs" />
-    <Compile Include="Source\ComputeCompiler.cs" />
-    <Compile Include="Source\ComputeContext.cs" />
-    <Compile Include="Source\ComputeContextPropertyList.cs" />
-    <Compile Include="Source\ComputeContextProperty.cs" />
-    <Compile Include="Source\ComputeDevice.cs" />
-    <Compile Include="Source\ComputeEvent.cs" />
-    <Compile Include="Source\ComputeEventBase.cs" />
-    <Compile Include="Source\ComputeEventList.cs" />
-    <Compile Include="Source\ComputeException.cs" />
-    <Compile Include="Source\ComputeImage.cs" />
-    <Compile Include="Source\ComputeImage2D.cs" />
-    <Compile Include="Source\ComputeImage3D.cs" />
-    <Compile Include="Source\ComputeImageFormat.cs" />
-    <Compile Include="Source\ComputeKernel.cs" />
-    <Compile Include="Source\ComputeMemory.cs" />
-    <Compile Include="Source\ComputeObject.cs" />
-    <Compile Include="Source\ComputePlatform.cs" />
-    <Compile Include="Source\ComputeProgram.cs" />
-    <Compile Include="Source\ComputeCommandQueue.cs" />
-    <Compile Include="Source\ComputeResource.cs" />
-    <Compile Include="Source\ComputeSampler.cs" />
-    <Compile Include="Source\ComputeSubBuffer.cs" />
-    <Compile Include="Source\ComputeUserEvent.cs" />
-    <Compile Include="Source\SysIntX2.cs" />
-    <Compile Include="Source\SysIntX3.cs" />
-    <Compile Include="Source\ComputeTools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Source\Bindings\Enums.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Cloo.dll.config">
@@ -132,6 +90,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Source\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
