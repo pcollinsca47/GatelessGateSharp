@@ -1,4 +1,23 @@
-﻿using System;
+﻿// Copyright 2017 Yurio Miyazawa (a.k.a zawawa)
+//
+// This file is part of Gateless Gate #.
+//
+// Gateless Gate # is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Gateless Gate # is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Gateless Gate #.  If not, see <http://www.gnu.org/licenses/>.
+
+
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -23,9 +42,10 @@ namespace GatelessGateSharp
         [DllImport("phymem_wrapper.dll")]
         extern public static void UnloadPhyMemDriver();
 
+        private static MainForm instance;
         public static String appName = "Gateless Gate #";
-        String databaseFileName = "GatelessGateSharp.sqlite";
-        String logFileName = "GatelessGateSharp.log";
+        private static String databaseFileName = "GatelessGateSharp.sqlite";
+        private static String logFileName = "GatelessGateSharp.log";
         const int richTextBoxLogMaxLines = 65536;
         private System.Threading.Mutex loggerMutex = new System.Threading.Mutex();
         private Control[] labelGPUVendorArray;
@@ -37,30 +57,33 @@ namespace GatelessGateSharp
         private Control[] labelGPUFanArray;
         private Control[] labelGPUCoreClockArray;
         private Control[] labelGPUMemoryClockArray;
-        private Control[] checkBoxGPUEnabledArray;
         private ComputeDevice[] computeDeviceArray;
         private const int computeDeviceArrayMaxLength = 8; // This depends on MainForm.
         private Boolean ADLInitialized = false;
         private Int32[] ADLAdapterIndexArray;
         private System.Threading.Mutex ADLMutex = new System.Threading.Mutex();
 
-        public void Logger(String lines)
+        public static MainForm Instance { get { return instance; }}
+
+        public static void Logger(String lines)
         {
-            loggerMutex.WaitOne();
+            Instance.loggerMutex.WaitOne();
             System.IO.StreamWriter file = new System.IO.StreamWriter(logFileName, true);
             file.WriteLine(lines);
             file.Close();
-            richTextBoxLog.Text += lines + "\n";
-            if (richTextBoxLog.Lines.Length > richTextBoxLogMaxLines)
+            Instance.richTextBoxLog.Text += lines + "\n";
+            if (Instance.richTextBoxLog.Lines.Length > richTextBoxLogMaxLines)
             {
-                richTextBoxLog.Select(0, richTextBoxLog.Text.IndexOf('\n') + 1);
-                richTextBoxLog.SelectedRtf = "{\\rtf1\\ansi\\ansicpg1252\\deff0\\deflang1053\\uc1 }";
+                Instance.richTextBoxLog.Select(0, Instance.richTextBoxLog.Text.IndexOf('\n') + 1);
+                Instance.richTextBoxLog.SelectedRtf = "{\\rtf1\\ansi\\ansicpg1252\\deff0\\deflang1053\\uc1 }";
             }
-            loggerMutex.ReleaseMutex();
+            Instance.loggerMutex.ReleaseMutex();
         }
 
         unsafe public MainForm()
         {
+            instance = this; ;
+
             InitializeComponent();
             Logger(appName + " started.");
             labelGPUVendorArray = new Control[] { labelGPU0Vendor, labelGPU1Vendor, labelGPU2Vendor, labelGPU3Vendor, labelGPU4Vendor, labelGPU5Vendor, labelGPU6Vendor, labelGPU7Vendor };
@@ -72,7 +95,6 @@ namespace GatelessGateSharp
             labelGPUSpeedArray = new Control[] { labelGPU0Speed, labelGPU1Speed, labelGPU2Speed, labelGPU3Speed, labelGPU4Speed, labelGPU5Speed, labelGPU6Speed, labelGPU7Speed };
             labelGPUCoreClockArray = new Control[] { labelGPU0CoreClock, labelGPU1CoreClock, labelGPU2CoreClock, labelGPU3CoreClock, labelGPU4CoreClock, labelGPU5CoreClock, labelGPU6CoreClock, labelGPU7CoreClock };
             labelGPUMemoryClockArray = new Control[] { labelGPU0MemoryClock, labelGPU1MemoryClock, labelGPU2MemoryClock, labelGPU3MemoryClock, labelGPU4MemoryClock, labelGPU5MemoryClock, labelGPU6MemoryClock, labelGPU7MemoryClock };
-            checkBoxGPUEnabledArray = new Control[] { checkBoxGPU0Enabled, checkBoxGPU1Enabled, checkBoxGPU2Enabled, checkBoxGPU3Enabled, checkBoxGPU4Enabled, checkBoxGPU5Enabled, checkBoxGPU6Enabled, checkBoxGPU7Enabled };
 
             if (LoadPhyMemDriver() != 0)
             {
@@ -214,7 +236,6 @@ namespace GatelessGateSharp
                 labelGPUFanArray[index].Visible = false;
                 labelGPUCoreClockArray[index].Visible = false;
                 labelGPUMemoryClockArray[index].Visible = false;
-                checkBoxGPUEnabledArray[index].Visible = false;
             }
 
             int ADLRet = -1;
@@ -320,6 +341,9 @@ namespace GatelessGateSharp
                         {
                             OSADLTemperatureData = (ADLTemperature)Marshal.PtrToStructure(tempBuffer, OSADLTemperatureData.GetType());
                             labelGPUTempArray[deviceIndex].Text = (OSADLTemperatureData.Temperature / 1000).ToString() + "℃";
+                            labelGPUTempArray[deviceIndex].ForeColor = (OSADLTemperatureData.Temperature >= 80000) ? Color.Red :
+                                                                       (OSADLTemperatureData.Temperature >= 60000) ? Color.Yellow :
+                                                                                                                     Color.Green;
                         }
                     }
 
@@ -510,6 +534,11 @@ namespace GatelessGateSharp
         private void timerDeviceStatusUpdates_Tick(object sender, EventArgs e)
         {
             UpdateDeviceStatus();
+        }
+
+        private void buttonStart_Click(object sender, EventArgs e)
+        {
+            OpenCLEthashMiner miner = new OpenCLEthashMiner(computeDeviceArray[0], 0);
         }
     }
 }

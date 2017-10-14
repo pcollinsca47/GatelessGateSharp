@@ -13,26 +13,32 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+// along with Gateless Gate #.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
-#include <Windows.h>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Cloo;
 
-extern "C" CRITICAL_SECTION phymem_mutex;
 
-BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)
+
+namespace GatelessGateSharp
 {
-	InitializeCriticalSection(&phymem_mutex);;
-
-	switch (ul_reason_for_call)
+    class Miner
     {
-    case DLL_PROCESS_ATTACH:
-    case DLL_THREAD_ATTACH:
-    case DLL_THREAD_DETACH:
-    case DLL_PROCESS_DETACH:
-        break;
-    }
-    return TRUE;
-}
+        private int mDeviceIndex;
 
+        public int DeviceIndex { get { return mDeviceIndex; } }
+
+        protected Miner(int aDeviceIndex)
+        {
+            mDeviceIndex = aDeviceIndex;
+        }
+
+        public void Run() { }
+    }
+}

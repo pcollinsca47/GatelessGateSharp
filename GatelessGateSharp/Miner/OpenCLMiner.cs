@@ -20,25 +20,29 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Runtime.InteropServices;
+using Cloo;
 
 
 
 namespace GatelessGateSharp
 {
-    static class Program
+    class OpenCLMiner : Miner
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
+        private ComputeDevice mDevice;
+        private ComputeContext mContext = null;
+
+        public ComputeDevice Device { get { return mDevice; } }
+        public ComputeContext Context { get { return mContext; } }
+
+        protected OpenCLMiner(ComputeDevice aDevice, int aDeviceIndex) : base(aDeviceIndex)
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            mDevice = aDevice;
+            List<ComputeDevice> deviceList = new List<ComputeDevice>();
+            deviceList.Add(mDevice);
+            ComputeContextPropertyList properties = new ComputeContextPropertyList(mDevice.Platform);
+            mContext = new ComputeContext(deviceList, properties, null, IntPtr.Zero);
         }
     }
 }

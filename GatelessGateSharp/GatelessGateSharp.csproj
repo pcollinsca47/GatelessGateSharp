@@ -115,6 +115,9 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Miner\OpenCLEthashMiner.cs" />
+    <Compile Include="Miner\OpenCLMiner.cs" />
+    <Compile Include="Miner\Miner.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="MainForm.resx">
@@ -131,6 +134,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.manifest" />
+    <None Include="Kernels\ethash.cl" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -144,10 +148,16 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Job\" />
+    <Folder Include="Stratum\" />
+    <Folder Include="Work\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(SolutionDir)$(SolutionName)\SQLite.Interop.dll $(TargetDir)
 copy $(SolutionDir)$(SolutionName)\System.Data.SQLite.dll $(TargetDir)
+xcopy /i /s /y $(ProjectDir)Kernels $(TargetDir)Kernels
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
