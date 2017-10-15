@@ -137,7 +137,12 @@ namespace GatelessGateSharp
 
             response = JsonConvert.DeserializeObject<Dictionary<string, Object>>(mStreamReader.ReadLine());
             MainForm.Logger("Authorized: " + response["result"]); // TODO
-            
+            if (!(bool)response["result"])
+            {
+                mMutex.ReleaseMutex();
+                throw new Exception("Authentication failed.");
+            }
+
             mMutex.ReleaseMutex();
 
             mStreamReaderThread = new Thread(new ThreadStart(StreamReaderThread));

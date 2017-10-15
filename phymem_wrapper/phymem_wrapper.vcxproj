@@ -164,56 +164,89 @@
     <PostBuildEvent>
       <Command>copy $(ProjectDir)bin\$(Platform)\$(ConfigurationName)\phymem_wrapper.dll $(SolutionDir)GatelessGateSharp\bin\Release</Command>
     </PostBuildEvent>
+    <ClCompile>
+      <TreatWarningAsError>false</TreatWarningAsError>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win7 Debug|Win32'">
     <PostBuildEvent>
       <Command>copy $(ProjectDir)bin\$(Platform)\$(ConfigurationName)\phymem_wrapper.dll $(SolutionDir)GatelessGateSharp\bin\Release</Command>
     </PostBuildEvent>
+    <ClCompile>
+      <TreatWarningAsError>false</TreatWarningAsError>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win7 Release|Win32'">
     <PostBuildEvent>
       <Command>copy $(ProjectDir)bin\$(Platform)\$(ConfigurationName)\phymem_wrapper.dll $(SolutionDir)GatelessGateSharp\bin\Release</Command>
     </PostBuildEvent>
+    <ClCompile>
+      <TreatWarningAsError>false</TreatWarningAsError>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win8.1 Debug|Win32'">
     <PostBuildEvent>
       <Command>copy $(ProjectDir)bin\$(Platform)\$(ConfigurationName)\phymem_wrapper.dll $(SolutionDir)GatelessGateSharp\bin\Release</Command>
     </PostBuildEvent>
+    <ClCompile>
+      <TreatWarningAsError>false</TreatWarningAsError>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win8 Release|Win32'">
     <PostBuildEvent>
       <Command>copy $(ProjectDir)bin\$(Platform)\$(ConfigurationName)\phymem_wrapper.dll $(SolutionDir)GatelessGateSharp\bin\Release</Command>
     </PostBuildEvent>
+    <ClCompile>
+      <TreatWarningAsError>false</TreatWarningAsError>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win8.1 Release|Win32'">
     <PostBuildEvent>
       <Command>copy $(ProjectDir)bin\$(Platform)\$(ConfigurationName)\phymem_wrapper.dll $(SolutionDir)GatelessGateSharp\bin\Release</Command>
     </PostBuildEvent>
+    <ClCompile>
+      <TreatWarningAsError>false</TreatWarningAsError>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win8 Debug|x64'">
     <PostBuildEvent>
       <Command>copy $(ProjectDir)bin\$(Platform)\$(ConfigurationName)\phymem_wrapper.dll $(SolutionDir)GatelessGateSharp\bin\Release</Command>
     </PostBuildEvent>
+    <ClCompile>
+      <TreatWarningAsError>false</TreatWarningAsError>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win7 Debug|x64'">
     <PostBuildEvent>
       <Command>copy $(ProjectDir)bin\$(Platform)\$(ConfigurationName)\phymem_wrapper.dll $(SolutionDir)GatelessGateSharp\bin\Release</Command>
     </PostBuildEvent>
+    <ClCompile>
+      <TreatWarningAsError>false</TreatWarningAsError>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win7 Release|x64'">
     <PostBuildEvent>
       <Command>copy $(ProjectDir)bin\$(Platform)\$(ConfigurationName)\phymem_wrapper.dll $(SolutionDir)GatelessGateSharp\bin\Release</Command>
     </PostBuildEvent>
+    <ClCompile>
+      <TreatWarningAsError>false</TreatWarningAsError>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win8.1 Debug|x64'">
     <PostBuildEvent>
       <Command>copy $(ProjectDir)bin\$(Platform)\$(ConfigurationName)\phymem_wrapper.dll $(SolutionDir)GatelessGateSharp\bin\Release</Command>
     </PostBuildEvent>
+    <ClCompile>
+      <TreatWarningAsError>false</TreatWarningAsError>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Win8 Release|x64'">
     <PostBuildEvent>
       <Command>copy $(ProjectDir)bin\$(Platform)\$(ConfigurationName)\phymem_wrapper.dll $(SolutionDir)GatelessGateSharp\bin\Release</Command>
     </PostBuildEvent>
+    <ClCompile>
+      <TreatWarningAsError>false</TreatWarningAsError>
+    </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

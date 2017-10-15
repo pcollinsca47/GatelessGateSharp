@@ -82,7 +82,7 @@ namespace GatelessGateSharp
 
         unsafe public MainForm()
         {
-            instance = this; ;
+            instance = this;
 
             InitializeComponent();
             Logger(appName + " started.");
@@ -541,8 +541,25 @@ namespace GatelessGateSharp
 
         private void buttonStart_Click(object sender, EventArgs e)
         {
-            mStratum = new NiceHashEthashStratum("daggerhashimoto.usa.nicehash.com", 3353, "1BHwDWVerUTiKxhHPf2ubqKKiBMiKQGomZ", "x");
-            mMiner = new OpenCLEthashMiner(computeDeviceArray[0], 0, mStratum);
+            // TODO: Check the value of the textbox.
+            try
+            {
+                mStratum = new NiceHashEthashStratum("daggerhashimoto.usa.nicehash.com", 3353, textBoxBitcoinAddress.Text, "x");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to connect to stratum server:\n" + ex.Message, appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            try
+            {
+                mMiner = new OpenCLEthashMiner(computeDeviceArray[0], 0, mStratum);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to launch miner:\n" + ex.Message, appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                mStratum = null;
+            }
         }
     }
 }

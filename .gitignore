@@ -208,3 +208,6 @@ $RECYCLE.BIN/
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
 *.tlog
+Win8.1Debug/phymem_wrapper.dll
+Win8.1Debug/phymem_wrapper.exp
+Win8.1Debug/phymem_wrapper.lib
