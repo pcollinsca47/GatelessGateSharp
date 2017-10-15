@@ -23,7 +23,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Cloo;
-using GatelessGateSharp;
 
 
 
@@ -34,20 +33,21 @@ namespace GatelessGateSharp
         private ComputeProgram mProgram;
         private ComputeKernel mDAGKernel;
         private ComputeKernel mSearchKernel;
-        
+
+       
         public OpenCLEthashMiner(ComputeDevice aDevice, int aDeviceIndex)
             : base(aDevice, aDeviceIndex)
         {
             mProgram = new ComputeProgram(this.Context, System.IO.File.ReadAllText(@"Kernels\ethash.cl"));
-            MainForm.Logger("Loaded ethash program.");
+            MainForm.Logger("Loaded ethash program for Device #" + aDeviceIndex + ".");
             List<ComputeDevice> deviceList = new List<ComputeDevice>();
             deviceList.Add(Device);
             mProgram.Build(deviceList, "-DWORKSIZE=256", null, IntPtr.Zero);
-            MainForm.Logger("Built ethash program.");
+            MainForm.Logger("Built ethash program for Device #" + aDeviceIndex + ".");
             mDAGKernel = mProgram.CreateKernel("GenerateDAG");
-            MainForm.Logger("Created DAG kernel.");
+            MainForm.Logger("Created DAG kernel for Device #" + aDeviceIndex + ".");
             mSearchKernel = mProgram.CreateKernel("search");
-            MainForm.Logger("Created search kernel.");
+            MainForm.Logger("Created search kernel for Device #" + aDeviceIndex + ".");
         }
     }
 }

@@ -536,8 +536,11 @@ namespace GatelessGateSharp
             UpdateDeviceStatus();
         }
 
+        NiceHashEthashStratum mStratum;
+
         private void buttonStart_Click(object sender, EventArgs e)
         {
+            mStratum = new NiceHashEthashStratum("daggerhashimoto.usa.nicehash.com", 3353, "1BHwDWVerUTiKxhHPf2ubqKKiBMiKQGomZ", "x");
             OpenCLEthashMiner miner = new OpenCLEthashMiner(computeDeviceArray[0], 0);
         }
     }
