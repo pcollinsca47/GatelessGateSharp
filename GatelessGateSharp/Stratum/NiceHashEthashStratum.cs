@@ -56,8 +56,10 @@ namespace GatelessGateSharp
         double mDifficulty = 1.0;
         string mSubsciptionID;
         string mExtranonce;
-        Job mJob;
+        Job mJob = null;
         private Mutex mMutex = new Mutex();
+
+        public Job CurrentJob { get { return mJob; } }
 
         private void StreamReaderThread()
         {
@@ -104,6 +106,7 @@ namespace GatelessGateSharp
             mStream = mClient.GetStream();
             mStreamReader = new StreamReader(mStream, System.Text.Encoding.ASCII, false);
             mStreamWriter = new StreamWriter(mStream, System.Text.Encoding.ASCII);
+            mJsonRPCMessageID = 1;
 
             mStreamWriter.Write(Newtonsoft.Json.JsonConvert.SerializeObject(new Dictionary<string, Object> {
                 { "id", mJsonRPCMessageID++ },
@@ -138,8 +141,8 @@ namespace GatelessGateSharp
             mMutex.ReleaseMutex();
 
             mStreamReaderThread = new Thread(new ThreadStart(StreamReaderThread));
-            mStreamReaderThread.Start();
             mStreamReaderThread.IsBackground = true;
+            mStreamReaderThread.Start();
         }
 
         public NiceHashEthashStratum(String aServerAddress, int aServerPort, String aUsername, String aPassword) // "daggerhashimoto.usa.nicehash.com", 3353

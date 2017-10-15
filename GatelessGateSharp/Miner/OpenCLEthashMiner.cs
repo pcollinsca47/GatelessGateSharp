@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Cloo;
 
@@ -33,11 +34,14 @@ namespace GatelessGateSharp
         private ComputeProgram mProgram;
         private ComputeKernel mDAGKernel;
         private ComputeKernel mSearchKernel;
+        private NiceHashEthashStratum mStratum;
+        private Thread mMinerThread = null;
 
-       
-        public OpenCLEthashMiner(ComputeDevice aDevice, int aDeviceIndex)
+        public OpenCLEthashMiner(ComputeDevice aDevice, int aDeviceIndex, NiceHashEthashStratum aStratum)
             : base(aDevice, aDeviceIndex)
         {
+            mStratum = aStratum;
+
             mProgram = new ComputeProgram(this.Context, System.IO.File.ReadAllText(@"Kernels\ethash.cl"));
             MainForm.Logger("Loaded ethash program for Device #" + aDeviceIndex + ".");
             List<ComputeDevice> deviceList = new List<ComputeDevice>();
@@ -48,6 +52,23 @@ namespace GatelessGateSharp
             MainForm.Logger("Created DAG kernel for Device #" + aDeviceIndex + ".");
             mSearchKernel = mProgram.CreateKernel("search");
             MainForm.Logger("Created search kernel for Device #" + aDeviceIndex + ".");
+
+            mMinerThread = new Thread(new ThreadStart(MinerThread));
+            mMinerThread.IsBackground = true;
+            mMinerThread.Start();
+        }
+
+        public void MinerThread()
+        {
+            int timePassed = 0;
+            while (mStratum.CurrentJob == null && timePassed < 5000)
+            {
+                Thread.Sleep(10);
+                timePassed += 10;
+            }
+            if (mStratum.CurrentJob == null)
+                throw new TimeoutException("Stratum server failed to send a new job.");
+            MainForm.Logger("Miner received a new job.");
         }
     }
 }
