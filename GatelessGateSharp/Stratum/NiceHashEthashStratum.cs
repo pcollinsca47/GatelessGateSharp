@@ -9,7 +9,7 @@ using System.Net;
 using System.Net.Sockets;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
+using HashLib;
 
 
 namespace GatelessGateSharp
@@ -37,6 +37,41 @@ namespace GatelessGateSharp
                 mHeaderhash = aHeaderhash;
             }
 
+            public static string ByteArrayToString(byte[] ba)
+            {
+                StringBuilder hex = new StringBuilder(ba.Length * 2);
+                foreach (byte b in ba)
+                    hex.AppendFormat("{0:x2}", b);
+                return hex.ToString();
+            }
+
+            public static byte[] StringToByteArray(String hex)
+            {
+                int NumberChars = hex.Length;
+                byte[] bytes = new byte[NumberChars / 2];
+                for (int i = 0; i < NumberChars; i += 2)
+                    bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+                return bytes;
+            }
+
+            public int Epoch {
+                get {
+                    byte[] seedhashArray = StringToByteArray(Seedhash);
+                    byte[] s = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+                    IHash hash = HashFactory.Crypto.SHA3.CreateKeccak256();
+                    int i;
+                    for (i = 0; i < 2048; ++i)
+                    {
+                        s = hash.ComputeBytes(s).GetBytes();
+                        if (s.SequenceEqual(seedhashArray))
+                            break;
+                    }
+                    if (i >= 2048)
+                        throw new Exception("Invalid seedhash.");
+                    return i + 1;
+                }
+            }
+ 
             public bool Equals(Job aJob)
             {
                 return (mID.Equals(aJob.mID));
