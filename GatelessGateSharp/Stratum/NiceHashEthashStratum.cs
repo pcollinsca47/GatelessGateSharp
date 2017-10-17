@@ -88,6 +88,8 @@ namespace GatelessGateSharp
         private Mutex mMutex = new Mutex();
 
         public Job CurrentJob { get { return mJob; } }
+        public double Difficulty { get { return mDifficulty; } }
+        public String Extranonce { get { return mExtranonce; } }
 
         private void StreamReaderThread()
         {
@@ -116,7 +118,7 @@ namespace GatelessGateSharp
                 }
                 else if (method.Equals("client.reconnect"))
                 {
-                    Connect();
+                    //Connect();
                 }
                 else
                 {

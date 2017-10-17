@@ -85,7 +85,10 @@ namespace GatelessGateSharp
             ComputeBuffer<UInt32> outputBuffer = new ComputeBuffer<UInt32>(Context, ComputeMemoryFlags.ReadWrite, 255);
             ComputeBuffer<byte> headerBuffer = new ComputeBuffer<byte>(Context, ComputeMemoryFlags.ReadOnly, 32);
             UInt32[] output = new UInt32[255];
+            byte[] extranonceByteArray = Utilities.StringToByteArray(mStratum.Extranonce);
             UInt64 startNonce = 0;
+            for (int i = 0; i < extranonceByteArray.Length; ++i)
+                startNonce |= (UInt64)extranonceByteArray[i] << (8 * (7 - i));
             while ((work = mStratum.GetWork()) != null)
             {
                 String jobID = work.CurrentJob.ID;
@@ -114,20 +117,26 @@ namespace GatelessGateSharp
                     mDAGKernel.SetValueArgument<UInt32>(3, (UInt32)cache.Data().Length / 64);
                     mDAGKernel.SetValueArgument<UInt32>(4, 1);
 
+                    System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+                    sw.Start();
                     Queue.Execute(mDAGKernel, new long[] { 0 }, new long[] { DAGSize / 64 }, new long[] { mLocalWorkSize }, null);
+                    Queue.Finish();
+                    sw.Stop();
+                    MainForm.Logger("Generated DAG for Epoch #" + epoch + " (" + (long)sw.Elapsed.TotalMilliseconds + "ms).");
 
                     DAGCacheBuffer.Dispose();
 
                     startNonce = 0;
                 }
-                
-                while (jobID == work.CurrentJob.ID) {
+
+                while (jobID == work.CurrentJob.ID)
+                {
                     mSearchKernel.SetMemoryArgument(0, outputBuffer); // g_output
                     mSearchKernel.SetMemoryArgument(1, headerBuffer); // g_header
                     mSearchKernel.SetMemoryArgument(2, DAGBuffer); // _g_dag
                     mSearchKernel.SetValueArgument<UInt32>(3, (UInt32)DAGSize / 128); // DAG_SIZE
                     mSearchKernel.SetValueArgument<UInt64>(4, startNonce); // start_nonce
-                    mSearchKernel.SetValueArgument<UInt64>(5, 0x000000ffff0000UL); // target
+                    mSearchKernel.SetValueArgument<UInt64>(5, (UInt64)(0x00000000ffffffffUL / mStratum.Difficulty)); // target
                     mSearchKernel.SetValueArgument<UInt32>(6, 1); // isolate
 
                     System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
@@ -145,7 +154,7 @@ namespace GatelessGateSharp
                         MainForm.Logger("Share found.");
                     startNonce += (UInt64)mGlobalWorkSize;
                 }
-                
+
                 headerBuffer.Dispose();
             }
 
