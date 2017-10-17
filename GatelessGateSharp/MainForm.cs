@@ -46,7 +46,6 @@ namespace GatelessGateSharp
         public static String appName = "Gateless Gate #";
         private static String databaseFileName = "GatelessGateSharp.sqlite";
         private static String logFileName = "GatelessGateSharp.log";
-        const int richTextBoxLogMaxLines = 65536;
         private System.Threading.Mutex loggerMutex = new System.Threading.Mutex();
         private Control[] labelGPUVendorArray;
         private Control[] labelGPUNameArray;
@@ -71,12 +70,15 @@ namespace GatelessGateSharp
             System.IO.StreamWriter file = new System.IO.StreamWriter(logFileName, true);
             file.WriteLine(lines);
             file.Close();
-            Instance.richTextBoxLog.Text += lines + "\n";
-            if (Instance.richTextBoxLog.Lines.Length > richTextBoxLogMaxLines)
-            {
-                Instance.richTextBoxLog.Select(0, Instance.richTextBoxLog.Text.IndexOf('\n') + 1);
-                Instance.richTextBoxLog.SelectedRtf = "{\\rtf1\\ansi\\ansicpg1252\\deff0\\deflang1053\\uc1 }";
-            }
+            Instance.richTextBoxLog.SelectionLength = 0;
+            Instance.richTextBoxLog.SelectionStart = Instance.richTextBoxLog.Text.Length;
+            Instance.richTextBoxLog.ScrollToCaret();
+            if (Instance.richTextBoxLog.Text != "")
+                Instance.richTextBoxLog.Text += "\n";
+            Instance.richTextBoxLog.Text += lines;
+            Instance.richTextBoxLog.SelectionLength = 0;
+            Instance.richTextBoxLog.SelectionStart = Instance.richTextBoxLog.Text.Length;
+            Instance.richTextBoxLog.ScrollToCaret();
             Instance.loggerMutex.ReleaseMutex();
         }
 

@@ -32,9 +32,11 @@ namespace GatelessGateSharp
     {
         private ComputeDevice mDevice;
         private ComputeContext mContext = null;
+        private ComputeCommandQueue mQueue = null;
 
         public ComputeDevice Device { get { return mDevice; } }
         public ComputeContext Context { get { return mContext; } }
+        public ComputeCommandQueue Queue { get { return mQueue; } }
 
         protected OpenCLMiner(ComputeDevice aDevice, int aDeviceIndex) : base(aDeviceIndex)
         {
@@ -43,6 +45,13 @@ namespace GatelessGateSharp
             deviceList.Add(mDevice);
             ComputeContextPropertyList properties = new ComputeContextPropertyList(mDevice.Platform);
             mContext = new ComputeContext(deviceList, properties, null, IntPtr.Zero);
+            mQueue = new ComputeCommandQueue(mContext, mDevice, ComputeCommandQueueFlags.None);
+        }
+
+        ~OpenCLMiner()
+        {
+            if (mQueue != null) mQueue.Dispose();
+            if (mContext != null) mContext.Dispose();
         }
     }
 }

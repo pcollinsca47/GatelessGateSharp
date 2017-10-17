@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ADL.cs" />
+    <Compile Include="Utilities.cs" />
     <Compile Include="Cloo\Bindings\CL10.cs" />
     <Compile Include="Cloo\Bindings\CL11.cs" />
     <Compile Include="Cloo\Bindings\CLCommandQueueHandle.cs" />
@@ -120,6 +121,7 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Miner\DAGCache.cs" />
     <Compile Include="Miner\OpenCLEthashMiner.cs" />
     <Compile Include="Miner\OpenCLMiner.cs" />
     <Compile Include="Miner\Miner.cs" />

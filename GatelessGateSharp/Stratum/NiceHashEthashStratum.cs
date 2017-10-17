@@ -18,6 +18,14 @@ namespace GatelessGateSharp
     {
         public new class Work : Stratum.Work
         {
+            private Job mJob;
+
+            public Job CurrentJob { get { return mJob; } }
+
+            public Work(Job aJob)
+            {
+                mJob = aJob;
+            }
         }
 
         public new class Job : Stratum.Job
@@ -37,26 +45,11 @@ namespace GatelessGateSharp
                 mHeaderhash = aHeaderhash;
             }
 
-            public static string ByteArrayToString(byte[] ba)
+            public int Epoch
             {
-                StringBuilder hex = new StringBuilder(ba.Length * 2);
-                foreach (byte b in ba)
-                    hex.AppendFormat("{0:x2}", b);
-                return hex.ToString();
-            }
-
-            public static byte[] StringToByteArray(String hex)
-            {
-                int NumberChars = hex.Length;
-                byte[] bytes = new byte[NumberChars / 2];
-                for (int i = 0; i < NumberChars; i += 2)
-                    bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
-                return bytes;
-            }
-
-            public int Epoch {
-                get {
-                    byte[] seedhashArray = StringToByteArray(Seedhash);
+                get
+                {
+                    byte[] seedhashArray = Utilities.StringToByteArray(Seedhash);
                     byte[] s = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
                     IHash hash = HashFactory.Crypto.SHA3.CreateKeccak256();
                     int i;
@@ -118,10 +111,10 @@ namespace GatelessGateSharp
                     mJob = new Job((string)parameters[0], (string)parameters[1], (string)parameters[2]);
                     mMutex.ReleaseMutex();
                     MainForm.Logger("Job ID: " + parameters[0]);
-                    MainForm.Logger("Seedhash: " + parameters[1]);
-                    MainForm.Logger("Headerhash: " + parameters[2]);
+                    //MainForm.Logger("Seedhash: " + parameters[1]);
+                    //MainForm.Logger("Headerhash: " + parameters[2]);
                 }
-                else if (method.Equals("mining.reconnect"))
+                else if (method.Equals("client.reconnect"))
                 {
                     Connect();
                 }
@@ -197,7 +190,7 @@ namespace GatelessGateSharp
 
         public new Work GetWork()
         {
-            return null;
+            return new Work(mJob);
         }
     }
 }
