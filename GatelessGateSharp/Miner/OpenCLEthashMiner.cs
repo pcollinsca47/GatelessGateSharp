@@ -39,14 +39,14 @@ namespace GatelessGateSharp
         private ComputeKernel mSearchKernel;
         private NiceHashEthashStratum mStratum;
         private Thread mMinerThread = null;
-        private long mLocalWorkSize = 128;
+        private long mLocalWorkSize = 256;
         private long mGlobalWorkSize;
 
         public OpenCLEthashMiner(ComputeDevice aDevice, int aDeviceIndex, NiceHashEthashStratum aStratum)
             : base(aDevice, aDeviceIndex)
         {
             mStratum = aStratum;
-            mGlobalWorkSize = 1024 * mLocalWorkSize * Device.MaxComputeUnits;
+            mGlobalWorkSize = 4096 * mLocalWorkSize * Device.MaxComputeUnits;
 
             mProgram = new ComputeProgram(this.Context, System.IO.File.ReadAllText(@"Kernels\ethash.cl"));
             MainForm.Logger("Loaded ethash program for Device #" + aDeviceIndex + ".");
@@ -58,8 +58,6 @@ namespace GatelessGateSharp
             MainForm.Logger("Created DAG kernel for Device #" + aDeviceIndex + ".");
             mSearchKernel = mProgram.CreateKernel("search");
             MainForm.Logger("Created search kernel for Device #" + aDeviceIndex + ".");
-
-            //TestKernel();
 
             mMinerThread = new Thread(new ThreadStart(MinerThread));
             mMinerThread.IsBackground = true;
@@ -88,12 +86,14 @@ namespace GatelessGateSharp
             ComputeBuffer<UInt32> outputBuffer = new ComputeBuffer<UInt32>(Context, ComputeMemoryFlags.ReadWrite, 256);
             ComputeBuffer<byte> headerBuffer = new ComputeBuffer<byte>(Context, ComputeMemoryFlags.ReadOnly, 32);
             UInt32[] output = new UInt32[256];
-            byte[] extranonceByteArray = Utilities.StringToByteArray(mStratum.Extranonce);
             while ((work = mStratum.GetWork()) != null)
             {
-                UInt64 startNonce = 0;
+                String extranonce = mStratum.Extranonce;
+                byte[] extranonceByteArray = Utilities.StringToByteArray(extranonce);
+                byte extranonce2 = work.Extranonce2;
+                UInt64 startNonce = (UInt64)extranonce2 << (8 * (7 - extranonceByteArray.Length));
                 for (int i = 0; i < extranonceByteArray.Length; ++i)
-                    startNonce |= (UInt64)extranonceByteArray[i] << (8 * (7 - i)); 
+                    startNonce |= (UInt64)extranonceByteArray[i] << (8 * (7 - i));
                 String jobID = work.CurrentJob.ID;
                 String headerhash = work.CurrentJob.Headerhash;
                 String seedhash = work.CurrentJob.Seedhash;
@@ -122,9 +122,18 @@ namespace GatelessGateSharp
                         mDAGKernel.SetMemoryArgument(1, DAGCacheBuffer);
                         mDAGKernel.SetMemoryArgument(2, DAGBuffer);
                         mDAGKernel.SetValueArgument<UInt32>(3, (UInt32)cache.Data().Length / 64);
-                        mDAGKernel.SetValueArgument<UInt32>(4, 0xffffffffu);
-                        Queue.Execute(mDAGKernel, new long[] { 0 }, new long[] { DAGSize / 64 }, new long[] { mLocalWorkSize }, null);
-                        Queue.Finish();
+                        mDAGKernel.SetValueArgument<UInt32>(4, (UInt32)(DAGSize / 64));
+                        mDAGKernel.SetValueArgument<UInt32>(5, 0xffffffffu);
+
+                        long globalWorkSize = DAGSize / 64;
+                        globalWorkSize /= 8;
+                        if (globalWorkSize % mLocalWorkSize > 0)
+                            globalWorkSize += mLocalWorkSize - globalWorkSize % mLocalWorkSize;
+                        for (long start = 0; start < DAGSize / 64; start += globalWorkSize)
+                        {
+                            Queue.Execute(mDAGKernel, new long[] { start }, new long[] { globalWorkSize }, new long[] { mLocalWorkSize }, null);
+                            Queue.Finish();
+                        }
                         DAGCacheBuffer.Dispose();
                     }
                     sw.Stop();
@@ -133,7 +142,7 @@ namespace GatelessGateSharp
 
                 consoleUpdateStopwatch.Start();
 
-                while (mStratum.CurrentJob.ID.Equals(jobID))
+                while (mStratum.CurrentJob.ID.Equals(jobID) && mStratum.Extranonce.Equals(extranonce))
                 {
                     UInt64 target = (UInt64)((double)0xffff0000U / difficulty);
                     mSearchKernel.SetMemoryArgument(0, outputBuffer); // g_output

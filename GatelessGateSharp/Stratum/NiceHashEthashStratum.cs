@@ -19,17 +19,22 @@ namespace GatelessGateSharp
         public new class Work : Stratum.Work
         {
             private Job mJob;
+            private byte mExtranonce2;
 
             public Job CurrentJob { get { return mJob; } }
+            public byte Extranonce2 { get { return mExtranonce2; } }
 
             public Work(Job aJob)
             {
                 mJob = aJob;
+                mExtranonce2 = mJob.GetNewExtranonce2();
             }
         }
 
         public new class Job : Stratum.Job
         {
+            Mutex mMutex = new Mutex();
+            private byte mExtranonce2 = 0;
             private string mID;
             private string mSeedhash;
             private string mHeaderhash;
@@ -68,6 +73,14 @@ namespace GatelessGateSharp
             public bool Equals(Job aJob)
             {
                 return (mID.Equals(aJob.mID));
+            }
+
+            public byte GetNewExtranonce2()
+            {
+                mMutex.WaitOne();
+                byte ret = mExtranonce2++;
+                mMutex.ReleaseMutex();
+                return ret;
             }
         }
 

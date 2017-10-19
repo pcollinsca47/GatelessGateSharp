@@ -371,31 +371,32 @@ static void SHA3_512(uint2 *s, uint isolate)
         s[i] = st[i];
 }
 
-__kernel void GenerateDAG(uint start, __global const uint16 *_Cache, __global uint16 *_DAG, uint LIGHT_SIZE, uint isolate)
+__kernel void GenerateDAG(uint start, __global const uint16 *_Cache, __global uint16 *_DAG, uint LIGHT_SIZE, uint DAG_SIZE, uint isolate)
 {
     __global const Node *Cache = (__global const Node *) _Cache;
     __global Node *DAG = (__global Node *) _DAG;
     uint NodeIdx = start + get_global_id(0);
-    //if  (NodeIdx > DAG_SIZE) return;
-    
-    Node DAGNode = Cache[NodeIdx % LIGHT_SIZE];
-    
-    DAGNode.dwords[0] ^= NodeIdx;
-    SHA3_512(DAGNode.qwords, isolate);
 
-    for (uint i = 0; i < 256; ++i)
-    {
-        uint ParentIdx = fnv(NodeIdx ^ i, DAGNode.dwords[i & 15]) % LIGHT_SIZE;
-        __global const Node *ParentNode = Cache + ParentIdx;
-        
-        #pragma unroll
-        for (uint x = 0; x < 4; ++x)
-        {
-            DAGNode.dqwords[x] *= (uint4)(FNV_PRIME);
-            DAGNode.dqwords[x] ^= ParentNode->dqwords[x];
-        }
-    }
-    
-    SHA3_512(DAGNode.qwords, isolate);
-    DAG[NodeIdx] = DAGNode;
+	Node DAGNode = Cache[NodeIdx % LIGHT_SIZE];
+
+	DAGNode.dwords[0] ^= NodeIdx;
+	SHA3_512(DAGNode.qwords, isolate);
+
+	for (uint i = 0; i < 256; ++i)
+	{
+		uint ParentIdx = fnv(NodeIdx ^ i, DAGNode.dwords[i & 15]) % LIGHT_SIZE;
+		__global const Node *ParentNode = Cache + ParentIdx;
+
+#pragma unroll
+		for (uint x = 0; x < 4; ++x)
+		{
+			DAGNode.dqwords[x] *= (uint4)(FNV_PRIME);
+			DAGNode.dqwords[x] ^= ParentNode->dqwords[x];
+		}
+	}
+
+	SHA3_512(DAGNode.qwords, isolate);
+
+	if (NodeIdx < DAG_SIZE)
+		DAG[NodeIdx] = DAGNode;
 }

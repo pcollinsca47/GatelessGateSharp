@@ -351,8 +351,8 @@ namespace GatelessGateSharp
                             OSADLTemperatureData = (ADLTemperature)Marshal.PtrToStructure(tempBuffer, OSADLTemperatureData.GetType());
                             labelGPUTempArray[deviceIndex].Text = (OSADLTemperatureData.Temperature / 1000).ToString() + "℃";
                             labelGPUTempArray[deviceIndex].ForeColor = (OSADLTemperatureData.Temperature >= 80000) ? Color.Red :
-                                                                       (OSADLTemperatureData.Temperature >= 60000) ? Color.Yellow :
-                                                                                                                     Color.Green;
+                                                                       (OSADLTemperatureData.Temperature >= 60000) ? Color.Purple :
+                                                                                                                     Color.Blue;
                         }
                     }
 
@@ -547,6 +547,7 @@ namespace GatelessGateSharp
 
         NiceHashEthashStratum mStratum;
         OpenCLEthashMiner mMiner;
+        OpenCLEthashMiner mMiner2;
 
         private void buttonStart_Click(object sender, EventArgs e)
         {
@@ -563,6 +564,7 @@ namespace GatelessGateSharp
             try
             {
                 mMiner = new OpenCLEthashMiner(computeDeviceArray[0], 0, mStratum);
+                mMiner2 = new OpenCLEthashMiner(computeDeviceArray[0], 0, mStratum);
             }
             catch (Exception ex)
             {
