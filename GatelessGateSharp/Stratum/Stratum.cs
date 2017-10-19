@@ -20,5 +20,14 @@ namespace GatelessGateSharp
         {
             return null;
         }
+
+        private bool mStopped = false;
+
+        public bool Stopped { get { return mStopped; } }
+
+        public void Stop()
+        {
+            mStopped = true;
+        }
     }
 }

@@ -108,7 +108,7 @@ namespace GatelessGateSharp
         {
             string line;
 
-            while ((line = mStreamReader.ReadLine()) != null)
+            while ((line = mStreamReader.ReadLine()) != null && !Stopped)
             {
                 Dictionary<String, Object> response = JsonConvert.DeserializeObject<Dictionary<string, Object>>(line);
                 if (response.ContainsKey("method") && response.ContainsKey("params"))
@@ -164,10 +164,21 @@ namespace GatelessGateSharp
                 }
             }
 
-            MainForm.Logger("Connection terminated. Reconnecting...");
-            Thread reconnectThread = new Thread(new ThreadStart(Connect));
-            reconnectThread.IsBackground = true;
-            reconnectThread.Start();
+            if (Stopped)
+            {
+                try
+                {
+                    mClient.Close();
+                }
+                catch (Exception ex) { }
+            }
+            else
+            {
+                MainForm.Logger("Connection terminated. Reconnecting...");
+                Thread reconnectThread = new Thread(new ThreadStart(Connect));
+                reconnectThread.IsBackground = true;
+                reconnectThread.Start();
+            }
         }
 
         public void Connect()

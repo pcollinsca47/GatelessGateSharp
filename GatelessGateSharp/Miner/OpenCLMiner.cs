@@ -50,8 +50,8 @@ namespace GatelessGateSharp
 
         ~OpenCLMiner()
         {
-            if (mQueue != null) mQueue.Dispose();
-            if (mContext != null) mContext.Dispose();
+            mQueue = null;
+            mContext = null;
         }
     }
 }

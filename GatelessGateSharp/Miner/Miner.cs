@@ -31,14 +31,19 @@ namespace GatelessGateSharp
     class Miner
     {
         private int mDeviceIndex;
+        private bool mStopped = false;
 
         public int DeviceIndex { get { return mDeviceIndex; } }
+        public bool Stopped { get { return mStopped; } }
 
         protected Miner(int aDeviceIndex)
         {
             mDeviceIndex = aDeviceIndex;
         }
 
-        public void Run() { }
+        public void Stop()
+        {
+            mStopped = true;
+        }
     }
 }

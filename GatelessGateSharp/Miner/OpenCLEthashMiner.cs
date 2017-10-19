@@ -86,7 +86,7 @@ namespace GatelessGateSharp
             ComputeBuffer<UInt32> outputBuffer = new ComputeBuffer<UInt32>(Context, ComputeMemoryFlags.ReadWrite, 256);
             ComputeBuffer<byte> headerBuffer = new ComputeBuffer<byte>(Context, ComputeMemoryFlags.ReadOnly, 32);
             UInt32[] output = new UInt32[256];
-            while ((work = mStratum.GetWork()) != null)
+            while (!Stopped && (work = mStratum.GetWork()) != null)
             {
                 String extranonce = mStratum.Extranonce;
                 byte[] extranonceByteArray = Utilities.StringToByteArray(extranonce);
@@ -142,7 +142,7 @@ namespace GatelessGateSharp
 
                 consoleUpdateStopwatch.Start();
 
-                while (mStratum.CurrentJob.ID.Equals(jobID) && mStratum.Extranonce.Equals(extranonce))
+                while (!Stopped && mStratum.CurrentJob.ID.Equals(jobID) && mStratum.Extranonce.Equals(extranonce))
                 {
                     UInt64 target = (UInt64)((double)0xffff0000U / difficulty);
                     mSearchKernel.SetMemoryArgument(0, outputBuffer); // g_output

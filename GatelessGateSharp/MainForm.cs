@@ -546,31 +546,64 @@ namespace GatelessGateSharp
         }
 
         NiceHashEthashStratum mStratum;
-        OpenCLEthashMiner mMiner;
-        OpenCLEthashMiner mMiner2;
+        List<Miner> mMiners = null;
+        enum ApplicationGlobalState
+        {
+            Idle = 0,
+            Mining = 1,
+            Benchmarking = 2
+        };
+        ApplicationGlobalState appState = ApplicationGlobalState.Idle;
 
         private void buttonStart_Click(object sender, EventArgs e)
         {
-            // TODO: Check the value of the textbox.
-            try
+            if (appState == ApplicationGlobalState.Idle)
             {
-                mStratum = new NiceHashEthashStratum("daggerhashimoto.usa.nicehash.com", 3353, textBoxBitcoinAddress.Text, "x");
+                try
+                {
+                    Logger("Launching miners...");
+                    // TODO: Check the value of the textbox.
+                    mStratum = new NiceHashEthashStratum("daggerhashimoto.usa.nicehash.com", 3353, textBoxBitcoinAddress.Text, "x");
+                    mMiners = new List<Miner>();
+                    for (int deviceIndex = 0; deviceIndex < computeDeviceArray.Length; ++deviceIndex)
+                        mMiners.Add(new OpenCLEthashMiner(computeDeviceArray[deviceIndex], deviceIndex, mStratum));
+                    appState = ApplicationGlobalState.Mining;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to launch miner(s):\n" + ex.Message, appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // TODO
+                    mStratum = null;
+                    mMiners = null;
+                }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Failed to connect to stratum server:\n" + ex.Message, appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+            else if (appState == ApplicationGlobalState.Mining) {
+                try
+                {
+                    Logger("Stopping miners...");
+                    foreach (Miner miner in mMiners)
+                        miner.Stop();
+                    System.Threading.Thread.Sleep(1000);
+                    mMiners = null;
+                    mStratum.Stop();
+                    System.Threading.Thread.Sleep(1000);
+                    mStratum.Stop();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to stop miner(s):\n" + ex.Message, appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    mStratum = null;
+                    mMiners = null;
+                }
+                appState = ApplicationGlobalState.Idle;
             }
-            try
-            {
-                mMiner = new OpenCLEthashMiner(computeDeviceArray[0], 0, mStratum);
-                mMiner2 = new OpenCLEthashMiner(computeDeviceArray[0], 0, mStratum);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Failed to launch miner:\n" + ex.Message, appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                mStratum = null;
-            }
+
+            UpdateControls();
+        }
+
+        private void UpdateControls()
+        {
+            buttonStart.Text = (appState == ApplicationGlobalState.Mining) ? "Stop" : "Start";
         }
     }
 }
