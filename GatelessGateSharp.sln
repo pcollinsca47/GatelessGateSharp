@@ -139,7 +139,7 @@ Global
 		{5C6B25E1-991B-4A2A-B9D3-8F5E672384FD}.Win8.1 Release|Win32.ActiveCfg = Release|Any CPU
 		{5C6B25E1-991B-4A2A-B9D3-8F5E672384FD}.Win8.1 Release|x64.ActiveCfg = Release|Any CPU
 		{5C6B25E1-991B-4A2A-B9D3-8F5E672384FD}.Win8.1 Release|x86.ActiveCfg = Release|Any CPU
-		{8270FCD3-8195-4761-95E1-2BFF95CCD876}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{8270FCD3-8195-4761-95E1-2BFF95CCD876}.Debug|Any CPU.ActiveCfg = Debug|x64
 		{8270FCD3-8195-4761-95E1-2BFF95CCD876}.Debug|Mixed Platforms.ActiveCfg = Release|x64
 		{8270FCD3-8195-4761-95E1-2BFF95CCD876}.Debug|Mixed Platforms.Build.0 = Release|x64
 		{8270FCD3-8195-4761-95E1-2BFF95CCD876}.Debug|Mixed Platforms.Deploy.0 = Release|x64
@@ -240,7 +240,7 @@ Global
 		{8270FCD3-8195-4761-95E1-2BFF95CCD876}.Win8.1 Release|x64.Build.0 = Release|x64
 		{8270FCD3-8195-4761-95E1-2BFF95CCD876}.Win8.1 Release|x86.ActiveCfg = Release|Win32
 		{8270FCD3-8195-4761-95E1-2BFF95CCD876}.Win8.1 Release|x86.Build.0 = Release|Win32
-		{5677641C-725E-4A22-A441-AC8FEFA214FD}.Debug|Any CPU.ActiveCfg = Win8.1 Debug|Win32
+		{5677641C-725E-4A22-A441-AC8FEFA214FD}.Debug|Any CPU.ActiveCfg = Win8.1 Debug|x64
 		{5677641C-725E-4A22-A441-AC8FEFA214FD}.Debug|Mixed Platforms.ActiveCfg = Win8.1 Debug|x64
 		{5677641C-725E-4A22-A441-AC8FEFA214FD}.Debug|Mixed Platforms.Build.0 = Win8.1 Debug|x64
 		{5677641C-725E-4A22-A441-AC8FEFA214FD}.Debug|Win32.ActiveCfg = Win8.1 Debug|Win32

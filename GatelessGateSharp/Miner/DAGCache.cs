@@ -380,15 +380,15 @@ namespace GatelessGateSharp
                 System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
                 sw.Start();
 
-                data = new byte[sDAGCacheSizes[mEpoch - 1]];
+                data = new byte[sDAGCacheSizes[mEpoch]];
 
                 byte[] o = hash.ComputeBytes(Utilities.StringToByteArray(mSeedhash)).GetBytes();
                 int n = data.Length / HASH_BYTES;
-                Buffer.BlockCopy(data, 0, o, 0, HASH_BYTES);
+                Buffer.BlockCopy(o, 0, data, 0, HASH_BYTES);
                 for (int i = 1; i < n; ++i)
                 {
                     o = hash.ComputeBytes(o).GetBytes();
-                    Buffer.BlockCopy(data, i * HASH_BYTES, o, 0, HASH_BYTES);
+                    Buffer.BlockCopy(o, 0, data, i * HASH_BYTES, HASH_BYTES);
                 }
 
                 o = new byte[64];
@@ -397,14 +397,17 @@ namespace GatelessGateSharp
                     for (int i = 0; i < n; ++i)
                     {
                         int u = ((i - 1 + n) % n);
-                        int v = data[i  * HASH_BYTES + 0] % n;
+                        int v = (int)((  ((UInt32)(data[i * HASH_BYTES + 0]) << 0)
+                                       | ((UInt32)(data[i * HASH_BYTES + 1]) << 8) 
+                                       | ((UInt32)(data[i * HASH_BYTES + 2]) << 16) 
+                                       | ((UInt32)(data[i * HASH_BYTES + 3]) << 24)) % (UInt32)n);
                         for (int j = 0; j < HASH_BYTES; ++j)
                             o[j] = (byte)(data[u * HASH_BYTES + j] ^ data[v * HASH_BYTES + j]);
                         o = hash.ComputeBytes(o).GetBytes();
-                        Buffer.BlockCopy(data, i * HASH_BYTES, o, 0, HASH_BYTES);
+                        Buffer.BlockCopy(o, 0, data, i * HASH_BYTES, HASH_BYTES);
                     }
                 }
-                
+
                 sDAGCacheDatabase[mEpoch] = data;
                 sw.Stop();
 

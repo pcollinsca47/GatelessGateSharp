@@ -39,7 +39,7 @@ namespace GatelessGateSharp
         private ComputeKernel mSearchKernel;
         private NiceHashEthashStratum mStratum;
         private Thread mMinerThread = null;
-        private long mLocalWorkSize = 256;
+        private long mLocalWorkSize = 128;
         private long mGlobalWorkSize;
 
         public OpenCLEthashMiner(ComputeDevice aDevice, int aDeviceIndex, NiceHashEthashStratum aStratum)
@@ -58,6 +58,8 @@ namespace GatelessGateSharp
             MainForm.Logger("Created DAG kernel for Device #" + aDeviceIndex + ".");
             mSearchKernel = mProgram.CreateKernel("search");
             MainForm.Logger("Created search kernel for Device #" + aDeviceIndex + ".");
+
+            //TestKernel();
 
             mMinerThread = new Thread(new ThreadStart(MinerThread));
             mMinerThread.IsBackground = true;
@@ -78,21 +80,25 @@ namespace GatelessGateSharp
             if (mStratum.CurrentJob == null)
                 throw new TimeoutException("Stratum server failed to send a new job.");
 
+            System.Diagnostics.Stopwatch consoleUpdateStopwatch = new System.Diagnostics.Stopwatch();
             NiceHashEthashStratum.Work work;
             int epoch = -1;
             long DAGSize = 0;
-            ComputeMemory DAGBuffer = null;
-            ComputeBuffer<UInt32> outputBuffer = new ComputeBuffer<UInt32>(Context, ComputeMemoryFlags.ReadWrite, 255);
+            ComputeBuffer<byte> DAGBuffer = null;
+            ComputeBuffer<UInt32> outputBuffer = new ComputeBuffer<UInt32>(Context, ComputeMemoryFlags.ReadWrite, 256);
             ComputeBuffer<byte> headerBuffer = new ComputeBuffer<byte>(Context, ComputeMemoryFlags.ReadOnly, 32);
-            UInt32[] output = new UInt32[255];
+            UInt32[] output = new UInt32[256];
             byte[] extranonceByteArray = Utilities.StringToByteArray(mStratum.Extranonce);
-            UInt64 startNonce = 0;
-            for (int i = 0; i < extranonceByteArray.Length; ++i)
-                startNonce |= (UInt64)extranonceByteArray[i] << (8 * (7 - i));
             while ((work = mStratum.GetWork()) != null)
             {
+                UInt64 startNonce = 0;
+                for (int i = 0; i < extranonceByteArray.Length; ++i)
+                    startNonce |= (UInt64)extranonceByteArray[i] << (8 * (7 - i)); 
                 String jobID = work.CurrentJob.ID;
-                fixed (byte* p = Utilities.StringToByteArray(work.CurrentJob.Headerhash))
+                String headerhash = work.CurrentJob.Headerhash;
+                String seedhash = work.CurrentJob.Seedhash;
+                double difficulty = mStratum.Difficulty;
+                fixed (byte* p = Utilities.StringToByteArray(headerhash))
                     Queue.Write<byte>(headerBuffer, true, 0, 32, (IntPtr)p, null);
 
                 if (epoch != work.CurrentJob.Epoch)
@@ -103,66 +109,65 @@ namespace GatelessGateSharp
                         DAGBuffer = null;
                     }
                     epoch = work.CurrentJob.Epoch;
-                    DAGCache cache = new DAGCache(work.CurrentJob.Epoch, work.CurrentJob.Seedhash);
+                    DAGCache cache = new DAGCache(epoch, work.CurrentJob.Seedhash);
                     DAGSize = Utilities.GetDAGSize(epoch);
-
-                    ComputeMemory DAGCacheBuffer;
-                    fixed (byte* p = cache.Data())
-                        DAGCacheBuffer = new ComputeBuffer<byte>(Context, ComputeMemoryFlags.ReadOnly | ComputeMemoryFlags.CopyHostPointer, cache.Data().Length, (IntPtr)p);
                     DAGBuffer = new ComputeBuffer<byte>(Context, ComputeMemoryFlags.ReadWrite, DAGSize);
-
-                    mDAGKernel.SetValueArgument<UInt32>(0, 0);
-                    mDAGKernel.SetMemoryArgument(1, DAGCacheBuffer);
-                    mDAGKernel.SetMemoryArgument(2, DAGBuffer);
-                    mDAGKernel.SetValueArgument<UInt32>(3, (UInt32)cache.Data().Length / 64);
-                    mDAGKernel.SetValueArgument<UInt32>(4, 1);
 
                     System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
                     sw.Start();
-                    Queue.Execute(mDAGKernel, new long[] { 0 }, new long[] { DAGSize / 64 }, new long[] { mLocalWorkSize }, null);
-                    Queue.Finish();
+                    fixed (byte* p = cache.Data())
+                    {
+                        ComputeBuffer<byte> DAGCacheBuffer = new ComputeBuffer<byte>(Context, ComputeMemoryFlags.ReadOnly | ComputeMemoryFlags.CopyHostPointer, cache.Data().Length, (IntPtr)p);
+                        mDAGKernel.SetValueArgument<UInt32>(0, 0);
+                        mDAGKernel.SetMemoryArgument(1, DAGCacheBuffer);
+                        mDAGKernel.SetMemoryArgument(2, DAGBuffer);
+                        mDAGKernel.SetValueArgument<UInt32>(3, (UInt32)cache.Data().Length / 64);
+                        mDAGKernel.SetValueArgument<UInt32>(4, 0xffffffffu);
+                        Queue.Execute(mDAGKernel, new long[] { 0 }, new long[] { DAGSize / 64 }, new long[] { mLocalWorkSize }, null);
+                        Queue.Finish();
+                        DAGCacheBuffer.Dispose();
+                    }
                     sw.Stop();
                     MainForm.Logger("Generated DAG for Epoch #" + epoch + " (" + (long)sw.Elapsed.TotalMilliseconds + "ms).");
-
-                    DAGCacheBuffer.Dispose();
-
-                    startNonce = 0;
                 }
 
-                while (jobID == work.CurrentJob.ID)
+                consoleUpdateStopwatch.Start();
+
+                while (mStratum.CurrentJob.ID.Equals(jobID))
                 {
+                    UInt64 target = (UInt64)((double)0xffff0000U / difficulty);
                     mSearchKernel.SetMemoryArgument(0, outputBuffer); // g_output
                     mSearchKernel.SetMemoryArgument(1, headerBuffer); // g_header
                     mSearchKernel.SetMemoryArgument(2, DAGBuffer); // _g_dag
-                    mSearchKernel.SetValueArgument<UInt32>(3, (UInt32)DAGSize / 128); // DAG_SIZE
+                    mSearchKernel.SetValueArgument<UInt32>(3, (UInt32)(DAGSize / 128)); // DAG_SIZE
                     mSearchKernel.SetValueArgument<UInt64>(4, startNonce); // start_nonce
-                    mSearchKernel.SetValueArgument<UInt64>(5, (UInt64)(0x00000000ffffffffUL / mStratum.Difficulty)); // target
-                    mSearchKernel.SetValueArgument<UInt32>(6, 1); // isolate
+                    mSearchKernel.SetValueArgument<UInt64>(5, target); // target
+                    mSearchKernel.SetValueArgument<UInt32>(6, 0xffffffffu); // isolate
 
                     System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
                     sw.Start();
                     fixed (UInt32* p = output)
                     {
-                        output[0] = 0;
-                        Queue.Write<UInt32>(outputBuffer, true, 0, 1, (IntPtr)p, null);
+                        output[255] = 0; // output[255] is used as an atomic counter.
+                        Queue.Write<UInt32>(outputBuffer, true, 0, 256, (IntPtr)p, null);
                         Queue.Execute(mSearchKernel, new long[] { 0 }, new long[] { mGlobalWorkSize }, new long[] { mLocalWorkSize }, null);
-                        Queue.Read<UInt32>(outputBuffer, true, 0, 255, (IntPtr)p, null);
+                        Queue.Read<UInt32>(outputBuffer, true, 0, 256, (IntPtr)p, null);
                     }
                     sw.Stop();
-                    //MainForm.Logger("Speed: " + ((double)mGlobalWorkSize) / sw.Elapsed.TotalSeconds / (1000000));
-                    if (output[0] > 0)
-                        MainForm.Logger("Share found.");
+                    if (consoleUpdateStopwatch.ElapsedMilliseconds >= 10 * 1000)
+                    {
+                        MainForm.Logger("Device #" + DeviceIndex + ": " + String.Format("{0:N2} Mh/s", ((double)mGlobalWorkSize) / sw.Elapsed.TotalSeconds / (1000000)));
+                        consoleUpdateStopwatch.Restart();
+                    }
+                    for (int i = 0; i < output[255]; ++i)
+                        mStratum.Submit(jobID, startNonce + (UInt64)output[i]);
                     startNonce += (UInt64)mGlobalWorkSize;
                 }
-
-                headerBuffer.Dispose();
             }
 
-            if (DAGBuffer != null)
-            {
-                DAGBuffer.Dispose();
-                DAGBuffer = null;
-            }
+            headerBuffer.Dispose();
+            outputBuffer.Dispose();
+            DAGBuffer.Dispose();
         }
     }
 }

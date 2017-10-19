@@ -423,7 +423,7 @@ namespace GatelessGateSharp
 
         public static long GetDAGSize(int epoch)
         {
-            return sDAGSizes[epoch - 1];
+            return sDAGSizes[epoch];
         }
         
         public static string ByteArrayToString(byte[] ba)
@@ -440,6 +440,15 @@ namespace GatelessGateSharp
             byte[] bytes = new byte[NumberChars / 2];
             for (int i = 0; i < NumberChars; i += 2)
                 bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+            return bytes;
+        }
+
+        public static byte[] StringToByteArrayReverse(String hex)
+        {
+            int NumberChars = hex.Length;
+            byte[] bytes = new byte[NumberChars / 2];
+            for (int i = 0; i < NumberChars; i += 2)
+                bytes[(NumberChars / 2) - (i / 2) - 1] = Convert.ToByte(hex.Substring(i, 2), 16);
             return bytes;
         }
     }

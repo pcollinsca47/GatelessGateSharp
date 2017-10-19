@@ -70,16 +70,22 @@ namespace GatelessGateSharp
             System.IO.StreamWriter file = new System.IO.StreamWriter(logFileName, true);
             file.WriteLine(lines);
             file.Close();
-            Instance.richTextBoxLog.SelectionLength = 0;
-            Instance.richTextBoxLog.SelectionStart = Instance.richTextBoxLog.Text.Length;
-            Instance.richTextBoxLog.ScrollToCaret();
-            if (Instance.richTextBoxLog.Text != "")
-                Instance.richTextBoxLog.Text += "\n";
-            Instance.richTextBoxLog.Text += lines;
-            Instance.richTextBoxLog.SelectionLength = 0;
-            Instance.richTextBoxLog.SelectionStart = Instance.richTextBoxLog.Text.Length;
-            Instance.richTextBoxLog.ScrollToCaret();
             Instance.loggerMutex.ReleaseMutex();
+
+            Instance.richTextBoxLog.Invoke((MethodInvoker)delegate
+            {
+                Instance.loggerMutex.WaitOne();
+                Instance.richTextBoxLog.SelectionLength = 0;
+                Instance.richTextBoxLog.SelectionStart = Instance.richTextBoxLog.Text.Length;
+                Instance.richTextBoxLog.ScrollToCaret();
+                if (Instance.richTextBoxLog.Text != "")
+                    Instance.richTextBoxLog.Text += "\n";
+                Instance.richTextBoxLog.Text += lines;
+                Instance.richTextBoxLog.SelectionLength = 0;
+                Instance.richTextBoxLog.SelectionStart = Instance.richTextBoxLog.Text.Length;
+                Instance.richTextBoxLog.ScrollToCaret();
+                Instance.loggerMutex.ReleaseMutex();
+            });
         }
 
         unsafe public MainForm()
@@ -87,29 +93,8 @@ namespace GatelessGateSharp
             instance = this;
 
             InitializeComponent();
-            Logger(appName + " started.");
-            labelGPUVendorArray = new Control[] { labelGPU0Vendor, labelGPU1Vendor, labelGPU2Vendor, labelGPU3Vendor, labelGPU4Vendor, labelGPU5Vendor, labelGPU6Vendor, labelGPU7Vendor };
-            labelGPUNameArray = new Control[] { labelGPU0Name, labelGPU1Name, labelGPU2Name, labelGPU3Name, labelGPU4Name, labelGPU5Name, labelGPU6Name, labelGPU7Name };
-            labelGPUIDArray = new Control[] { labelGPU0ID, labelGPU1ID, labelGPU2ID, labelGPU3ID, labelGPU4ID, labelGPU5ID, labelGPU6ID, labelGPU7ID };
-            labelGPUTempArray = new Control[] { labelGPU0Temp, labelGPU1Temp, labelGPU2Temp, labelGPU3Temp, labelGPU4Temp, labelGPU5Temp, labelGPU6Temp, labelGPU7Temp };
-            labelGPUActivityArray = new Control[] { labelGPU0Activity, labelGPU1Activity, labelGPU2Activity, labelGPU3Activity, labelGPU4Activity, labelGPU5Activity, labelGPU6Activity, labelGPU7Activity };
-            labelGPUFanArray = new Control[] { labelGPU0Fan, labelGPU1Fan, labelGPU2Fan, labelGPU3Fan, labelGPU4Fan, labelGPU5Fan, labelGPU6Fan, labelGPU7Fan };
-            labelGPUSpeedArray = new Control[] { labelGPU0Speed, labelGPU1Speed, labelGPU2Speed, labelGPU3Speed, labelGPU4Speed, labelGPU5Speed, labelGPU6Speed, labelGPU7Speed };
-            labelGPUCoreClockArray = new Control[] { labelGPU0CoreClock, labelGPU1CoreClock, labelGPU2CoreClock, labelGPU3CoreClock, labelGPU4CoreClock, labelGPU5CoreClock, labelGPU6CoreClock, labelGPU7CoreClock };
-            labelGPUMemoryClockArray = new Control[] { labelGPU0MemoryClock, labelGPU1MemoryClock, labelGPU2MemoryClock, labelGPU3MemoryClock, labelGPU4MemoryClock, labelGPU5MemoryClock, labelGPU6MemoryClock, labelGPU7MemoryClock };
-
-            if (LoadPhyMemDriver() != 0)
-            {
-                Logger("Successfully loaded phymem.");
-            }
-            else
-            {
-                Logger("Failed to load phymem.");
-                MessageBox.Show("Failed to load phymem.", appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                System.Environment.Exit(1);
-            }
         }
-
+        
         private void CreateNewDatabase()
         {
             SQLiteConnection.CreateFile(databaseFileName);
@@ -181,6 +166,28 @@ namespace GatelessGateSharp
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            Logger(appName + " started.");
+            labelGPUVendorArray = new Control[] { labelGPU0Vendor, labelGPU1Vendor, labelGPU2Vendor, labelGPU3Vendor, labelGPU4Vendor, labelGPU5Vendor, labelGPU6Vendor, labelGPU7Vendor };
+            labelGPUNameArray = new Control[] { labelGPU0Name, labelGPU1Name, labelGPU2Name, labelGPU3Name, labelGPU4Name, labelGPU5Name, labelGPU6Name, labelGPU7Name };
+            labelGPUIDArray = new Control[] { labelGPU0ID, labelGPU1ID, labelGPU2ID, labelGPU3ID, labelGPU4ID, labelGPU5ID, labelGPU6ID, labelGPU7ID };
+            labelGPUTempArray = new Control[] { labelGPU0Temp, labelGPU1Temp, labelGPU2Temp, labelGPU3Temp, labelGPU4Temp, labelGPU5Temp, labelGPU6Temp, labelGPU7Temp };
+            labelGPUActivityArray = new Control[] { labelGPU0Activity, labelGPU1Activity, labelGPU2Activity, labelGPU3Activity, labelGPU4Activity, labelGPU5Activity, labelGPU6Activity, labelGPU7Activity };
+            labelGPUFanArray = new Control[] { labelGPU0Fan, labelGPU1Fan, labelGPU2Fan, labelGPU3Fan, labelGPU4Fan, labelGPU5Fan, labelGPU6Fan, labelGPU7Fan };
+            labelGPUSpeedArray = new Control[] { labelGPU0Speed, labelGPU1Speed, labelGPU2Speed, labelGPU3Speed, labelGPU4Speed, labelGPU5Speed, labelGPU6Speed, labelGPU7Speed };
+            labelGPUCoreClockArray = new Control[] { labelGPU0CoreClock, labelGPU1CoreClock, labelGPU2CoreClock, labelGPU3CoreClock, labelGPU4CoreClock, labelGPU5CoreClock, labelGPU6CoreClock, labelGPU7CoreClock };
+            labelGPUMemoryClockArray = new Control[] { labelGPU0MemoryClock, labelGPU1MemoryClock, labelGPU2MemoryClock, labelGPU3MemoryClock, labelGPU4MemoryClock, labelGPU5MemoryClock, labelGPU6MemoryClock, labelGPU7MemoryClock };
+
+            if (LoadPhyMemDriver() != 0)
+            {
+                Logger("Successfully loaded phymem.");
+            }
+            else
+            {
+                Logger("Failed to load phymem.");
+                MessageBox.Show("Failed to load phymem.", appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                System.Environment.Exit(1);
+            }
+
             if (!System.IO.File.Exists(databaseFileName))
                 CreateNewDatabase();
             LoadDatabase();
