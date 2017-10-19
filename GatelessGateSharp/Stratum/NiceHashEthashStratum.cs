@@ -108,8 +108,19 @@ namespace GatelessGateSharp
         {
             string line;
 
-            while ((line = mStreamReader.ReadLine()) != null && !Stopped)
+            while (!Stopped)
             {
+                try
+                {
+                    if ((line = mStreamReader.ReadLine()) == null)
+                        throw new Exception("Disconnected from stratum server.");
+                }
+                catch (Exception ex)
+                {
+                    MainForm.Logger("Failed to receive data from stratum server: " + ex.Message);
+                    break;
+                }
+
                 Dictionary<String, Object> response = JsonConvert.DeserializeObject<Dictionary<string, Object>>(line);
                 if (response.ContainsKey("method") && response.ContainsKey("params"))
                 {

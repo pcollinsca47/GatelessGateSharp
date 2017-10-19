@@ -163,9 +163,10 @@ namespace GatelessGateSharp
                         Queue.Read<UInt32>(outputBuffer, true, 0, 256, (IntPtr)p, null);
                     }
                     sw.Stop();
+                    mSpeed = ((double)mGlobalWorkSize) / sw.Elapsed.TotalSeconds;
                     if (consoleUpdateStopwatch.ElapsedMilliseconds >= 10 * 1000)
                     {
-                        MainForm.Logger("Device #" + DeviceIndex + ": " + String.Format("{0:N2} Mh/s", ((double)mGlobalWorkSize) / sw.Elapsed.TotalSeconds / (1000000)));
+                        MainForm.Logger("Device #" + DeviceIndex + ": " + String.Format("{0:N2} Mh/s", mSpeed / (1000000)));
                         consoleUpdateStopwatch.Restart();
                     }
                     for (int i = 0; i < output[255]; ++i)
@@ -177,6 +178,7 @@ namespace GatelessGateSharp
             headerBuffer.Dispose();
             outputBuffer.Dispose();
             DAGBuffer.Dispose();
+            mSpeed = 0;
         }
     }
 }

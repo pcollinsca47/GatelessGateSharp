@@ -329,10 +329,23 @@ namespace GatelessGateSharp
 
         private void UpdateDeviceStatus()
         {
+            double totalSpeed = 0;
+            if (mMiners != null)
+                foreach (Miner miner in mMiners)
+                    totalSpeed += miner.Speed;
+            labelCurrentSpeed.Text = (appState != ApplicationGlobalState.Mining) ? "-" : String.Format("{0:N2} Mh/s", totalSpeed / 1000000);
+
             ADLMutex.WaitOne();
             int deviceIndex = 0;
             foreach (ComputeDevice device in computeDeviceArray)
             {
+                double speed = 0;
+                if (mMiners != null)
+                    foreach (Miner miner in mMiners)
+                        if (miner.DeviceIndex == deviceIndex)
+                            speed += miner.Speed;
+                labelGPUSpeedArray[deviceIndex].Text = (appState != ApplicationGlobalState.Mining) ? "-" : String.Format("{0:N2} Mh/s", speed / 1000000);
+
                 if (ADLAdapterIndexArray[deviceIndex] >= 0)
                 {
                     // temperature
@@ -557,6 +570,8 @@ namespace GatelessGateSharp
 
         private void buttonStart_Click(object sender, EventArgs e)
         {
+            this.Enabled = false;
+
             if (appState == ApplicationGlobalState.Idle)
             {
                 try
@@ -587,7 +602,7 @@ namespace GatelessGateSharp
                     mMiners = null;
                     mStratum.Stop();
                     System.Threading.Thread.Sleep(1000);
-                    mStratum.Stop();
+                    mStratum = null;
                 }
                 catch (Exception ex)
                 {
@@ -604,6 +619,15 @@ namespace GatelessGateSharp
         private void UpdateControls()
         {
             buttonStart.Text = (appState == ApplicationGlobalState.Mining) ? "Stop" : "Start";
+            buttonBenchmark.Enabled = false;
+
+            groupBoxCoinsToMine.Enabled = (appState == ApplicationGlobalState.Idle);
+            textBoxBitcoinAddress.Enabled = (appState == ApplicationGlobalState.Idle);
+            textBoxEthereumAddress.Enabled = (appState == ApplicationGlobalState.Idle);
+            textBoxMoneroAddress.Enabled = (appState == ApplicationGlobalState.Idle);
+            textBoxZcashAddress.Enabled = (appState == ApplicationGlobalState.Idle);
+
+            this.Enabled = true;
         }
     }
 }

@@ -123,12 +123,12 @@
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
+            this.labelCurrentSpeed = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.tabPageCoins = new System.Windows.Forms.TabPage();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBoxCoinsToMine = new System.Windows.Forms.GroupBox();
             this.radioButton4 = new System.Windows.Forms.RadioButton();
             this.radioButton3 = new System.Windows.Forms.RadioButton();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
@@ -153,13 +153,13 @@
             this.tabPageLog = new System.Windows.Forms.TabPage();
             this.richTextBoxLog = new System.Windows.Forms.RichTextBox();
             this.buttonStart = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
+            this.buttonBenchmark = new System.Windows.Forms.Button();
             this.timerDeviceStatusUpdates = new System.Windows.Forms.Timer(this.components);
             this.tabControlPools.SuspendLayout();
             this.tabPageHome.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tabPageCoins.SuspendLayout();
-            this.groupBox1.SuspendLayout();
+            this.groupBoxCoinsToMine.SuspendLayout();
             this.tabPagePools.SuspendLayout();
             this.tabPageLog.SuspendLayout();
             this.SuspendLayout();
@@ -190,7 +190,7 @@
             this.tabPageHome.Controls.Add(this.label7);
             this.tabPageHome.Controls.Add(this.label6);
             this.tabPageHome.Controls.Add(this.label5);
-            this.tabPageHome.Controls.Add(this.label4);
+            this.tabPageHome.Controls.Add(this.labelCurrentSpeed);
             this.tabPageHome.Controls.Add(this.label3);
             this.tabPageHome.Controls.Add(this.label2);
             this.tabPageHome.Controls.Add(this.label1);
@@ -1103,14 +1103,14 @@
             this.label5.TabIndex = 9;
             this.label5.Text = "Estimated Profits:";
             // 
-            // label4
+            // labelCurrentSpeed
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(96, 42);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(41, 13);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "0 Mh/s";
+            this.labelCurrentSpeed.AutoSize = true;
+            this.labelCurrentSpeed.Location = new System.Drawing.Point(96, 42);
+            this.labelCurrentSpeed.Name = "labelCurrentSpeed";
+            this.labelCurrentSpeed.Size = new System.Drawing.Size(10, 13);
+            this.labelCurrentSpeed.TabIndex = 8;
+            this.labelCurrentSpeed.Text = "-";
             // 
             // label3
             // 
@@ -1141,7 +1141,7 @@
             // 
             // tabPageCoins
             // 
-            this.tabPageCoins.Controls.Add(this.groupBox1);
+            this.tabPageCoins.Controls.Add(this.groupBoxCoinsToMine);
             this.tabPageCoins.Controls.Add(this.label17);
             this.tabPageCoins.Controls.Add(this.button5);
             this.tabPageCoins.Controls.Add(this.button4);
@@ -1163,18 +1163,18 @@
             this.tabPageCoins.Text = "Coins";
             this.tabPageCoins.UseVisualStyleBackColor = true;
             // 
-            // groupBox1
+            // groupBoxCoinsToMine
             // 
-            this.groupBox1.Controls.Add(this.radioButton4);
-            this.groupBox1.Controls.Add(this.radioButton3);
-            this.groupBox1.Controls.Add(this.radioButton2);
-            this.groupBox1.Controls.Add(this.radioButton1);
-            this.groupBox1.Location = new System.Drawing.Point(9, 6);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(112, 115);
-            this.groupBox1.TabIndex = 20;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Coin(s) to Mine";
+            this.groupBoxCoinsToMine.Controls.Add(this.radioButton4);
+            this.groupBoxCoinsToMine.Controls.Add(this.radioButton3);
+            this.groupBoxCoinsToMine.Controls.Add(this.radioButton2);
+            this.groupBoxCoinsToMine.Controls.Add(this.radioButton1);
+            this.groupBoxCoinsToMine.Location = new System.Drawing.Point(9, 6);
+            this.groupBoxCoinsToMine.Name = "groupBoxCoinsToMine";
+            this.groupBoxCoinsToMine.Size = new System.Drawing.Size(112, 115);
+            this.groupBoxCoinsToMine.TabIndex = 20;
+            this.groupBoxCoinsToMine.TabStop = false;
+            this.groupBoxCoinsToMine.Text = "Coin(s) to Mine";
             // 
             // radioButton4
             // 
@@ -1403,14 +1403,14 @@
             this.buttonStart.UseVisualStyleBackColor = true;
             this.buttonStart.Click += new System.EventHandler(this.buttonStart_Click);
             // 
-            // button6
+            // buttonBenchmark
             // 
-            this.button6.Location = new System.Drawing.Point(440, 391);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(75, 23);
-            this.button6.TabIndex = 2;
-            this.button6.Text = "Benchmark";
-            this.button6.UseVisualStyleBackColor = true;
+            this.buttonBenchmark.Location = new System.Drawing.Point(440, 391);
+            this.buttonBenchmark.Name = "buttonBenchmark";
+            this.buttonBenchmark.Size = new System.Drawing.Size(75, 23);
+            this.buttonBenchmark.TabIndex = 2;
+            this.buttonBenchmark.Text = "Benchmark";
+            this.buttonBenchmark.UseVisualStyleBackColor = true;
             // 
             // timerDeviceStatusUpdates
             // 
@@ -1422,7 +1422,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(606, 424);
-            this.Controls.Add(this.button6);
+            this.Controls.Add(this.buttonBenchmark);
             this.Controls.Add(this.buttonStart);
             this.Controls.Add(this.tabControlPools);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -1438,8 +1438,8 @@
             this.groupBox2.PerformLayout();
             this.tabPageCoins.ResumeLayout(false);
             this.tabPageCoins.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.groupBoxCoinsToMine.ResumeLayout(false);
+            this.groupBoxCoinsToMine.PerformLayout();
             this.tabPagePools.ResumeLayout(false);
             this.tabPagePools.PerformLayout();
             this.tabPageLog.ResumeLayout(false);
@@ -1456,7 +1456,7 @@
         private System.Windows.Forms.TabPage tabPagePools;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label labelCurrentSpeed;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
@@ -1480,9 +1480,9 @@
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button buttonBenchmark;
         private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBoxCoinsToMine;
         private System.Windows.Forms.RadioButton radioButton4;
         private System.Windows.Forms.RadioButton radioButton3;
         private System.Windows.Forms.RadioButton radioButton2;
