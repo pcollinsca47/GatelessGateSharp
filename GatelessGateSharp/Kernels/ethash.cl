@@ -371,7 +371,7 @@ static void SHA3_512(uint2 *s, uint isolate)
         s[i] = st[i];
 }
 
-__kernel void GenerateDAG(uint start, __global const uint16 *_Cache, __global uint16 *_DAG, uint LIGHT_SIZE, uint DAG_SIZE, uint isolate)
+__kernel void GenerateDAG(uint start, __global const uint16 *_Cache, __global uint16 *_DAG, uint LIGHT_SIZE, /* uint DAG_SIZE, */ uint isolate)
 {
     __global const Node *Cache = (__global const Node *) _Cache;
     __global Node *DAG = (__global Node *) _DAG;
@@ -397,6 +397,6 @@ __kernel void GenerateDAG(uint start, __global const uint16 *_Cache, __global ui
 
 	SHA3_512(DAGNode.qwords, isolate);
 
-	if (NodeIdx < DAG_SIZE)
+	//if (NodeIdx < DAG_SIZE)
 		DAG[NodeIdx] = DAGNode;
 }

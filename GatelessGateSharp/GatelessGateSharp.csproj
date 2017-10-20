@@ -170,6 +170,7 @@
     <PostBuildEvent>copy $(SolutionDir)$(SolutionName)\SQLite.Interop.dll $(TargetDir)
 copy $(SolutionDir)$(SolutionName)\System.Data.SQLite.dll $(TargetDir)
 xcopy /i /s /y $(ProjectDir)Kernels $(TargetDir)Kernels
+xcopy /i /s /y $(ProjectDir)BinaryKernels $(TargetDir)BinaryKernels
 </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

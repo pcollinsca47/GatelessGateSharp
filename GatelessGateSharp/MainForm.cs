@@ -31,6 +31,9 @@ using System.Collections;
 using System.Runtime.InteropServices;
 using Cloo;
 using ATI.ADL;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 
 
 namespace GatelessGateSharp
@@ -324,7 +327,36 @@ namespace GatelessGateSharp
                 Logger("Failed to initialize AMD Display Library.");
             }
 
+            UpdateDeviceStatus();
             timerDeviceStatusUpdates.Enabled = true;
+            UpdateCurrencyStats();
+            timerCurrencyStatUpdates.Enabled = true;
+        }
+
+        private void UpdateCurrencyStats()
+        {
+            double balance = 0;
+            try
+            {
+                var client = new System.Net.WebClient();
+                String jsonString = client.DownloadString("https://api.nicehash.com/api?method=stats.provider&addr=" + textBoxBitcoinAddress.Text);
+                var response = JsonConvert.DeserializeObject<Dictionary<string, Object>>(jsonString);
+                var result = (JContainer)(response["result"]);
+                var stats = (JArray)(result["stats"]);
+                foreach (JContainer item in stats)
+                    balance += Double.Parse((String)item["balance"]);
+
+                jsonString = client.DownloadString("https://blockchain.info/ticker");
+                response = JsonConvert.DeserializeObject<Dictionary<string, Object>>(jsonString);
+                var USD = (JContainer)(response["USD"]);
+                var rate = (double)(USD["15m"]);
+
+                labelBalance.Text = balance.ToString() + " BTC (" + String.Format("{0:N2}", (balance * rate)) + " USD)";
+            }
+            catch (Exception _)
+            {
+                labelBalance.Text = "-";
+            }
         }
 
         private void UpdateDeviceStatus()
@@ -628,6 +660,11 @@ namespace GatelessGateSharp
             textBoxZcashAddress.Enabled = (appState == ApplicationGlobalState.Idle);
 
             this.Enabled = true;
+        }
+
+        private void timerCurrencyStatUpdates_Tick(object sender, EventArgs e)
+        {
+            UpdateCurrencyStats();
         }
     }
 }

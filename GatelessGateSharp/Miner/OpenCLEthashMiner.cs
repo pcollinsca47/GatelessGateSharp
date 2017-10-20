@@ -39,7 +39,7 @@ namespace GatelessGateSharp
         private ComputeKernel mSearchKernel;
         private NiceHashEthashStratum mStratum;
         private Thread mMinerThread = null;
-        private long mLocalWorkSize = 256;
+        private long mLocalWorkSize = 192;
         private long mGlobalWorkSize;
 
         public OpenCLEthashMiner(ComputeDevice aDevice, int aDeviceIndex, NiceHashEthashStratum aStratum)
@@ -49,6 +49,7 @@ namespace GatelessGateSharp
             mGlobalWorkSize = 4096 * mLocalWorkSize * Device.MaxComputeUnits;
 
             mProgram = new ComputeProgram(this.Context, System.IO.File.ReadAllText(@"Kernels\ethash.cl"));
+            //mProgram = new ComputeProgram(this.Context, new List<byte[]> { System.IO.File.ReadAllBytes(@"BinaryKernels\ethash-newEllesmeregw192l8.bin") }, new List<ComputeDevice> { Device });
             MainForm.Logger("Loaded ethash program for Device #" + aDeviceIndex + ".");
             List<ComputeDevice> deviceList = new List<ComputeDevice>();
             deviceList.Add(Device);
@@ -111,24 +112,26 @@ namespace GatelessGateSharp
                     epoch = work.CurrentJob.Epoch;
                     DAGCache cache = new DAGCache(epoch, work.CurrentJob.Seedhash);
                     DAGSize = Utilities.GetDAGSize(epoch);
-                    DAGBuffer = new ComputeBuffer<byte>(Context, ComputeMemoryFlags.ReadWrite, DAGSize);
 
                     System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
                     sw.Start();
                     fixed (byte* p = cache.Data())
                     {
-                        ComputeBuffer<byte> DAGCacheBuffer = new ComputeBuffer<byte>(Context, ComputeMemoryFlags.ReadOnly | ComputeMemoryFlags.CopyHostPointer, cache.Data().Length, (IntPtr)p);
-                        mDAGKernel.SetValueArgument<UInt32>(0, 0);
-                        mDAGKernel.SetMemoryArgument(1, DAGCacheBuffer);
-                        mDAGKernel.SetMemoryArgument(2, DAGBuffer);
-                        mDAGKernel.SetValueArgument<UInt32>(3, (UInt32)cache.Data().Length / 64);
-                        mDAGKernel.SetValueArgument<UInt32>(4, (UInt32)(DAGSize / 64));
-                        mDAGKernel.SetValueArgument<UInt32>(5, 0xffffffffu);
-
                         long globalWorkSize = DAGSize / 64;
                         globalWorkSize /= 8;
                         if (globalWorkSize % mLocalWorkSize > 0)
                             globalWorkSize += mLocalWorkSize - globalWorkSize % mLocalWorkSize;
+
+                        ComputeBuffer<byte> DAGCacheBuffer = new ComputeBuffer<byte>(Context, ComputeMemoryFlags.ReadOnly | ComputeMemoryFlags.CopyHostPointer, cache.Data().Length, (IntPtr)p);
+                        DAGBuffer = new ComputeBuffer<byte>(Context, ComputeMemoryFlags.ReadWrite, globalWorkSize * 8 * 64 /* DAGSize */); // With this, we can remove a conditional statement in the DAG kernel.
+
+                        mDAGKernel.SetValueArgument<UInt32>(0, 0);
+                        mDAGKernel.SetMemoryArgument(1, DAGCacheBuffer);
+                        mDAGKernel.SetMemoryArgument(2, DAGBuffer);
+                        mDAGKernel.SetValueArgument<UInt32>(3, (UInt32)cache.Data().Length / 64);
+                        //mDAGKernel.SetValueArgument<UInt32>(4, (UInt32)(DAGSize / 64));
+                        mDAGKernel.SetValueArgument<UInt32>(4, 0xffffffffu);
+
                         for (long start = 0; start < DAGSize / 64; start += globalWorkSize)
                         {
                             Queue.Execute(mDAGKernel, new long[] { start }, new long[] { globalWorkSize }, new long[] { mLocalWorkSize }, null);

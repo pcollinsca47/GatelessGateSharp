@@ -30,7 +30,7 @@
         {
             this.components = new System.ComponentModel.Container();
             this.tabControlPools = new System.Windows.Forms.TabControl();
-            this.tabPageHome = new System.Windows.Forms.TabPage();
+            this.tabPageStatus = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.labelGPU7MemoryClock = new System.Windows.Forms.Label();
             this.labelGPU3MemoryClock = new System.Windows.Forms.Label();
@@ -115,13 +115,10 @@
             this.label19 = new System.Windows.Forms.Label();
             this.label69 = new System.Windows.Forms.Label();
             this.label70 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
+            this.labelBalance = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.labelCurrentSpeed = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -149,14 +146,15 @@
             this.tabPagePools = new System.Windows.Forms.TabPage();
             this.label18 = new System.Windows.Forms.Label();
             this.listBoxPoolPriorities = new System.Windows.Forms.ListBox();
-            this.tabPageSettings = new System.Windows.Forms.TabPage();
+            this.tabPageDevices = new System.Windows.Forms.TabPage();
             this.tabPageLog = new System.Windows.Forms.TabPage();
             this.richTextBoxLog = new System.Windows.Forms.RichTextBox();
             this.buttonStart = new System.Windows.Forms.Button();
             this.buttonBenchmark = new System.Windows.Forms.Button();
             this.timerDeviceStatusUpdates = new System.Windows.Forms.Timer(this.components);
+            this.timerCurrencyStatUpdates = new System.Windows.Forms.Timer(this.components);
             this.tabControlPools.SuspendLayout();
-            this.tabPageHome.SuspendLayout();
+            this.tabPageStatus.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tabPageCoins.SuspendLayout();
             this.groupBoxCoinsToMine.SuspendLayout();
@@ -166,10 +164,10 @@
             // 
             // tabControlPools
             // 
-            this.tabControlPools.Controls.Add(this.tabPageHome);
+            this.tabControlPools.Controls.Add(this.tabPageStatus);
             this.tabControlPools.Controls.Add(this.tabPageCoins);
             this.tabControlPools.Controls.Add(this.tabPagePools);
-            this.tabControlPools.Controls.Add(this.tabPageSettings);
+            this.tabControlPools.Controls.Add(this.tabPageDevices);
             this.tabControlPools.Controls.Add(this.tabPageLog);
             this.tabControlPools.Location = new System.Drawing.Point(11, 8);
             this.tabControlPools.Name = "tabControlPools";
@@ -177,29 +175,26 @@
             this.tabControlPools.Size = new System.Drawing.Size(585, 377);
             this.tabControlPools.TabIndex = 0;
             // 
-            // tabPageHome
+            // tabPageStatus
             // 
-            this.tabPageHome.Controls.Add(this.groupBox2);
-            this.tabPageHome.Controls.Add(this.label69);
-            this.tabPageHome.Controls.Add(this.label70);
-            this.tabPageHome.Controls.Add(this.label11);
-            this.tabPageHome.Controls.Add(this.label9);
-            this.tabPageHome.Controls.Add(this.label8);
-            this.tabPageHome.Controls.Add(this.label12);
-            this.tabPageHome.Controls.Add(this.label10);
-            this.tabPageHome.Controls.Add(this.label7);
-            this.tabPageHome.Controls.Add(this.label6);
-            this.tabPageHome.Controls.Add(this.label5);
-            this.tabPageHome.Controls.Add(this.labelCurrentSpeed);
-            this.tabPageHome.Controls.Add(this.label3);
-            this.tabPageHome.Controls.Add(this.label2);
-            this.tabPageHome.Controls.Add(this.label1);
-            this.tabPageHome.Location = new System.Drawing.Point(4, 22);
-            this.tabPageHome.Name = "tabPageHome";
-            this.tabPageHome.Size = new System.Drawing.Size(577, 351);
-            this.tabPageHome.TabIndex = 2;
-            this.tabPageHome.Text = "Home";
-            this.tabPageHome.UseVisualStyleBackColor = true;
+            this.tabPageStatus.Controls.Add(this.groupBox2);
+            this.tabPageStatus.Controls.Add(this.label69);
+            this.tabPageStatus.Controls.Add(this.label70);
+            this.tabPageStatus.Controls.Add(this.label8);
+            this.tabPageStatus.Controls.Add(this.label12);
+            this.tabPageStatus.Controls.Add(this.label10);
+            this.tabPageStatus.Controls.Add(this.labelBalance);
+            this.tabPageStatus.Controls.Add(this.label5);
+            this.tabPageStatus.Controls.Add(this.labelCurrentSpeed);
+            this.tabPageStatus.Controls.Add(this.label3);
+            this.tabPageStatus.Controls.Add(this.label2);
+            this.tabPageStatus.Controls.Add(this.label1);
+            this.tabPageStatus.Location = new System.Drawing.Point(4, 22);
+            this.tabPageStatus.Name = "tabPageStatus";
+            this.tabPageStatus.Size = new System.Drawing.Size(577, 351);
+            this.tabPageStatus.TabIndex = 2;
+            this.tabPageStatus.Text = "Status";
+            this.tabPageStatus.UseVisualStyleBackColor = true;
             // 
             // groupBox2
             // 
@@ -284,9 +279,10 @@
             this.groupBox2.Controls.Add(this.label21);
             this.groupBox2.Controls.Add(this.label20);
             this.groupBox2.Controls.Add(this.label19);
-            this.groupBox2.Location = new System.Drawing.Point(11, 117);
+            this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.groupBox2.Location = new System.Drawing.Point(11, 118);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(555, 222);
+            this.groupBox2.Size = new System.Drawing.Size(555, 221);
             this.groupBox2.TabIndex = 140;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Devices";
@@ -531,7 +527,7 @@
             // 
             this.labelGPU7Name.Location = new System.Drawing.Point(89, 195);
             this.labelGPU7Name.Name = "labelGPU7Name";
-            this.labelGPU7Name.Size = new System.Drawing.Size(110, 14);
+            this.labelGPU7Name.Size = new System.Drawing.Size(115, 14);
             this.labelGPU7Name.TabIndex = 194;
             this.labelGPU7Name.Text = "Radeon RX 480";
             // 
@@ -539,7 +535,7 @@
             // 
             this.labelGPU3Name.Location = new System.Drawing.Point(89, 108);
             this.labelGPU3Name.Name = "labelGPU3Name";
-            this.labelGPU3Name.Size = new System.Drawing.Size(110, 14);
+            this.labelGPU3Name.Size = new System.Drawing.Size(115, 14);
             this.labelGPU3Name.TabIndex = 193;
             this.labelGPU3Name.Text = "Radeon RX 480";
             // 
@@ -653,7 +649,7 @@
             // 
             this.labelGPU6Name.Location = new System.Drawing.Point(89, 173);
             this.labelGPU6Name.Name = "labelGPU6Name";
-            this.labelGPU6Name.Size = new System.Drawing.Size(110, 14);
+            this.labelGPU6Name.Size = new System.Drawing.Size(115, 14);
             this.labelGPU6Name.TabIndex = 180;
             this.labelGPU6Name.Text = "Radeon RX 480";
             // 
@@ -661,7 +657,7 @@
             // 
             this.labelGPU2Name.Location = new System.Drawing.Point(89, 86);
             this.labelGPU2Name.Name = "labelGPU2Name";
-            this.labelGPU2Name.Size = new System.Drawing.Size(110, 14);
+            this.labelGPU2Name.Size = new System.Drawing.Size(115, 14);
             this.labelGPU2Name.TabIndex = 179;
             this.labelGPU2Name.Text = "Radeon RX 480";
             // 
@@ -775,7 +771,7 @@
             // 
             this.labelGPU5Name.Location = new System.Drawing.Point(89, 152);
             this.labelGPU5Name.Name = "labelGPU5Name";
-            this.labelGPU5Name.Size = new System.Drawing.Size(110, 14);
+            this.labelGPU5Name.Size = new System.Drawing.Size(115, 14);
             this.labelGPU5Name.TabIndex = 166;
             this.labelGPU5Name.Text = "Radeon RX 480";
             // 
@@ -783,7 +779,7 @@
             // 
             this.labelGPU1Name.Location = new System.Drawing.Point(89, 65);
             this.labelGPU1Name.Name = "labelGPU1Name";
-            this.labelGPU1Name.Size = new System.Drawing.Size(110, 14);
+            this.labelGPU1Name.Size = new System.Drawing.Size(115, 14);
             this.labelGPU1Name.TabIndex = 165;
             this.labelGPU1Name.Text = "Radeon RX 480";
             // 
@@ -897,7 +893,7 @@
             // 
             this.labelGPU4Name.Location = new System.Drawing.Point(89, 130);
             this.labelGPU4Name.Name = "labelGPU4Name";
-            this.labelGPU4Name.Size = new System.Drawing.Size(110, 14);
+            this.labelGPU4Name.Size = new System.Drawing.Size(115, 14);
             this.labelGPU4Name.TabIndex = 151;
             this.labelGPU4Name.Text = "Radeon RX 480";
             // 
@@ -905,7 +901,7 @@
             // 
             this.labelGPU0Name.Location = new System.Drawing.Point(89, 44);
             this.labelGPU0Name.Name = "labelGPU0Name";
-            this.labelGPU0Name.Size = new System.Drawing.Size(110, 14);
+            this.labelGPU0Name.Size = new System.Drawing.Size(115, 14);
             this.labelGPU0Name.TabIndex = 152;
             this.labelGPU0Name.Text = "Radeon RX 480";
             // 
@@ -1015,12 +1011,11 @@
             // 
             // label69
             // 
-            this.label69.AutoSize = true;
             this.label69.Location = new System.Drawing.Point(96, 8);
             this.label69.Name = "label69";
-            this.label69.Size = new System.Drawing.Size(62, 13);
+            this.label69.Size = new System.Drawing.Size(109, 17);
             this.label69.TabIndex = 23;
-            this.label69.Text = "NICEHASH";
+            this.label69.Text = "NiceHash";
             // 
             // label70
             // 
@@ -1031,41 +1026,21 @@
             this.label70.TabIndex = 22;
             this.label70.Text = "Current Pool:";
             // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(201, 76);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(80, 13);
-            this.label11.TabIndex = 19;
-            this.label11.Text = "(0 USD/Month)";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(201, 59);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(69, 13);
-            this.label9.TabIndex = 18;
-            this.label9.Text = "(0 USD/Day)";
-            // 
             // label8
             // 
-            this.label8.AutoSize = true;
             this.label8.Location = new System.Drawing.Point(96, 76);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(73, 13);
+            this.label8.Size = new System.Drawing.Size(109, 16);
             this.label8.TabIndex = 17;
-            this.label8.Text = "0 ETH/Month";
+            this.label8.Text = "-";
             // 
             // label12
             // 
-            this.label12.AutoSize = true;
             this.label12.Location = new System.Drawing.Point(96, 59);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(62, 13);
+            this.label12.Size = new System.Drawing.Size(109, 13);
             this.label12.TabIndex = 16;
-            this.label12.Text = "0 ETH/Day";
+            this.label12.Text = "-";
             // 
             // label10
             // 
@@ -1076,23 +1051,13 @@
             this.label10.TabIndex = 14;
             this.label10.Text = "Balance(s):";
             // 
-            // label7
+            // labelBalance
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(201, 92);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(45, 13);
-            this.label7.TabIndex = 11;
-            this.label7.Text = "(0 USD)";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(96, 92);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(38, 13);
-            this.label6.TabIndex = 10;
-            this.label6.Text = "0 ETH";
+            this.labelBalance.Location = new System.Drawing.Point(96, 92);
+            this.labelBalance.Name = "labelBalance";
+            this.labelBalance.Size = new System.Drawing.Size(158, 13);
+            this.labelBalance.TabIndex = 10;
+            this.labelBalance.Text = "-";
             // 
             // label5
             // 
@@ -1123,10 +1088,9 @@
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(96, 25);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(52, 13);
+            this.label2.Size = new System.Drawing.Size(109, 17);
             this.label2.TabIndex = 6;
             this.label2.Text = "Ethereum";
             // 
@@ -1361,14 +1325,14 @@
             this.listBoxPoolPriorities.Size = new System.Drawing.Size(141, 121);
             this.listBoxPoolPriorities.TabIndex = 22;
             // 
-            // tabPageSettings
+            // tabPageDevices
             // 
-            this.tabPageSettings.Location = new System.Drawing.Point(4, 22);
-            this.tabPageSettings.Name = "tabPageSettings";
-            this.tabPageSettings.Size = new System.Drawing.Size(577, 351);
-            this.tabPageSettings.TabIndex = 4;
-            this.tabPageSettings.Text = "Settings";
-            this.tabPageSettings.UseVisualStyleBackColor = true;
+            this.tabPageDevices.Location = new System.Drawing.Point(4, 22);
+            this.tabPageDevices.Name = "tabPageDevices";
+            this.tabPageDevices.Size = new System.Drawing.Size(577, 351);
+            this.tabPageDevices.TabIndex = 4;
+            this.tabPageDevices.Text = "Devices";
+            this.tabPageDevices.UseVisualStyleBackColor = true;
             // 
             // tabPageLog
             // 
@@ -1417,6 +1381,11 @@
             this.timerDeviceStatusUpdates.Interval = 1000;
             this.timerDeviceStatusUpdates.Tick += new System.EventHandler(this.timerDeviceStatusUpdates_Tick);
             // 
+            // timerCurrencyStatUpdates
+            // 
+            this.timerCurrencyStatUpdates.Interval = 60000;
+            this.timerCurrencyStatUpdates.Tick += new System.EventHandler(this.timerCurrencyStatUpdates_Tick);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1432,8 +1401,8 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControlPools.ResumeLayout(false);
-            this.tabPageHome.ResumeLayout(false);
-            this.tabPageHome.PerformLayout();
+            this.tabPageStatus.ResumeLayout(false);
+            this.tabPageStatus.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.tabPageCoins.ResumeLayout(false);
@@ -1450,23 +1419,20 @@
         #endregion
 
         private System.Windows.Forms.TabControl tabControlPools;
-        private System.Windows.Forms.TabPage tabPageHome;
+        private System.Windows.Forms.TabPage tabPageStatus;
         private System.Windows.Forms.TabPage tabPageLog;
         private System.Windows.Forms.TabPage tabPageCoins;
         private System.Windows.Forms.TabPage tabPagePools;
-        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label labelBalance;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label labelCurrentSpeed;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TabPage tabPageSettings;
-        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TabPage tabPageDevices;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Button buttonStart;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox textBoxZcashAddress;
         private System.Windows.Forms.Label label16;
@@ -1575,6 +1541,7 @@
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Timer timerCurrencyStatUpdates;
     }
 }
 
