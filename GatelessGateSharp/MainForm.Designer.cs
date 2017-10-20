@@ -115,8 +115,8 @@
             this.label19 = new System.Windows.Forms.Label();
             this.label69 = new System.Windows.Forms.Label();
             this.label70 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
+            this.labelPriceWeek = new System.Windows.Forms.Label();
+            this.labelPriceDay = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.labelBalance = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -153,6 +153,7 @@
             this.buttonBenchmark = new System.Windows.Forms.Button();
             this.timerDeviceStatusUpdates = new System.Windows.Forms.Timer(this.components);
             this.timerCurrencyStatUpdates = new System.Windows.Forms.Timer(this.components);
+            this.labelPriceMonth = new System.Windows.Forms.Label();
             this.tabControlPools.SuspendLayout();
             this.tabPageStatus.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -172,16 +173,17 @@
             this.tabControlPools.Location = new System.Drawing.Point(11, 8);
             this.tabControlPools.Name = "tabControlPools";
             this.tabControlPools.SelectedIndex = 0;
-            this.tabControlPools.Size = new System.Drawing.Size(585, 377);
+            this.tabControlPools.Size = new System.Drawing.Size(585, 395);
             this.tabControlPools.TabIndex = 0;
             // 
             // tabPageStatus
             // 
+            this.tabPageStatus.Controls.Add(this.labelPriceMonth);
             this.tabPageStatus.Controls.Add(this.groupBox2);
             this.tabPageStatus.Controls.Add(this.label69);
             this.tabPageStatus.Controls.Add(this.label70);
-            this.tabPageStatus.Controls.Add(this.label8);
-            this.tabPageStatus.Controls.Add(this.label12);
+            this.tabPageStatus.Controls.Add(this.labelPriceWeek);
+            this.tabPageStatus.Controls.Add(this.labelPriceDay);
             this.tabPageStatus.Controls.Add(this.label10);
             this.tabPageStatus.Controls.Add(this.labelBalance);
             this.tabPageStatus.Controls.Add(this.label5);
@@ -191,7 +193,7 @@
             this.tabPageStatus.Controls.Add(this.label1);
             this.tabPageStatus.Location = new System.Drawing.Point(4, 22);
             this.tabPageStatus.Name = "tabPageStatus";
-            this.tabPageStatus.Size = new System.Drawing.Size(577, 351);
+            this.tabPageStatus.Size = new System.Drawing.Size(577, 369);
             this.tabPageStatus.TabIndex = 2;
             this.tabPageStatus.Text = "Status";
             this.tabPageStatus.UseVisualStyleBackColor = true;
@@ -280,7 +282,7 @@
             this.groupBox2.Controls.Add(this.label20);
             this.groupBox2.Controls.Add(this.label19);
             this.groupBox2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.groupBox2.Location = new System.Drawing.Point(11, 118);
+            this.groupBox2.Location = new System.Drawing.Point(11, 137);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(555, 221);
             this.groupBox2.TabIndex = 140;
@@ -1026,34 +1028,34 @@
             this.label70.TabIndex = 22;
             this.label70.Text = "Current Pool:";
             // 
-            // label8
+            // labelPriceWeek
             // 
-            this.label8.Location = new System.Drawing.Point(96, 76);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(109, 16);
-            this.label8.TabIndex = 17;
-            this.label8.Text = "-";
+            this.labelPriceWeek.Location = new System.Drawing.Point(96, 76);
+            this.labelPriceWeek.Name = "labelPriceWeek";
+            this.labelPriceWeek.Size = new System.Drawing.Size(232, 17);
+            this.labelPriceWeek.TabIndex = 17;
+            this.labelPriceWeek.Text = "-";
             // 
-            // label12
+            // labelPriceDay
             // 
-            this.label12.Location = new System.Drawing.Point(96, 59);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(109, 13);
-            this.label12.TabIndex = 16;
-            this.label12.Text = "-";
+            this.labelPriceDay.Location = new System.Drawing.Point(96, 59);
+            this.labelPriceDay.Name = "labelPriceDay";
+            this.labelPriceDay.Size = new System.Drawing.Size(232, 17);
+            this.labelPriceDay.TabIndex = 16;
+            this.labelPriceDay.Text = "-";
             // 
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(8, 92);
+            this.label10.Location = new System.Drawing.Point(8, 110);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(60, 13);
+            this.label10.Size = new System.Drawing.Size(49, 13);
             this.label10.TabIndex = 14;
-            this.label10.Text = "Balance(s):";
+            this.label10.Text = "Balance:";
             // 
             // labelBalance
             // 
-            this.labelBalance.Location = new System.Drawing.Point(96, 92);
+            this.labelBalance.Location = new System.Drawing.Point(96, 110);
             this.labelBalance.Name = "labelBalance";
             this.labelBalance.Size = new System.Drawing.Size(158, 13);
             this.labelBalance.TabIndex = 10;
@@ -1359,7 +1361,7 @@
             // 
             // buttonStart
             // 
-            this.buttonStart.Location = new System.Drawing.Point(521, 391);
+            this.buttonStart.Location = new System.Drawing.Point(521, 409);
             this.buttonStart.Name = "buttonStart";
             this.buttonStart.Size = new System.Drawing.Size(75, 23);
             this.buttonStart.TabIndex = 1;
@@ -1369,7 +1371,7 @@
             // 
             // buttonBenchmark
             // 
-            this.buttonBenchmark.Location = new System.Drawing.Point(440, 391);
+            this.buttonBenchmark.Location = new System.Drawing.Point(440, 409);
             this.buttonBenchmark.Name = "buttonBenchmark";
             this.buttonBenchmark.Size = new System.Drawing.Size(75, 23);
             this.buttonBenchmark.TabIndex = 2;
@@ -1386,11 +1388,19 @@
             this.timerCurrencyStatUpdates.Interval = 60000;
             this.timerCurrencyStatUpdates.Tick += new System.EventHandler(this.timerCurrencyStatUpdates_Tick);
             // 
+            // labelPriceMonth
+            // 
+            this.labelPriceMonth.Location = new System.Drawing.Point(96, 93);
+            this.labelPriceMonth.Name = "labelPriceMonth";
+            this.labelPriceMonth.Size = new System.Drawing.Size(232, 17);
+            this.labelPriceMonth.TabIndex = 141;
+            this.labelPriceMonth.Text = "-";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(606, 424);
+            this.ClientSize = new System.Drawing.Size(606, 442);
             this.Controls.Add(this.buttonBenchmark);
             this.Controls.Add(this.buttonStart);
             this.Controls.Add(this.tabControlPools);
@@ -1431,9 +1441,9 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TabPage tabPageDevices;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label labelPriceDay;
         private System.Windows.Forms.Button buttonStart;
-        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label labelPriceWeek;
         private System.Windows.Forms.TextBox textBoxZcashAddress;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.TextBox textBoxMoneroAddress;
@@ -1542,6 +1552,7 @@
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.Timer timerCurrencyStatUpdates;
+        private System.Windows.Forms.Label labelPriceMonth;
     }
 }
 

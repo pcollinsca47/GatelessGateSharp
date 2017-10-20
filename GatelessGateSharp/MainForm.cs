@@ -335,9 +335,9 @@ namespace GatelessGateSharp
 
         private void UpdateCurrencyStats()
         {
-            double balance = 0;
             try
             {
+                double balance = 0;
                 var client = new System.Net.WebClient();
                 String jsonString = client.DownloadString("https://api.nicehash.com/api?method=stats.provider&addr=" + textBoxBitcoinAddress.Text);
                 var response = JsonConvert.DeserializeObject<Dictionary<string, Object>>(jsonString);
@@ -351,11 +351,41 @@ namespace GatelessGateSharp
                 var USD = (JContainer)(response["USD"]);
                 var rate = (double)(USD["15m"]);
 
-                labelBalance.Text = balance.ToString() + " BTC (" + String.Format("{0:N2}", (balance * rate)) + " USD)";
+                labelBalance.Text = String.Format("{0:N6}", balance) + " BTC (" + String.Format("{0:N2}", (balance * rate)) + " USD)";
+
+                if (appState == ApplicationGlobalState.Mining)
+                {
+                    double totalSpeed = 0;
+                    if (mMiners != null)
+                        foreach (Miner miner in mMiners)
+                            totalSpeed += miner.Speed;
+
+                    double price = 0;
+                    jsonString = client.DownloadString("https://api.nicehash.com/api?method=stats.global.current");
+                    response = JsonConvert.DeserializeObject<Dictionary<string, Object>>(jsonString);
+                    result = (JContainer)(response["result"]);
+                    stats = (JArray)(result["stats"]);
+                    foreach (JContainer item in stats)
+                        if ((double)item["algo"] == 20)
+                            price = Double.Parse((String)item["price"]) * totalSpeed / 1000000000.0;
+
+                    labelPriceDay.Text = String.Format("{0:N6}", price) + " BTC/Day (" + String.Format("{0:N2}", (price * rate)) + " USD/Day)";
+                    labelPriceWeek.Text = String.Format("{0:N6}", price * 7) + " BTC/Week (" + String.Format("{0:N2}", (price * 7 * rate)) + " USD/Week)";
+                    labelPriceMonth.Text = String.Format("{0:N6}", price * (365.25 / 12)) + " BTC/Month (" + String.Format("{0:N2}", (price * (365.25 / 12) * rate)) + " USD/Month)";
+                }
+                else
+                {
+                    labelPriceDay.Text = "-";
+                    labelPriceWeek.Text = "-";
+                    labelPriceMonth.Text = "-";
+                }
             }
             catch (Exception _)
             {
                 labelBalance.Text = "-";
+                labelPriceDay.Text = "-";
+                labelPriceWeek.Text = "-";
+                labelPriceMonth.Text = "-";
             }
         }
 
@@ -646,6 +676,8 @@ namespace GatelessGateSharp
             }
 
             UpdateControls();
+            UpdateDeviceStatus();
+            UpdateCurrencyStats();
         }
 
         private void UpdateControls()
