@@ -375,12 +375,22 @@ namespace GatelessGateSharp
             timerCurrencyStatUpdates.Enabled = true;
         }
 
+        private class CustomWebClient : System.Net.WebClient
+        {
+            protected override System.Net.WebRequest GetWebRequest(Uri uri)
+            {
+                System.Net.WebRequest request = base.GetWebRequest(uri);
+                request.Timeout = 5 * 1000;
+                return request;
+            }
+        }
+
         private void UpdateCurrencyStats()
         {
             try
             {
                 double balance = 0;
-                var client = new System.Net.WebClient();
+                var client = new CustomWebClient();
                 String jsonString = client.DownloadString("https://api.nicehash.com/api?method=stats.provider&addr=" + textBoxBitcoinAddress.Text);
                 var response = JsonConvert.DeserializeObject<Dictionary<string, Object>>(jsonString);
                 var result = (JContainer)(response["result"]);
