@@ -61,9 +61,11 @@ namespace GatelessGateSharp
         private Control[] labelGPUMemoryClockArray;
         private ComputeDevice[] computeDeviceArray;
         private const int computeDeviceArrayMaxLength = 8; // This depends on MainForm.
-        private Boolean ADLInitialized = false;
+        private bool ADLInitialized = false;
+        private bool NVMLInitialized = false;
         private Int32[] ADLAdapterIndexArray;
-        private System.Threading.Mutex ADLMutex = new System.Threading.Mutex();
+        private System.Threading.Mutex DeviceManagementLibrariesMutex = new System.Threading.Mutex();
+        private ManagedCuda.Nvml.nvmlDevice[] nvmlDeviceArray;
 
         public static MainForm Instance { get { return instance; }}
 
@@ -327,6 +329,46 @@ namespace GatelessGateSharp
                 Logger("Failed to initialize AMD Display Library.");
             }
 
+            try {
+                if (ManagedCuda.Nvml.NvmlNativeMethods.nvmlInit() == 0)
+                {
+                    Logger("Successfully initialized NVIDIA Management Library.");
+                    uint nvmlDeviceCount = 0;
+                    ManagedCuda.Nvml.NvmlNativeMethods.nvmlDeviceGetCount(ref nvmlDeviceCount);
+                    Logger("NVML Device Count: " + nvmlDeviceCount);
+
+                    nvmlDeviceArray = new ManagedCuda.Nvml.nvmlDevice[computeDeviceArray.Length];
+                    for (uint i = 0; i < nvmlDeviceCount; ++i)
+                    {
+                        ManagedCuda.Nvml.nvmlDevice nvmlDevice = new ManagedCuda.Nvml.nvmlDevice();
+                        ManagedCuda.Nvml.NvmlNativeMethods.nvmlDeviceGetHandleByIndex(i, ref nvmlDevice);
+                        ManagedCuda.Nvml.nvmlPciInfo info = new ManagedCuda.Nvml.nvmlPciInfo();
+                        ManagedCuda.Nvml.NvmlNativeMethods.nvmlDeviceGetPciInfo(nvmlDevice, ref info);
+
+                        uint j;
+                        for (j = 0; j < computeDeviceArray.Length; ++j) {
+                            if (computeDeviceArray[j].Vendor == "NVIDIA Corporation" && computeDeviceArray[j].PciBusIdNV == info.bus) { 
+                                nvmlDeviceArray[j] = nvmlDevice;
+                                break;
+                            }
+                        }
+                        if (j >= computeDeviceArray.Length)
+                            throw new Exception();
+                    }
+
+                    NVMLInitialized = true;
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+            if (!NVMLInitialized)
+            {
+                Logger("Failed to initialize NVIDIA Management Library.");
+            }
+            else {
+            }
+            
             UpdateDeviceStatus();
             timerDeviceStatusUpdates.Enabled = true;
             UpdateCurrencyStats();
@@ -397,7 +439,7 @@ namespace GatelessGateSharp
                     totalSpeed += miner.Speed;
             labelCurrentSpeed.Text = (appState != ApplicationGlobalState.Mining) ? "-" : String.Format("{0:N2} Mh/s", totalSpeed / 1000000);
 
-            ADLMutex.WaitOne();
+            DeviceManagementLibrariesMutex.WaitOne();
             int deviceIndex = 0;
             foreach (ComputeDevice device in computeDeviceArray)
             {
@@ -469,10 +511,31 @@ namespace GatelessGateSharp
                             labelGPUFanArray[deviceIndex].Text = OSADLFanSpeedValueData.iFanSpeed.ToString() + "%";
                         }
                     }
+                } else if (NVMLInitialized && device.Vendor.Equals("NVIDIA Corporation")) {
+                    uint temp = 0;
+                    ManagedCuda.Nvml.NvmlNativeMethods.nvmlDeviceGetTemperature(nvmlDeviceArray[deviceIndex], ManagedCuda.Nvml.nvmlTemperatureSensors.Gpu, ref temp);
+                    labelGPUTempArray[deviceIndex].Text      = temp.ToString() + "℃";
+                    labelGPUTempArray[deviceIndex].ForeColor = (temp >= 80) ? Color.Red :
+                                                               (temp >= 60) ? Color.Purple :
+                                                                              Color.Blue;
+
+                    uint fanSpeed = 0;
+                    ManagedCuda.Nvml.NvmlNativeMethods.nvmlDeviceGetFanSpeed(nvmlDeviceArray[deviceIndex], ref fanSpeed);
+                    labelGPUFanArray[deviceIndex].Text = fanSpeed.ToString() + "%";
+
+                    ManagedCuda.Nvml.nvmlUtilization utilization = new ManagedCuda.Nvml.nvmlUtilization();
+                    ManagedCuda.Nvml.NvmlNativeMethods.nvmlDeviceGetUtilizationRates(nvmlDeviceArray[deviceIndex], ref utilization);
+                    labelGPUActivityArray[deviceIndex].Text = utilization.gpu.ToString() + "%";
+
+                    uint clock = 0;
+                    ManagedCuda.Nvml.NvmlNativeMethods.nvmlDeviceGetClockInfo(nvmlDeviceArray[deviceIndex], ManagedCuda.Nvml.nvmlClockType.Graphics, ref clock);
+                    labelGPUCoreClockArray[deviceIndex].Text = clock.ToString() + " MHz";
+                    ManagedCuda.Nvml.NvmlNativeMethods.nvmlDeviceGetClockInfo(nvmlDeviceArray[deviceIndex], ManagedCuda.Nvml.nvmlClockType.Mem, ref clock);
+                    labelGPUMemoryClockArray[deviceIndex].Text = clock.ToString() + " MHz";
                 }
                 ++deviceIndex;
             }
-            ADLMutex.ReleaseMutex();
+            DeviceManagementLibrariesMutex.ReleaseMutex();
         }
 
         private void DumpADLInfo()

@@ -338,6 +338,10 @@ namespace Cloo
         OpenCLCVersion = 0x103D,
 
         /// <summary></summary>
+        CL_DEVICE_PCI_BUS_ID_NV = (0x4008),
+        /// <summary></summary>
+        CL_DEVICE_PCI_SLOT_ID_NV = (0x4009),
+        /// <summary></summary>
         CL_DEVICE_PROFILING_TIMER_OFFSET_AMD = 0x4036,
         /// <summary></summary>
         CL_DEVICE_TOPOLOGY_AMD = 0x4037,

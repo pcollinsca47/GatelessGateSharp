@@ -561,6 +561,12 @@ namespace Cloo
         /// <summary></summary>
         [CLSCompliant(false)]
         public cl_device_topology_amd TopologyAMD { get { return GetInfo<cl_device_topology_amd>(ComputeDeviceInfo.CL_DEVICE_TOPOLOGY_AMD); } }
+        /// <summary></summary>
+        [CLSCompliant(false)]
+        public Int32 PciBusIdNV { get { return GetInfo<Int32>(ComputeDeviceInfo.CL_DEVICE_PCI_BUS_ID_NV); } }
+        /// <summary></summary>
+        [CLSCompliant(false)]
+        public Int32 PciSlotIdNV { get { return GetInfo<Int32>(ComputeDeviceInfo.CL_DEVICE_PCI_SLOT_ID_NV); } }
 
         #endregion
 
