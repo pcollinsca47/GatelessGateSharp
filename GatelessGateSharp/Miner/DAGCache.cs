@@ -340,18 +340,18 @@ namespace GatelessGateSharp
             284950208, 285081536
         };
 
-        public static int WORD_BYTES = 4;                   // bytes in word
-        public static int DATASET_BYTES_INIT = 1073741824;  // bytes in dataset at genesis
-        public static int DATASET_BYTES_GROWTH = 8388608;   // dataset growth per epoch
-        public static int CACHE_BYTES_INIT = 16777216;      // bytes in cache at genesis
-        public static int CACHE_BYTES_GROWTH = 131072;      // cache growth per epoch
-        public static int CACHE_MULTIPLIER = 1024;          // size of the DAG relative to the cache
-        public static int EPOCH_LENGTH = 30000;             // blocks per epoch
-        public static int MIX_BYTES = 128;                  // width of mix
-        public static int HASH_BYTES = 64;                  // hash length in bytes
-        public static int DATASET_PARENTS = 256;            // number of parents of each dataset element
-        public static int CACHE_ROUNDS = 3;                 // number of rounds in cache production
-        public static int ACCESSES = 64;                    // number of accesses in hashimoto loop
+        public const int WORD_BYTES = 4;                   // bytes in word
+        public const int DATASET_BYTES_INIT = 1073741824;  // bytes in dataset at genesis
+        public const int DATASET_BYTES_GROWTH = 8388608;   // dataset growth per epoch
+        public const int CACHE_BYTES_INIT = 16777216;      // bytes in cache at genesis
+        public const int CACHE_BYTES_GROWTH = 131072;      // cache growth per epoch
+        public const int CACHE_MULTIPLIER = 1024;          // size of the DAG relative to the cache
+        public const int EPOCH_LENGTH = 30000;             // blocks per epoch
+        public const int MIX_BYTES = 128;                  // width of mix
+        public const int HASH_BYTES = 64;                  // hash length in bytes
+        public const int DATASET_PARENTS = 256;            // number of parents of each dataset element
+        public const int CACHE_ROUNDS = 3;                 // number of rounds in cache production
+        public const int ACCESSES = 64;                    // number of accesses in hashimoto loop
 
         static Mutex mMutex = new Mutex();
         static Dictionary<int, byte[]> sDAGCacheDatabase = new Dictionary<int, byte[]>();
@@ -365,7 +365,7 @@ namespace GatelessGateSharp
             mSeedhash = aSeedhash;
         }
 
-        public byte[] Data()
+        public byte[] GetData()
         {
             IHash hash = HashFactory.Crypto.SHA3.CreateKeccak512();
             byte[] data;

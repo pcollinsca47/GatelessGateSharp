@@ -37,12 +37,12 @@ namespace GatelessGateSharp
         private ComputeProgram mProgram;
         private ComputeKernel mDAGKernel;
         private ComputeKernel mSearchKernel;
-        private NiceHashEthashStratum mStratum;
+        private EthashStratum mStratum;
         private Thread mMinerThread = null;
         private long mLocalWorkSize = 192;
         private long mGlobalWorkSize;
 
-        public OpenCLEthashMiner(ComputeDevice aDevice, int aDeviceIndex, NiceHashEthashStratum aStratum)
+        public OpenCLEthashMiner(ComputeDevice aDevice, int aDeviceIndex, EthashStratum aStratum)
             : base(aDevice, aDeviceIndex)
         {
             mStratum = aStratum;
@@ -71,7 +71,7 @@ namespace GatelessGateSharp
 
             // Wait for the first job to arrive.
             int timePassed = 0;
-            while (mStratum.CurrentJob == null && timePassed < 5000)
+            while (mStratum.CurrentJob == null && timePassed < 60000)
             {
                 Thread.Sleep(10);
                 timePassed += 10;
@@ -80,55 +80,57 @@ namespace GatelessGateSharp
                 throw new TimeoutException("Stratum server failed to send a new job.");
 
             System.Diagnostics.Stopwatch consoleUpdateStopwatch = new System.Diagnostics.Stopwatch();
-            NiceHashEthashStratum.Work work;
+            EthashStratum.Work work;
             int epoch = -1;
             long DAGSize = 0;
             ComputeBuffer<byte> DAGBuffer = null;
             ComputeBuffer<UInt32> outputBuffer = new ComputeBuffer<UInt32>(Context, ComputeMemoryFlags.ReadWrite, 256);
             ComputeBuffer<byte> headerBuffer = new ComputeBuffer<byte>(Context, ComputeMemoryFlags.ReadOnly, 32);
             UInt32[] output = new UInt32[256];
+            Random r = new Random();
             while (!Stopped && (work = mStratum.GetWork()) != null)
             {
-                String extranonce = mStratum.Extranonce;
-                byte[] extranonceByteArray = Utilities.StringToByteArray(extranonce);
-                byte extranonce2 = work.Extranonce2;
-                UInt64 startNonce = (UInt64)extranonce2 << (8 * (7 - extranonceByteArray.Length));
+                String poolExtranonce = mStratum.PoolExtranonce;
+                byte[] extranonceByteArray = Utilities.StringToByteArray(poolExtranonce);
+                byte localExtranonce = work.LocalExtranonce;
+                UInt64 startNonce = (UInt64)localExtranonce << (8 * (7 - extranonceByteArray.Length));
                 for (int i = 0; i < extranonceByteArray.Length; ++i)
                     startNonce |= (UInt64)extranonceByteArray[i] << (8 * (7 - i));
-                String jobID = work.CurrentJob.ID;
-                String headerhash = work.CurrentJob.Headerhash;
-                String seedhash = work.CurrentJob.Seedhash;
+                startNonce += (ulong)r.Next(0, int.MaxValue) & (0xfffffffffffffffful >> (extranonceByteArray.Length * 8 + 16));
+                String jobID = work.GetJob().ID;
+                String headerhash = work.GetJob().Headerhash;
+                String seedhash = work.GetJob().Seedhash;
                 double difficulty = mStratum.Difficulty;
                 fixed (byte* p = Utilities.StringToByteArray(headerhash))
                     Queue.Write<byte>(headerBuffer, true, 0, 32, (IntPtr)p, null);
 
-                if (epoch != work.CurrentJob.Epoch)
+                if (epoch != work.GetJob().Epoch)
                 {
                     if (DAGBuffer != null)
                     {
                         DAGBuffer.Dispose();
                         DAGBuffer = null;
                     }
-                    epoch = work.CurrentJob.Epoch;
-                    DAGCache cache = new DAGCache(epoch, work.CurrentJob.Seedhash);
+                    epoch = work.GetJob().Epoch;
+                    DAGCache cache = new DAGCache(epoch, work.GetJob().Seedhash);
                     DAGSize = Utilities.GetDAGSize(epoch);
 
                     System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
                     sw.Start();
-                    fixed (byte* p = cache.Data())
+                    fixed (byte* p = cache.GetData())
                     {
                         long globalWorkSize = DAGSize / 64;
                         globalWorkSize /= 8;
                         if (globalWorkSize % mLocalWorkSize > 0)
                             globalWorkSize += mLocalWorkSize - globalWorkSize % mLocalWorkSize;
 
-                        ComputeBuffer<byte> DAGCacheBuffer = new ComputeBuffer<byte>(Context, ComputeMemoryFlags.ReadOnly | ComputeMemoryFlags.CopyHostPointer, cache.Data().Length, (IntPtr)p);
+                        ComputeBuffer<byte> DAGCacheBuffer = new ComputeBuffer<byte>(Context, ComputeMemoryFlags.ReadOnly | ComputeMemoryFlags.CopyHostPointer, cache.GetData().Length, (IntPtr)p);
                         DAGBuffer = new ComputeBuffer<byte>(Context, ComputeMemoryFlags.ReadWrite, globalWorkSize * 8 * 64 /* DAGSize */); // With this, we can remove a conditional statement in the DAG kernel.
 
                         mDAGKernel.SetValueArgument<UInt32>(0, 0);
                         mDAGKernel.SetMemoryArgument(1, DAGCacheBuffer);
                         mDAGKernel.SetMemoryArgument(2, DAGBuffer);
-                        mDAGKernel.SetValueArgument<UInt32>(3, (UInt32)cache.Data().Length / 64);
+                        mDAGKernel.SetValueArgument<UInt32>(3, (UInt32)cache.GetData().Length / 64);
                         //mDAGKernel.SetValueArgument<UInt32>(4, (UInt32)(DAGSize / 64));
                         mDAGKernel.SetValueArgument<UInt32>(4, 0xffffffffu);
 
@@ -145,7 +147,7 @@ namespace GatelessGateSharp
 
                 consoleUpdateStopwatch.Start();
 
-                while (!Stopped && mStratum.CurrentJob.ID.Equals(jobID) && mStratum.Extranonce.Equals(extranonce))
+                while (!Stopped && mStratum.CurrentJob.ID.Equals(jobID) && mStratum.PoolExtranonce.Equals(poolExtranonce))
                 {
                     UInt64 target = (UInt64)((double)0xffff0000U / difficulty);
                     mSearchKernel.SetMemoryArgument(0, outputBuffer); // g_output
@@ -173,7 +175,7 @@ namespace GatelessGateSharp
                         consoleUpdateStopwatch.Restart();
                     }
                     for (int i = 0; i < output[255]; ++i)
-                        mStratum.Submit(jobID, startNonce + (UInt64)output[i]);
+                        mStratum.Submit(work.GetJob(), startNonce + (UInt64)output[i]);
                     startNonce += (UInt64)mGlobalWorkSize;
                 }
             }

@@ -14,95 +14,37 @@ using HashLib;
 
 namespace GatelessGateSharp
 {
-    class NiceHashEthashStratum : Stratum
+    class NiceHashEthashStratum : EthashStratum
     {
-        public new class Work : Stratum.Work
+        public new class Work : EthashStratum.Work
         {
             private Job mJob;
-            private byte mExtranonce2;
 
-            public Job CurrentJob { get { return mJob; } }
-            public byte Extranonce2 { get { return mExtranonce2; } }
+            public Job GetJob() { return mJob; }
 
             public Work(Job aJob)
+                : base(aJob)
             {
                 mJob = aJob;
-                mExtranonce2 = mJob.GetNewExtranonce2();
             }
         }
 
-        public new class Job : Stratum.Job
+        public new class Job : EthashStratum.Job
         {
-            Mutex mMutex = new Mutex();
-            private byte mExtranonce2 = 0;
-            private string mID;
-            private string mSeedhash;
-            private string mHeaderhash;
-
-            public string ID { get { return mID; } }
-            public string Seedhash { get { return mSeedhash; } }
-            public string Headerhash { get { return mHeaderhash; } }
-
             public Job(string aID, string aSeedhash, string aHeaderhash) 
+                : base(aID, aSeedhash, aHeaderhash)
             {
-                mID = aID;
-                mSeedhash = aSeedhash;
-                mHeaderhash = aHeaderhash;
-            }
-
-            public int Epoch
-            {
-                get
-                {
-                    byte[] seedhashArray = Utilities.StringToByteArray(Seedhash);
-                    byte[] s = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-                    IHash hash = HashFactory.Crypto.SHA3.CreateKeccak256();
-                    int i;
-                    for (i = 0; i < 2048; ++i)
-                    {
-                        if (s.SequenceEqual(seedhashArray))
-                            break;
-                        s = hash.ComputeBytes(s).GetBytes();
-                    }
-                    if (i >= 2048)
-                        throw new Exception("Invalid seedhash.");
-                    return i;
-                }
-            }
- 
-            public bool Equals(Job aJob)
-            {
-                return (mID.Equals(aJob.mID));
-            }
-
-            public byte GetNewExtranonce2()
-            {
-                mMutex.WaitOne();
-                byte ret = mExtranonce2++;
-                mMutex.ReleaseMutex();
-                return ret;
             }
         }
 
-        String mServerAddress;
-        int mServerPort;
-        String mUsername;
-        String mPassword;
         TcpClient mClient;
         NetworkStream mStream;
         StreamReader mStreamReader;
         StreamWriter mStreamWriter;
         Thread mStreamReaderThread;
         int mJsonRPCMessageID = 1;
-        double mDifficulty = 1.0;
         string mSubsciptionID;
-        string mExtranonce;
-        Job mJob = null;
         private Mutex mMutex = new Mutex();
-
-        public Job CurrentJob { get { return mJob; } }
-        public double Difficulty { get { return mDifficulty; } }
-        public String Extranonce { get { return mExtranonce; } }
 
         private void StreamReaderThread()
         {
@@ -136,7 +78,7 @@ namespace GatelessGateSharp
                     else if (method.Equals("mining.notify"))
                     {
                         mMutex.WaitOne();
-                        mJob = new Job((string)parameters[0], (string)parameters[1], (string)parameters[2]);
+                        mJob = (EthashStratum.Job)(new Job((string)parameters[0], (string)parameters[1], (string)parameters[2]));
                         mMutex.ReleaseMutex();
                         MainForm.Logger("Received new job (ID: " + parameters[0] + ").");
                         //MainForm.Logger("Seedhash: " + parameters[1]);
@@ -145,7 +87,7 @@ namespace GatelessGateSharp
                     else if (method.Equals("mining.set_extranonce"))
                     {
                         mMutex.WaitOne();
-                        mExtranonce = (String)parameters[0];
+                        mPoolExtranonce = (String)parameters[0];
                         mMutex.ReleaseMutex();
                         MainForm.Logger("Received new extranonce: " + parameters[0]);
                     }
@@ -192,11 +134,11 @@ namespace GatelessGateSharp
             }
         }
 
-        public void Connect()
+        override protected void Connect()
         {
             mMutex.WaitOne();
 
-            mClient = new TcpClient(mServerAddress, mServerPort);
+            mClient = new TcpClient(ServerAddress, ServerPort);
             mStream = mClient.GetStream();
             mStreamReader = new StreamReader(mStream, System.Text.Encoding.ASCII, false);
             mStreamWriter = new StreamWriter(mStream, System.Text.Encoding.ASCII);
@@ -214,7 +156,7 @@ namespace GatelessGateSharp
 
             Dictionary<String, Object> response = JsonConvert.DeserializeObject<Dictionary<string, Object> >(mStreamReader.ReadLine());
             mSubsciptionID = (string)(((JArray)(((JArray)(response["result"]))[0]))[1]);
-            mExtranonce = (string)(((JArray)(response["result"]))[1]);
+            mPoolExtranonce = (string)(((JArray)(response["result"]))[1]);
             //MainForm.Logger("Subsciption ID: " + mSubsciptionID);
             //MainForm.Logger("Protocol Version: " + ((JArray)(((JArray)(response["result"]))[0]))[2]); // TODO: Check this.
             //MainForm.Logger("Extranonce: " + mExtranonce);
@@ -234,13 +176,12 @@ namespace GatelessGateSharp
                 { "id", mJsonRPCMessageID++ },
                 { "method", "mining.authorize" },
                 { "params", new List<string> {
-                    mUsername,
-                    mPassword
+                    Username,
+                    Password
             }}}));
             mStreamWriter.Write("\n");
             mStreamWriter.Flush();
             response = JsonConvert.DeserializeObject<Dictionary<string, Object>>(mStreamReader.ReadLine());
-            MainForm.Logger("Authorized: " + response["result"]); // TODO
             if (!(bool)response["result"])
             {
                 mMutex.ReleaseMutex();
@@ -254,15 +195,16 @@ namespace GatelessGateSharp
             mStreamReaderThread.Start();
         }
 
-        public void Submit(String jobID, UInt64 output)
+        public override void Submit(EthashStratum.Job job, UInt64 output)
         {
             mMutex.WaitOne();
             try
             {
                 String stringNonce
-                      = ((Extranonce.Length == 2) ? (String.Format("{6:x2}{5:x2}{4:x2}{3:x2}{2:x2}{1:x2}{0:x2}", ((output >> 0) & 0xff), ((output >> 8) & 0xff), ((output >> 16) & 0xff), ((output >> 24) & 0xff), ((output >> 32) & 0xff), ((output >> 40) & 0xff), ((output >> 48) & 0xff))) :
-                         (Extranonce.Length == 4) ? (String.Format("{5:x2}{4:x2}{3:x2}{2:x2}{1:x2}{0:x2}", ((output >> 0) & 0xff), ((output >> 8) & 0xff), ((output >> 16) & 0xff), ((output >> 24) & 0xff), ((output >> 32) & 0xff), ((output >> 40) & 0xff))) :
-                                                    (String.Format("{4:x2}{3:x2}{2:x2}{1:x2}{0:x2}", ((output >> 0) & 0xff), ((output >> 8) & 0xff), ((output >> 16) & 0xff), ((output >> 24) & 0xff), ((output >> 32) & 0xff))));
+                      = ((PoolExtranonce.Length == 0) ? (String.Format("{7:x2}{6:x2}{5:x2}{4:x2}{3:x2}{2:x2}{1:x2}{0:x2}", ((output >> 0) & 0xff), ((output >> 8) & 0xff), ((output >> 16) & 0xff), ((output >> 24) & 0xff), ((output >> 32) & 0xff), ((output >> 40) & 0xff), ((output >> 48) & 0xff), ((output >> 56) & 0xff))) :
+                         (PoolExtranonce.Length == 2) ? (String.Format("{6:x2}{5:x2}{4:x2}{3:x2}{2:x2}{1:x2}{0:x2}", ((output >> 0) & 0xff), ((output >> 8) & 0xff), ((output >> 16) & 0xff), ((output >> 24) & 0xff), ((output >> 32) & 0xff), ((output >> 40) & 0xff), ((output >> 48) & 0xff))) :
+                         (PoolExtranonce.Length == 4) ? (String.Format("{5:x2}{4:x2}{3:x2}{2:x2}{1:x2}{0:x2}", ((output >> 0) & 0xff), ((output >> 8) & 0xff), ((output >> 16) & 0xff), ((output >> 24) & 0xff), ((output >> 32) & 0xff), ((output >> 40) & 0xff))) :
+                                                        (String.Format("{4:x2}{3:x2}{2:x2}{1:x2}{0:x2}", ((output >> 0) & 0xff), ((output >> 8) & 0xff), ((output >> 16) & 0xff), ((output >> 24) & 0xff), ((output >> 32) & 0xff))));
                 //      = ((Extranonce.Length == 2) ? (String.Format("{0:x2}{1:x2}{2:x2}{3:x2}{4:x2}{5:x2}{6:x2}", ((output >> 0) & 0xff), ((output >> 8) & 0xff), ((output >> 16) & 0xff), ((output >> 24) & 0xff), ((output >> 32) & 0xff), ((output >> 40) & 0xff), ((output >> 48) & 0xff))) :
                 //         (Extranonce.Length == 4) ? (String.Format("{0:x2}{1:x2}{2:x2}{3:x2}{4:x2}{5:x2}",       ((output >> 0) & 0xff), ((output >> 8) & 0xff), ((output >> 16) & 0xff), ((output >> 24) & 0xff), ((output >> 32) & 0xff), ((output >> 40) & 0xff))) :
                 //                                    (String.Format("{0:x2}{1:x2}{2:x2}{3:x2}{4:x2}",             ((output >> 0) & 0xff), ((output >> 8) & 0xff), ((output >> 16) & 0xff), ((output >> 24) & 0xff), ((output >> 32) & 0xff))));
@@ -270,8 +212,8 @@ namespace GatelessGateSharp
                     { "id", mJsonRPCMessageID++ },
                     { "method", "mining.submit" },
                     { "params", new List<string> {
-                        mUsername,
-                        jobID,
+                        Username,
+                        job.ID,
                         stringNonce
                 }}});
                 mStreamWriter.Write(message + "\n");
@@ -286,18 +228,8 @@ namespace GatelessGateSharp
         }
 
         public NiceHashEthashStratum(String aServerAddress, int aServerPort, String aUsername, String aPassword) // "daggerhashimoto.usa.nicehash.com", 3353
+            : base(aServerAddress, aServerPort, aUsername, aPassword)
         {
-            mServerAddress = aServerAddress;
-            mServerPort = aServerPort;
-            mUsername = aUsername;
-            mPassword = aPassword;
-
-            Connect();
-        }
-
-        public new Work GetWork()
-        {
-            return new Work(mJob);
         }
     }
 }

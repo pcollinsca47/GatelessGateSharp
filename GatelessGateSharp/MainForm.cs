@@ -693,7 +693,7 @@ namespace GatelessGateSharp
             UpdateDeviceStatus();
         }
 
-        NiceHashEthashStratum mStratum;
+        EthashStratum mStratum;
         List<Miner> mMiners = null;
         enum ApplicationGlobalState
         {
@@ -703,29 +703,76 @@ namespace GatelessGateSharp
         };
         ApplicationGlobalState appState = ApplicationGlobalState.Idle;
 
+        public bool ValidateBitcoinAddress()
+        {
+            try
+            {
+                NBitcoin.BitcoinAddress address = (NBitcoin.BitcoinAddress)NBitcoin.Network.Main.CreateBitcoinAddress(textBoxBitcoinAddress.Text);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Please enter a valid Biocoin addresss.", appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
+
         private void buttonStart_Click(object sender, EventArgs e)
         {
+            // TODO: Check the value of the textbox.
+            //if (!ValidateBitcoinAddress())
+            //    return;
+
             this.Enabled = false;
 
             if (appState == ApplicationGlobalState.Idle)
             {
-                try
+                String errorMessage = "";
+                foreach (String pool in listBoxPoolPriorities.Items)
                 {
-                    Logger("Launching miners...");
-                    // TODO: Check the value of the textbox.
-                    mStratum = new NiceHashEthashStratum("daggerhashimoto.usa.nicehash.com", 3353, textBoxBitcoinAddress.Text, "x");
-                    mMiners = new List<Miner>();
-                    for (int deviceIndex = 0; deviceIndex < computeDeviceArray.Length; ++deviceIndex)
-                        mMiners.Add(new OpenCLEthashMiner(computeDeviceArray[deviceIndex], deviceIndex, mStratum));
-                    appState = ApplicationGlobalState.Mining;
+                    try
+                    {
+                        Logger("Launching miners...");
+                        if (pool == "NiceHash")
+                        {
+                            mStratum = new NiceHashEthashStratum("daggerhashimoto.usa.nicehash.com", 3353, textBoxBitcoinAddress.Text, "x");
+                        }
+                        else if (pool == "DwarfPool")
+                        {
+                            mStratum = new NiceHashEthashStratum("eth-us2.dwarfpool.com", 8008, textBoxEthereumAddress.Text, "x");
+                        }
+                        else if (pool == "ethermine.org")
+                        {
+                            mStratum = new OpenEthereumPoolEthashStratum("us1.ethermine.org", 4444, textBoxEthereumAddress.Text, "x");
+                        }
+                        else if (pool == "ethpool.org")
+                        {
+                            mStratum = new OpenEthereumPoolEthashStratum("us1.ethpool.org", 4444, textBoxEthereumAddress.Text, "x");
+                        }
+                        else if (pool == "Nanopool")
+                        {
+                            mStratum = new OpenEthereumPoolEthashStratum("eth-us-west1.nanopool.org", 9999, textBoxEthereumAddress.Text, "x");
+                        }
+                        else
+                        {
+                            mStratum = new OpenEthereumPoolEthashStratum("eth-uswest.zawawa.net", 4000, textBoxEthereumAddress.Text, "x");
+                        }
+                        mMiners = new List<Miner>();
+                        for (int deviceIndex = 0; deviceIndex < computeDeviceArray.Length; ++deviceIndex)
+                            mMiners.Add(new OpenCLEthashMiner(computeDeviceArray[deviceIndex], deviceIndex, mStratum));
+                        appState = ApplicationGlobalState.Mining;
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        // TODO
+                        mStratum = null;
+                        mMiners = null;
+                        errorMessage = ex.Message;
+                    }
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Failed to launch miner(s):\n" + ex.Message, appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    // TODO
-                    mStratum = null;
-                    mMiners = null;
-                }
+                if (mMiners == null)
+                    MessageBox.Show("Failed to launch miner(s):\n" + errorMessage, appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else if (appState == ApplicationGlobalState.Mining) {
                 try
@@ -770,6 +817,34 @@ namespace GatelessGateSharp
         private void timerCurrencyStatUpdates_Tick(object sender, EventArgs e)
         {
             UpdateCurrencyStats();
+        }
+
+        private void buttonPoolPrioritiesUp_Click(object sender, EventArgs e)
+        {
+            int selectedIndex = listBoxPoolPriorities.SelectedIndex;
+            if (selectedIndex > 0)
+            {
+                listBoxPoolPriorities.Items.Insert(selectedIndex - 1, listBoxPoolPriorities.Items[selectedIndex]);
+                listBoxPoolPriorities.Items.RemoveAt(selectedIndex + 1);
+                listBoxPoolPriorities.SelectedIndex = selectedIndex - 1;
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            int selectedIndex = listBoxPoolPriorities.SelectedIndex;
+            if (selectedIndex < listBoxPoolPriorities.Items.Count - 1 & selectedIndex != -1)
+            {
+                listBoxPoolPriorities.Items.Insert(selectedIndex + 2, listBoxPoolPriorities.Items[selectedIndex]);
+                listBoxPoolPriorities.Items.RemoveAt(selectedIndex);
+                listBoxPoolPriorities.SelectedIndex = selectedIndex + 1;
+            }
+        }
+
+        private void buttonViewBalancesAtNiceHash_Click(object sender, EventArgs e)
+        {
+            if (ValidateBitcoinAddress())
+                System.Diagnostics.Process.Start("https://www.nicehash.com/miner/" + textBoxBitcoinAddress.Text);
         }
     }
 }
