@@ -169,7 +169,7 @@ namespace GatelessGateSharp
             conn.Close();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void MainForm_Load(object sender, EventArgs e)
         {
             Logger(appName + " started.");
             labelGPUVendorArray = new Control[] { labelGPU0Vendor, labelGPU1Vendor, labelGPU2Vendor, labelGPU3Vendor, labelGPU4Vendor, labelGPU5Vendor, labelGPU6Vendor, labelGPU7Vendor };
@@ -387,57 +387,105 @@ namespace GatelessGateSharp
 
         private void UpdateCurrencyStats()
         {
-            try
+            //try
             {
-                double balance = 0;
+                String poolName = (appState == ApplicationGlobalState.Mining) ? mStratum.PoolName : (string)listBoxPoolPriorities.Items[0];
+                labelCurrentPool.Text = poolName;
+
                 var client = new CustomWebClient();
-                String jsonString = client.DownloadString("https://api.nicehash.com/api?method=stats.provider&addr=" + textBoxBitcoinAddress.Text);
-                var response = JsonConvert.DeserializeObject<Dictionary<string, Object>>(jsonString);
-                var result = (JContainer)(response["result"]);
-                var stats = (JArray)(result["stats"]);
-                foreach (JContainer item in stats)
-                    balance += Double.Parse((String)item["balance"]);
-
-                jsonString = client.DownloadString("https://blockchain.info/ticker");
-                response = JsonConvert.DeserializeObject<Dictionary<string, Object>>(jsonString);
-                var USD = (JContainer)(response["USD"]);
-                var rate = (double)(USD["15m"]);
-
-                labelBalance.Text = String.Format("{0:N6}", balance) + " BTC (" + String.Format("{0:N2}", (balance * rate)) + " USD)";
-
-                if (appState == ApplicationGlobalState.Mining)
+                double USDBTC = 0;
                 {
-                    double totalSpeed = 0;
-                    if (mMiners != null)
-                        foreach (Miner miner in mMiners)
-                            totalSpeed += miner.Speed;
-
-                    double price = 0;
-                    jsonString = client.DownloadString("https://api.nicehash.com/api?method=stats.global.current");
-                    response = JsonConvert.DeserializeObject<Dictionary<string, Object>>(jsonString);
-                    result = (JContainer)(response["result"]);
-                    stats = (JArray)(result["stats"]);
+                    String jsonString = client.DownloadString("https://blockchain.info/ticker");
+                    var response = JsonConvert.DeserializeObject<Dictionary<string, Object>>(jsonString);
+                    var USD = (JContainer)(response["USD"]);
+                    USDBTC = (double)(USD["15m"]);
+                }
+                
+                if (poolName == "NiceHash")
+                {
+                    double balance = 0;
+                    String jsonString = client.DownloadString("https://api.nicehash.com/api?method=stats.provider&addr=" + textBoxBitcoinAddress.Text);
+                    var response = JsonConvert.DeserializeObject<Dictionary<string, Object>>(jsonString);
+                    var result = (JContainer)(response["result"]);
+                    var stats = (JArray)(result["stats"]);
                     foreach (JContainer item in stats)
-                        if ((double)item["algo"] == 20)
-                            price = Double.Parse((String)item["price"]) * totalSpeed / 1000000000.0;
+                        balance += Double.Parse((String)item["balance"]);
+                    labelBalance.Text = String.Format("{0:N6}", balance) + " BTC (" + String.Format("{0:N2}", (balance * USDBTC)) + " USD)";
 
-                    labelPriceDay.Text = String.Format("{0:N6}", price) + " BTC/Day (" + String.Format("{0:N2}", (price * rate)) + " USD/Day)";
-                    labelPriceWeek.Text = String.Format("{0:N6}", price * 7) + " BTC/Week (" + String.Format("{0:N2}", (price * 7 * rate)) + " USD/Week)";
-                    labelPriceMonth.Text = String.Format("{0:N6}", price * (365.25 / 12)) + " BTC/Month (" + String.Format("{0:N2}", (price * (365.25 / 12) * rate)) + " USD/Month)";
+                    if (appState == ApplicationGlobalState.Mining && textBoxBitcoinAddress.Text != "")
+                    {
+                        double totalSpeed = 0;
+                        if (mMiners != null)
+                            foreach (Miner miner in mMiners)
+                                totalSpeed += miner.Speed;
+
+                        double price = 0;
+                        jsonString = client.DownloadString("https://api.nicehash.com/api?method=stats.global.current");
+                        response = JsonConvert.DeserializeObject<Dictionary<string, Object>>(jsonString);
+                        result = (JContainer)(response["result"]);
+                        stats = (JArray)(result["stats"]);
+                        foreach (JContainer item in stats)
+                            if ((double)item["algo"] == 20)
+                                price = Double.Parse((String)item["price"]) * totalSpeed / 1000000000.0;
+
+                        labelPriceDay.Text = String.Format("{0:N6}", price) + " BTC/Day (" + String.Format("{0:N2}", (price * USDBTC)) + " USD/Day)";
+                        labelPriceWeek.Text = String.Format("{0:N6}", price * 7) + " BTC/Week (" + String.Format("{0:N2}", (price * 7 * USDBTC)) + " USD/Week)";
+                        labelPriceMonth.Text = String.Format("{0:N6}", price * (365.25 / 12)) + " BTC/Month (" + String.Format("{0:N2}", (price * (365.25 / 12) * USDBTC)) + " USD/Month)";
+                    }
+                    else
+                    {
+                        labelPriceDay.Text = "-";
+                        labelPriceWeek.Text = "-";
+                        labelPriceMonth.Text = "-";
+                    }
+                }
+                else if (poolName == "ethermine.org" && textBoxEthereumAddress.Text != "")
+                {
+                    String jsonString = client.DownloadString("https://api.coinmarketcap.com/v1/ticker/?convert=USD");
+                    var responseArray = JsonConvert.DeserializeObject<JArray>(jsonString);
+                    double USDETH = 0.0;
+                    foreach (JContainer currency in responseArray)
+                        if ((String)currency["id"] == "ethereum")
+                            USDETH = Double.Parse((String)currency["price_usd"]);
+
+                    jsonString = client.DownloadString("https://api.ethermine.org/miner/" + textBoxEthereumAddress.Text + "/currentStats");
+                    var response = JsonConvert.DeserializeObject<Dictionary<string, Object>>(jsonString);
+                    var data = (JContainer)(response["data"]);
+                    double balance = (double)data["unpaid"] * 1e-18;
+                    double averageHashrate = (double)data["averageHashrate"];
+                    double coinsPerMin = (double)data["coinsPerMin"];
+                    labelBalance.Text = String.Format("{0:N6}", balance) + " ETH (" + String.Format("{0:N2}", (balance * USDETH)) + " USD)";
+
+                    if (appState == ApplicationGlobalState.Mining && averageHashrate != 0)
+                    {
+                        double totalSpeed = 0;
+                        if (mMiners != null)
+                            foreach (Miner miner in mMiners)
+                                totalSpeed += miner.Speed;
+
+                        double price = (coinsPerMin * 60 * 24) * (totalSpeed / averageHashrate);
+
+                        labelPriceDay.Text = String.Format("{0:N6}", price) + " ETH/Day (" + String.Format("{0:N2}", (price * USDETH)) + " USD/Day)";
+                        labelPriceWeek.Text = String.Format("{0:N6}", price * 7) + " ETH/Week (" + String.Format("{0:N2}", (price * 7 * USDETH)) + " USD/Week)";
+                        labelPriceMonth.Text = String.Format("{0:N6}", price * (365.25 / 12)) + " ETH/Month (" + String.Format("{0:N2}", (price * (365.25 / 12) * USDETH)) + " USD/Month)";
+                    }
+                    else
+                    {
+                        labelPriceDay.Text = "-";
+                        labelPriceWeek.Text = "-";
+                        labelPriceMonth.Text = "-";
+                    }
                 }
                 else
                 {
                     labelPriceDay.Text = "-";
                     labelPriceWeek.Text = "-";
                     labelPriceMonth.Text = "-";
+                    labelBalance.Text = "-";
                 }
             }
-            catch (Exception _)
+            //catch (Exception _)
             {
-                labelBalance.Text = "-";
-                labelPriceDay.Text = "-";
-                labelPriceWeek.Text = "-";
-                labelPriceMonth.Text = "-";
             }
         }
 
@@ -717,11 +765,34 @@ namespace GatelessGateSharp
             }
         }
 
+        public bool ValidateEthereumAddress()
+        {
+            System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex("^0x[a-f0-9]{40}$");
+            var match = regex.Match(textBoxEthereumAddress.Text);
+            if (match.Success)
+            {
+                return true;
+            }
+            else
+            {
+                MessageBox.Show("Please enter a valid Ethereum addresss.", appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
+
         private void buttonStart_Click(object sender, EventArgs e)
         {
-            // TODO: Check the value of the textbox.
-            //if (!ValidateBitcoinAddress())
-            //    return;
+            UpdateDatabase();
+
+            if (textBoxBitcoinAddress.Text != "" && !ValidateBitcoinAddress())
+                return;
+            if (textBoxEthereumAddress.Text != "" && !ValidateEthereumAddress())
+                return;
+            if (textBoxBitcoinAddress.Text == "" && textBoxEthereumAddress.Text == "")
+            {
+                MessageBox.Show("Please enter at least one valid wallet addresss.", appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
             this.Enabled = false;
 
@@ -735,32 +806,33 @@ namespace GatelessGateSharp
                         Logger("Launching miners...");
                         if (pool == "NiceHash")
                         {
-                            mStratum = new NiceHashEthashStratum("daggerhashimoto.usa.nicehash.com", 3353, textBoxBitcoinAddress.Text, "x");
+                            mStratum = new NiceHashEthashStratum("daggerhashimoto.usa.nicehash.com", 3353, textBoxBitcoinAddress.Text, "x", pool);
                         }
                         else if (pool == "DwarfPool")
                         {
-                            mStratum = new NiceHashEthashStratum("eth-us2.dwarfpool.com", 8008, textBoxEthereumAddress.Text, "x");
+                            mStratum = new NiceHashEthashStratum("eth-us2.dwarfpool.com", 8008, textBoxEthereumAddress.Text, "x", pool);
                         }
                         else if (pool == "ethermine.org")
                         {
-                            mStratum = new OpenEthereumPoolEthashStratum("us1.ethermine.org", 4444, textBoxEthereumAddress.Text, "x");
+                            mStratum = new OpenEthereumPoolEthashStratum("us1.ethermine.org", 4444, textBoxEthereumAddress.Text, "x", pool);
                         }
                         else if (pool == "ethpool.org")
                         {
-                            mStratum = new OpenEthereumPoolEthashStratum("us1.ethpool.org", 4444, textBoxEthereumAddress.Text, "x");
+                            mStratum = new OpenEthereumPoolEthashStratum("us1.ethpool.org", 4444, textBoxEthereumAddress.Text, "x", pool);
                         }
                         else if (pool == "Nanopool")
                         {
-                            mStratum = new OpenEthereumPoolEthashStratum("eth-us-west1.nanopool.org", 9999, textBoxEthereumAddress.Text, "x");
+                            mStratum = new OpenEthereumPoolEthashStratum("eth-us-west1.nanopool.org", 9999, textBoxEthereumAddress.Text, "x", pool);
                         }
                         else
                         {
-                            mStratum = new OpenEthereumPoolEthashStratum("eth-uswest.zawawa.net", 4000, textBoxEthereumAddress.Text, "x");
+                            mStratum = new OpenEthereumPoolEthashStratum("eth-uswest.zawawa.net", 4000, textBoxEthereumAddress.Text, "x", pool);
                         }
                         mMiners = new List<Miner>();
                         for (int deviceIndex = 0; deviceIndex < computeDeviceArray.Length; ++deviceIndex)
                             mMiners.Add(new OpenCLEthashMiner(computeDeviceArray[deviceIndex], deviceIndex, mStratum));
                         appState = ApplicationGlobalState.Mining;
+                        tabControlMainForm.SelectedIndex = 0;
                         break;
                     }
                     catch (Exception ex)
@@ -827,10 +899,11 @@ namespace GatelessGateSharp
                 listBoxPoolPriorities.Items.Insert(selectedIndex - 1, listBoxPoolPriorities.Items[selectedIndex]);
                 listBoxPoolPriorities.Items.RemoveAt(selectedIndex + 1);
                 listBoxPoolPriorities.SelectedIndex = selectedIndex - 1;
+                UpdateCurrencyStats();
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void buttonPoolPrioritiesDown_Click(object sender, EventArgs e)
         {
             int selectedIndex = listBoxPoolPriorities.SelectedIndex;
             if (selectedIndex < listBoxPoolPriorities.Items.Count - 1 & selectedIndex != -1)
@@ -838,6 +911,7 @@ namespace GatelessGateSharp
                 listBoxPoolPriorities.Items.Insert(selectedIndex + 2, listBoxPoolPriorities.Items[selectedIndex]);
                 listBoxPoolPriorities.Items.RemoveAt(selectedIndex);
                 listBoxPoolPriorities.SelectedIndex = selectedIndex + 1;
+                UpdateCurrencyStats();
             }
         }
 
@@ -845,6 +919,11 @@ namespace GatelessGateSharp
         {
             if (ValidateBitcoinAddress())
                 System.Diagnostics.Process.Start("https://www.nicehash.com/miner/" + textBoxBitcoinAddress.Text);
+        }
+
+        private void tabControlMainForm_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateDatabase();
         }
     }
 }

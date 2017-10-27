@@ -80,9 +80,7 @@ namespace GatelessGateSharp
                         mMutex.WaitOne();
                         mJob = (EthashStratum.Job)(new Job((string)parameters[0], (string)parameters[1], (string)parameters[2]));
                         mMutex.ReleaseMutex();
-                        MainForm.Logger("Received new job (ID: " + parameters[0] + ").");
-                        //MainForm.Logger("Seedhash: " + parameters[1]);
-                        //MainForm.Logger("Headerhash: " + parameters[2]);
+                        MainForm.Logger("Received new job: " + parameters[0]);
                     }
                     else if (method.Equals("mining.set_extranonce"))
                     {
@@ -227,8 +225,8 @@ namespace GatelessGateSharp
             mMutex.ReleaseMutex();
         }
 
-        public NiceHashEthashStratum(String aServerAddress, int aServerPort, String aUsername, String aPassword) // "daggerhashimoto.usa.nicehash.com", 3353
-            : base(aServerAddress, aServerPort, aUsername, aPassword)
+        public NiceHashEthashStratum(String aServerAddress, int aServerPort, String aUsername, String aPassword, String aPoolName) // "daggerhashimoto.usa.nicehash.com", 3353
+            : base(aServerAddress, aServerPort, aUsername, aPassword, aPoolName)
         {
         }
     }

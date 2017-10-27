@@ -122,7 +122,7 @@ namespace GatelessGateSharp
                     regex = new System.Text.RegularExpressions.Regex(@"^0x(.*)................................................$");
                     mDifficulty = (double)0xffff0000U / (double)Convert.ToUInt64(regex.Replace((string)result[2], "$1"), 16);
                     mMutex.ReleaseMutex();
-                    MainForm.Logger("Received new job (Job ID: " + mJob.ID + ").");
+                    MainForm.Logger("Received new job: " + mJob.ID);
                 }
                 else
                 {
@@ -223,8 +223,8 @@ namespace GatelessGateSharp
             mMutex.ReleaseMutex();
         }
 
-        public OpenEthereumPoolEthashStratum(String aServerAddress, int aServerPort, String aUsername, String aPassword) // "daggerhashimoto.usa.nicehash.com", 3353
-            : base(aServerAddress, aServerPort, aUsername, aPassword)
+        public OpenEthereumPoolEthashStratum(String aServerAddress, int aServerPort, String aUsername, String aPassword, String aPoolName)
+            : base(aServerAddress, aServerPort, aUsername, aPassword, aPoolName)
         {
         }
     }

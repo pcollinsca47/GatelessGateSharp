@@ -49,6 +49,7 @@ namespace GatelessGateSharp
         String mPassword;
         protected double mDifficulty = 1.0;
         protected String mPoolExtranonce = "";
+        protected String mPoolName = "";
 
         public bool Stopped { get { return mStopped; } }
         public String ServerAddress { get { return mServerAddress; } }
@@ -56,6 +57,7 @@ namespace GatelessGateSharp
         public String Username { get { return mUsername; } }
         public String Password { get { return mPassword; } }
         public String PoolExtranonce { get { return mPoolExtranonce; } }
+        public String PoolName { get { return mPoolName; } }
         public double Difficulty { get { return mDifficulty; } }
 
         public void Stop()
@@ -63,12 +65,13 @@ namespace GatelessGateSharp
             mStopped = true;
         }
 
-        public Stratum(String aServerAddress, int aServerPort, String aUsername, String aPassword) // "daggerhashimoto.usa.nicehash.com", 3353
+        public Stratum(String aServerAddress, int aServerPort, String aUsername, String aPassword, String aPoolName)
         {
             mServerAddress = aServerAddress;
             mServerPort = aServerPort;
             mUsername = aUsername;
             mPassword = aPassword;
+            mPoolName = aPoolName;
 
             Connect();
         }

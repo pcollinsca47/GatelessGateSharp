@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.tabControlPools = new System.Windows.Forms.TabControl();
+            this.tabControlMainForm = new System.Windows.Forms.TabControl();
             this.tabPageStatus = new System.Windows.Forms.TabPage();
             this.labelPriceMonth = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -114,7 +114,7 @@
             this.label21 = new System.Windows.Forms.Label();
             this.label20 = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
-            this.label69 = new System.Windows.Forms.Label();
+            this.labelCurrentPool = new System.Windows.Forms.Label();
             this.label70 = new System.Windows.Forms.Label();
             this.labelPriceWeek = new System.Windows.Forms.Label();
             this.labelPriceDay = new System.Windows.Forms.Label();
@@ -123,8 +123,8 @@
             this.label5 = new System.Windows.Forms.Label();
             this.labelCurrentSpeed = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this.labelCurrentAlgorithm = new System.Windows.Forms.Label();
+            this.labelCurrentAlgorithmCaption = new System.Windows.Forms.Label();
             this.tabPageCoins = new System.Windows.Forms.TabPage();
             this.groupBoxCoinsToMine = new System.Windows.Forms.GroupBox();
             this.radioButton4 = new System.Windows.Forms.RadioButton();
@@ -145,6 +145,10 @@
             this.textBoxBitcoinAddress = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
             this.tabPagePools = new System.Windows.Forms.TabPage();
+            this.groupBoxPoolPriorities = new System.Windows.Forms.GroupBox();
+            this.buttonPoolPrioritiesDown = new System.Windows.Forms.Button();
+            this.buttonPoolPrioritiesUp = new System.Windows.Forms.Button();
+            this.listBoxPoolPriorities = new System.Windows.Forms.ListBox();
             this.tabPageDevices = new System.Windows.Forms.TabPage();
             this.tabPageLog = new System.Windows.Forms.TabPage();
             this.richTextBoxLog = new System.Windows.Forms.RichTextBox();
@@ -152,38 +156,35 @@
             this.buttonBenchmark = new System.Windows.Forms.Button();
             this.timerDeviceStatusUpdates = new System.Windows.Forms.Timer(this.components);
             this.timerCurrencyStatUpdates = new System.Windows.Forms.Timer(this.components);
-            this.groupBoxPoolPriorities = new System.Windows.Forms.GroupBox();
-            this.listBoxPoolPriorities = new System.Windows.Forms.ListBox();
-            this.buttonPoolPrioritiesUp = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
-            this.tabControlPools.SuspendLayout();
+            this.tabControlMainForm.SuspendLayout();
             this.tabPageStatus.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.tabPageCoins.SuspendLayout();
             this.groupBoxCoinsToMine.SuspendLayout();
             this.tabPagePools.SuspendLayout();
-            this.tabPageLog.SuspendLayout();
             this.groupBoxPoolPriorities.SuspendLayout();
+            this.tabPageLog.SuspendLayout();
             this.SuspendLayout();
             // 
-            // tabControlPools
+            // tabControlMainForm
             // 
-            this.tabControlPools.Controls.Add(this.tabPageStatus);
-            this.tabControlPools.Controls.Add(this.tabPageCoins);
-            this.tabControlPools.Controls.Add(this.tabPagePools);
-            this.tabControlPools.Controls.Add(this.tabPageDevices);
-            this.tabControlPools.Controls.Add(this.tabPageLog);
-            this.tabControlPools.Location = new System.Drawing.Point(11, 8);
-            this.tabControlPools.Name = "tabControlPools";
-            this.tabControlPools.SelectedIndex = 0;
-            this.tabControlPools.Size = new System.Drawing.Size(585, 395);
-            this.tabControlPools.TabIndex = 0;
+            this.tabControlMainForm.Controls.Add(this.tabPageStatus);
+            this.tabControlMainForm.Controls.Add(this.tabPageCoins);
+            this.tabControlMainForm.Controls.Add(this.tabPagePools);
+            this.tabControlMainForm.Controls.Add(this.tabPageDevices);
+            this.tabControlMainForm.Controls.Add(this.tabPageLog);
+            this.tabControlMainForm.Location = new System.Drawing.Point(11, 8);
+            this.tabControlMainForm.Name = "tabControlMainForm";
+            this.tabControlMainForm.SelectedIndex = 0;
+            this.tabControlMainForm.Size = new System.Drawing.Size(585, 395);
+            this.tabControlMainForm.TabIndex = 0;
+            this.tabControlMainForm.SelectedIndexChanged += new System.EventHandler(this.tabControlMainForm_SelectedIndexChanged);
             // 
             // tabPageStatus
             // 
             this.tabPageStatus.Controls.Add(this.labelPriceMonth);
             this.tabPageStatus.Controls.Add(this.groupBox2);
-            this.tabPageStatus.Controls.Add(this.label69);
+            this.tabPageStatus.Controls.Add(this.labelCurrentPool);
             this.tabPageStatus.Controls.Add(this.label70);
             this.tabPageStatus.Controls.Add(this.labelPriceWeek);
             this.tabPageStatus.Controls.Add(this.labelPriceDay);
@@ -192,8 +193,8 @@
             this.tabPageStatus.Controls.Add(this.label5);
             this.tabPageStatus.Controls.Add(this.labelCurrentSpeed);
             this.tabPageStatus.Controls.Add(this.label3);
-            this.tabPageStatus.Controls.Add(this.label2);
-            this.tabPageStatus.Controls.Add(this.label1);
+            this.tabPageStatus.Controls.Add(this.labelCurrentAlgorithm);
+            this.tabPageStatus.Controls.Add(this.labelCurrentAlgorithmCaption);
             this.tabPageStatus.Location = new System.Drawing.Point(4, 22);
             this.tabPageStatus.Name = "tabPageStatus";
             this.tabPageStatus.Size = new System.Drawing.Size(577, 369);
@@ -1022,13 +1023,13 @@
             this.label19.TabIndex = 140;
             this.label19.Text = "#";
             // 
-            // label69
+            // labelCurrentPool
             // 
-            this.label69.Location = new System.Drawing.Point(96, 8);
-            this.label69.Name = "label69";
-            this.label69.Size = new System.Drawing.Size(109, 17);
-            this.label69.TabIndex = 23;
-            this.label69.Text = "NiceHash";
+            this.labelCurrentPool.Location = new System.Drawing.Point(96, 8);
+            this.labelCurrentPool.Name = "labelCurrentPool";
+            this.labelCurrentPool.Size = new System.Drawing.Size(109, 17);
+            this.labelCurrentPool.TabIndex = 23;
+            this.labelCurrentPool.Text = "-";
             // 
             // label70
             // 
@@ -1099,22 +1100,22 @@
             this.label3.TabIndex = 7;
             this.label3.Text = "Current Speed:";
             // 
-            // label2
+            // labelCurrentAlgorithm
             // 
-            this.label2.Location = new System.Drawing.Point(96, 25);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(109, 17);
-            this.label2.TabIndex = 6;
-            this.label2.Text = "Ethereum";
+            this.labelCurrentAlgorithm.Location = new System.Drawing.Point(96, 25);
+            this.labelCurrentAlgorithm.Name = "labelCurrentAlgorithm";
+            this.labelCurrentAlgorithm.Size = new System.Drawing.Size(109, 17);
+            this.labelCurrentAlgorithm.TabIndex = 6;
+            this.labelCurrentAlgorithm.Text = "-";
             // 
-            // label1
+            // labelCurrentAlgorithmCaption
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 25);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(68, 13);
-            this.label1.TabIndex = 5;
-            this.label1.Text = "Current Coin:";
+            this.labelCurrentAlgorithmCaption.AutoSize = true;
+            this.labelCurrentAlgorithmCaption.Location = new System.Drawing.Point(8, 25);
+            this.labelCurrentAlgorithmCaption.Name = "labelCurrentAlgorithmCaption";
+            this.labelCurrentAlgorithmCaption.Size = new System.Drawing.Size(90, 13);
+            this.labelCurrentAlgorithmCaption.TabIndex = 5;
+            this.labelCurrentAlgorithmCaption.Text = "Current Algorithm:";
             // 
             // tabPageCoins
             // 
@@ -1324,6 +1325,52 @@
             this.tabPagePools.Text = "Pools";
             this.tabPagePools.UseVisualStyleBackColor = true;
             // 
+            // groupBoxPoolPriorities
+            // 
+            this.groupBoxPoolPriorities.Controls.Add(this.buttonPoolPrioritiesDown);
+            this.groupBoxPoolPriorities.Controls.Add(this.buttonPoolPrioritiesUp);
+            this.groupBoxPoolPriorities.Controls.Add(this.listBoxPoolPriorities);
+            this.groupBoxPoolPriorities.Location = new System.Drawing.Point(3, 3);
+            this.groupBoxPoolPriorities.Name = "groupBoxPoolPriorities";
+            this.groupBoxPoolPriorities.Size = new System.Drawing.Size(167, 134);
+            this.groupBoxPoolPriorities.TabIndex = 24;
+            this.groupBoxPoolPriorities.TabStop = false;
+            this.groupBoxPoolPriorities.Text = "Pool Priorities";
+            // 
+            // buttonPoolPrioritiesDown
+            // 
+            this.buttonPoolPrioritiesDown.Location = new System.Drawing.Point(109, 48);
+            this.buttonPoolPrioritiesDown.Name = "buttonPoolPrioritiesDown";
+            this.buttonPoolPrioritiesDown.Size = new System.Drawing.Size(51, 23);
+            this.buttonPoolPrioritiesDown.TabIndex = 25;
+            this.buttonPoolPrioritiesDown.Text = "Down";
+            this.buttonPoolPrioritiesDown.UseVisualStyleBackColor = true;
+            this.buttonPoolPrioritiesDown.Click += new System.EventHandler(this.buttonPoolPrioritiesDown_Click);
+            // 
+            // buttonPoolPrioritiesUp
+            // 
+            this.buttonPoolPrioritiesUp.Location = new System.Drawing.Point(109, 19);
+            this.buttonPoolPrioritiesUp.Name = "buttonPoolPrioritiesUp";
+            this.buttonPoolPrioritiesUp.Size = new System.Drawing.Size(51, 23);
+            this.buttonPoolPrioritiesUp.TabIndex = 24;
+            this.buttonPoolPrioritiesUp.Text = "Up";
+            this.buttonPoolPrioritiesUp.UseVisualStyleBackColor = true;
+            this.buttonPoolPrioritiesUp.Click += new System.EventHandler(this.buttonPoolPrioritiesUp_Click);
+            // 
+            // listBoxPoolPriorities
+            // 
+            this.listBoxPoolPriorities.FormattingEnabled = true;
+            this.listBoxPoolPriorities.Items.AddRange(new object[] {
+            "NiceHash",
+            "ethermine.org",
+            "ethpool.org",
+            "DwarfPool",
+            "Nanopool"});
+            this.listBoxPoolPriorities.Location = new System.Drawing.Point(6, 19);
+            this.listBoxPoolPriorities.Name = "listBoxPoolPriorities";
+            this.listBoxPoolPriorities.Size = new System.Drawing.Size(97, 108);
+            this.listBoxPoolPriorities.TabIndex = 23;
+            // 
             // tabPageDevices
             // 
             this.tabPageDevices.Location = new System.Drawing.Point(4, 22);
@@ -1368,6 +1415,7 @@
             // 
             // buttonBenchmark
             // 
+            this.buttonBenchmark.Enabled = false;
             this.buttonBenchmark.Location = new System.Drawing.Point(440, 409);
             this.buttonBenchmark.Name = "buttonBenchmark";
             this.buttonBenchmark.Size = new System.Drawing.Size(75, 23);
@@ -1385,52 +1433,6 @@
             this.timerCurrencyStatUpdates.Interval = 60000;
             this.timerCurrencyStatUpdates.Tick += new System.EventHandler(this.timerCurrencyStatUpdates_Tick);
             // 
-            // groupBoxPoolPriorities
-            // 
-            this.groupBoxPoolPriorities.Controls.Add(this.button1);
-            this.groupBoxPoolPriorities.Controls.Add(this.buttonPoolPrioritiesUp);
-            this.groupBoxPoolPriorities.Controls.Add(this.listBoxPoolPriorities);
-            this.groupBoxPoolPriorities.Location = new System.Drawing.Point(3, 3);
-            this.groupBoxPoolPriorities.Name = "groupBoxPoolPriorities";
-            this.groupBoxPoolPriorities.Size = new System.Drawing.Size(167, 134);
-            this.groupBoxPoolPriorities.TabIndex = 24;
-            this.groupBoxPoolPriorities.TabStop = false;
-            this.groupBoxPoolPriorities.Text = "Pool Priorities";
-            // 
-            // listBoxPoolPriorities
-            // 
-            this.listBoxPoolPriorities.FormattingEnabled = true;
-            this.listBoxPoolPriorities.Items.AddRange(new object[] {
-            "NiceHash",
-            "ethermine.org",
-            "ethpool.org",
-            "DwarfPool",
-            "Nanopool"});
-            this.listBoxPoolPriorities.Location = new System.Drawing.Point(6, 19);
-            this.listBoxPoolPriorities.Name = "listBoxPoolPriorities";
-            this.listBoxPoolPriorities.Size = new System.Drawing.Size(97, 108);
-            this.listBoxPoolPriorities.TabIndex = 23;
-            // 
-            // buttonPoolPrioritiesUp
-            // 
-            this.buttonPoolPrioritiesUp.Location = new System.Drawing.Point(109, 19);
-            this.buttonPoolPrioritiesUp.Name = "buttonPoolPrioritiesUp";
-            this.buttonPoolPrioritiesUp.Size = new System.Drawing.Size(51, 23);
-            this.buttonPoolPrioritiesUp.TabIndex = 24;
-            this.buttonPoolPrioritiesUp.Text = "Up";
-            this.buttonPoolPrioritiesUp.UseVisualStyleBackColor = true;
-            this.buttonPoolPrioritiesUp.Click += new System.EventHandler(this.buttonPoolPrioritiesUp_Click);
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(109, 48);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(51, 23);
-            this.button1.TabIndex = 25;
-            this.button1.Text = "Down";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1438,14 +1440,14 @@
             this.ClientSize = new System.Drawing.Size(606, 442);
             this.Controls.Add(this.buttonBenchmark);
             this.Controls.Add(this.buttonStart);
-            this.Controls.Add(this.tabControlPools);
+            this.Controls.Add(this.tabControlMainForm);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Name = "MainForm";
             this.Text = "Gateless Gate #";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
-            this.Load += new System.EventHandler(this.Form1_Load);
-            this.tabControlPools.ResumeLayout(false);
+            this.Load += new System.EventHandler(this.MainForm_Load);
+            this.tabControlMainForm.ResumeLayout(false);
             this.tabPageStatus.ResumeLayout(false);
             this.tabPageStatus.PerformLayout();
             this.groupBox2.ResumeLayout(false);
@@ -1455,15 +1457,15 @@
             this.groupBoxCoinsToMine.ResumeLayout(false);
             this.groupBoxCoinsToMine.PerformLayout();
             this.tabPagePools.ResumeLayout(false);
-            this.tabPageLog.ResumeLayout(false);
             this.groupBoxPoolPriorities.ResumeLayout(false);
+            this.tabPageLog.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.TabControl tabControlPools;
+        private System.Windows.Forms.TabControl tabControlMainForm;
         private System.Windows.Forms.TabPage tabPageStatus;
         private System.Windows.Forms.TabPage tabPageLog;
         private System.Windows.Forms.TabPage tabPageCoins;
@@ -1472,8 +1474,8 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label labelCurrentSpeed;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labelCurrentAlgorithm;
+        private System.Windows.Forms.Label labelCurrentAlgorithmCaption;
         private System.Windows.Forms.TabPage tabPageDevices;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label labelPriceDay;
@@ -1498,7 +1500,7 @@
         private System.Windows.Forms.RadioButton radioButton3;
         private System.Windows.Forms.RadioButton radioButton2;
         private System.Windows.Forms.RadioButton radioButton1;
-        private System.Windows.Forms.Label label69;
+        private System.Windows.Forms.Label labelCurrentPool;
         private System.Windows.Forms.Label label70;
         private System.Windows.Forms.Timer timerDeviceStatusUpdates;
         private System.Windows.Forms.RichTextBox richTextBoxLog;
@@ -1587,7 +1589,7 @@
         private System.Windows.Forms.Timer timerCurrencyStatUpdates;
         private System.Windows.Forms.Label labelPriceMonth;
         private System.Windows.Forms.GroupBox groupBoxPoolPriorities;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonPoolPrioritiesDown;
         private System.Windows.Forms.Button buttonPoolPrioritiesUp;
         private System.Windows.Forms.ListBox listBoxPoolPriorities;
     }
