@@ -77,20 +77,24 @@ namespace GatelessGateSharp
             file.Close();
             Instance.loggerMutex.ReleaseMutex();
 
-            Instance.richTextBoxLog.Invoke((MethodInvoker)delegate
+            try
             {
-                Instance.loggerMutex.WaitOne();
-                Instance.richTextBoxLog.SelectionLength = 0;
-                Instance.richTextBoxLog.SelectionStart = Instance.richTextBoxLog.Text.Length;
-                Instance.richTextBoxLog.ScrollToCaret();
-                if (Instance.richTextBoxLog.Text != "")
-                    Instance.richTextBoxLog.Text += "\n";
-                Instance.richTextBoxLog.Text += lines;
-                Instance.richTextBoxLog.SelectionLength = 0;
-                Instance.richTextBoxLog.SelectionStart = Instance.richTextBoxLog.Text.Length;
-                Instance.richTextBoxLog.ScrollToCaret();
-                Instance.loggerMutex.ReleaseMutex();
-            });
+                Instance.richTextBoxLog.Invoke((MethodInvoker)delegate
+                {
+                    Instance.loggerMutex.WaitOne();
+                    Instance.richTextBoxLog.SelectionLength = 0;
+                    Instance.richTextBoxLog.SelectionStart = Instance.richTextBoxLog.Text.Length;
+                    Instance.richTextBoxLog.ScrollToCaret();
+                    if (Instance.richTextBoxLog.Text != "")
+                        Instance.richTextBoxLog.Text += "\n";
+                    Instance.richTextBoxLog.Text += lines;
+                    Instance.richTextBoxLog.SelectionLength = 0;
+                    Instance.richTextBoxLog.SelectionStart = Instance.richTextBoxLog.Text.Length;
+                    Instance.richTextBoxLog.ScrollToCaret();
+                    Instance.loggerMutex.ReleaseMutex();
+                });
+            }
+            catch (Exception ex) { }
         }
 
         unsafe public MainForm()
@@ -107,6 +111,9 @@ namespace GatelessGateSharp
             conn.Open();
             String sql = "create table wallet_addresses (coin varchar(128), address varchar(128));";
             SQLiteCommand command = new SQLiteCommand(sql, conn);
+            command.ExecuteNonQuery();
+            sql = "create table pools (name varchar(128));";
+            command = new SQLiteCommand(sql, conn);
             command.ExecuteNonQuery();
             conn.Close();
         }
@@ -137,6 +144,24 @@ namespace GatelessGateSharp
                     textBoxZcashAddress.Text = (String)reader["address"];
                 }
             }
+
+            try
+            {
+                sql = "select * from pools";
+                command = new SQLiteCommand(sql, conn);
+                reader = command.ExecuteReader();
+                List<String> oldItems = new List<string>();
+                foreach (String poolName in listBoxPoolPriorities.Items)
+                    oldItems.Add(poolName);
+                listBoxPoolPriorities.Items.Clear();
+                while (reader.Read())
+                    listBoxPoolPriorities.Items.Add((String)reader["name"]);
+                foreach (String poolName in oldItems)
+                    if (!listBoxPoolPriorities.Items.Contains(poolName))
+                        listBoxPoolPriorities.Items.Add(poolName);
+            }
+            catch (Exception ex) { }
+
             conn.Close();
         }
 
@@ -165,6 +190,26 @@ namespace GatelessGateSharp
             command.Parameters.AddWithValue("@coin", "zcash");
             command.Parameters.AddWithValue("@address", textBoxZcashAddress.Text);
             command.ExecuteNonQuery();
+
+            try
+            {
+                sql = "delete from pools";
+                command = new SQLiteCommand(sql, conn);
+                command.ExecuteNonQuery();
+            }
+            catch (Exception ex) {
+                sql = "create table pools (name varchar(128));";
+                command = new SQLiteCommand(sql, conn);
+                command.ExecuteNonQuery();
+            }
+
+            sql = "insert into pools (name) values (@name)";
+            foreach (String poolName in listBoxPoolPriorities.Items)
+            {
+                command = new SQLiteCommand(sql, conn);
+                command.Parameters.AddWithValue("@name", poolName);
+                command.ExecuteNonQuery();
+            }
             
             conn.Close();
         }
@@ -387,10 +432,33 @@ namespace GatelessGateSharp
 
         private void UpdateCurrencyStats()
         {
-            //try
+            try
             {
-                String poolName = (appState == ApplicationGlobalState.Mining) ? mStratum.PoolName : (string)listBoxPoolPriorities.Items[0];
-                labelCurrentPool.Text = poolName;
+                double totalSpeed = 0;
+                if (mMiners != null)
+                    foreach (Miner miner in mMiners)
+                        totalSpeed += miner.Speed;
+                labelCurrentSpeed.Text = (appState != ApplicationGlobalState.Mining) ? "-" : String.Format("{0:N2} Mh/s", totalSpeed / 1000000);
+
+                String poolName = (string)listBoxPoolPriorities.Items[0];
+                if (appState == ApplicationGlobalState.Mining && mStratum != null)
+                {
+                    labelCurrentPool.Text = mStratum.PoolName + " (" + mStratum.ServerAddress + ")";
+                    poolName = mStratum.PoolName;
+                }
+                else
+                {
+                    labelCurrentPool.Text = (string)listBoxPoolPriorities.Items[0];
+                }
+
+                if (appState == ApplicationGlobalState.Mining && mMiners != null)
+                {
+                    labelCurrentAlgorithm.Text = mMiners[0].AlgorithmName; // TODO
+                }
+                else
+                {
+                    labelCurrentAlgorithm.Text = "-";
+                }
 
                 var client = new CustomWebClient();
                 double USDBTC = 0;
@@ -400,7 +468,16 @@ namespace GatelessGateSharp
                     var USD = (JContainer)(response["USD"]);
                     USDBTC = (double)(USD["15m"]);
                 }
-                
+
+                double USDETH = 0.0;
+                {
+                    String jsonString = client.DownloadString("https://api.coinmarketcap.com/v1/ticker/?convert=USD");
+                    var responseArray = JsonConvert.DeserializeObject<JArray>(jsonString);
+                    foreach (JContainer currency in responseArray)
+                        if ((String)currency["id"] == "ethereum")
+                            USDETH = Double.Parse((String)currency["price_usd"]);
+                }
+
                 if (poolName == "NiceHash")
                 {
                     double balance = 0;
@@ -414,11 +491,6 @@ namespace GatelessGateSharp
 
                     if (appState == ApplicationGlobalState.Mining && textBoxBitcoinAddress.Text != "")
                     {
-                        double totalSpeed = 0;
-                        if (mMiners != null)
-                            foreach (Miner miner in mMiners)
-                                totalSpeed += miner.Speed;
-
                         double price = 0;
                         jsonString = client.DownloadString("https://api.nicehash.com/api?method=stats.global.current");
                         response = JsonConvert.DeserializeObject<Dictionary<string, Object>>(jsonString);
@@ -441,14 +513,7 @@ namespace GatelessGateSharp
                 }
                 else if (poolName == "ethermine.org" && textBoxEthereumAddress.Text != "")
                 {
-                    String jsonString = client.DownloadString("https://api.coinmarketcap.com/v1/ticker/?convert=USD");
-                    var responseArray = JsonConvert.DeserializeObject<JArray>(jsonString);
-                    double USDETH = 0.0;
-                    foreach (JContainer currency in responseArray)
-                        if ((String)currency["id"] == "ethereum")
-                            USDETH = Double.Parse((String)currency["price_usd"]);
-
-                    jsonString = client.DownloadString("https://api.ethermine.org/miner/" + textBoxEthereumAddress.Text + "/currentStats");
+                    String jsonString = client.DownloadString("https://api.ethermine.org/miner/" + textBoxEthereumAddress.Text + "/currentStats");
                     var response = JsonConvert.DeserializeObject<Dictionary<string, Object>>(jsonString);
                     var data = (JContainer)(response["data"]);
                     double balance = (double)data["unpaid"] * 1e-18;
@@ -458,11 +523,6 @@ namespace GatelessGateSharp
 
                     if (appState == ApplicationGlobalState.Mining && averageHashrate != 0)
                     {
-                        double totalSpeed = 0;
-                        if (mMiners != null)
-                            foreach (Miner miner in mMiners)
-                                totalSpeed += miner.Speed;
-
                         double price = (coinsPerMin * 60 * 24) * (totalSpeed / averageHashrate);
 
                         labelPriceDay.Text = String.Format("{0:N6}", price) + " ETH/Day (" + String.Format("{0:N2}", (price * USDETH)) + " USD/Day)";
@@ -476,6 +536,53 @@ namespace GatelessGateSharp
                         labelPriceMonth.Text = "-";
                     }
                 }
+                else if (poolName == "ethpool.org" && textBoxEthereumAddress.Text != "")
+                {
+                    String jsonString = client.DownloadString("http://api.ethpool.org/miner/" + textBoxEthereumAddress.Text + "/currentStats");
+                    var response = JsonConvert.DeserializeObject<Dictionary<string, Object>>(jsonString);
+                    var data = (JContainer)(response["data"]);
+                    double balance = 0;
+                    try
+                    {
+                        balance = (double)data["unpaid"] * 1e-18;
+                    }
+                    catch (Exception ex) { }
+                    double averageHashrate = (double)data["averageHashrate"];
+                    double coinsPerMin = (double)data["coinsPerMin"];
+                    labelBalance.Text = String.Format("{0:N6}", balance) + " ETH (" + String.Format("{0:N2}", (balance * USDETH)) + " USD)";
+
+                    if (appState == ApplicationGlobalState.Mining && averageHashrate != 0)
+                    {
+                        double price = (coinsPerMin * 60 * 24) * (totalSpeed / averageHashrate);
+
+                        labelPriceDay.Text = String.Format("{0:N6}", price) + " ETH/Day (" + String.Format("{0:N2}", (price * USDETH)) + " USD/Day)";
+                        labelPriceWeek.Text = String.Format("{0:N6}", price * 7) + " ETH/Week (" + String.Format("{0:N2}", (price * 7 * USDETH)) + " USD/Week)";
+                        labelPriceMonth.Text = String.Format("{0:N6}", price * (365.25 / 12)) + " ETH/Month (" + String.Format("{0:N2}", (price * (365.25 / 12) * USDETH)) + " USD/Month)";
+                    }
+                    else
+                    {
+                        labelPriceDay.Text = "-";
+                        labelPriceWeek.Text = "-";
+                        labelPriceMonth.Text = "-";
+                    }
+                }
+                else if (poolName == "Nanopool" && textBoxEthereumAddress.Text != "")
+                {
+                    String jsonString = client.DownloadString("https://api.nanopool.org/v1/eth/user/" + textBoxEthereumAddress.Text);
+                    var response = JsonConvert.DeserializeObject<Dictionary<string, Object>>(jsonString);
+                    var data = (JContainer)(response["data"]);
+                    double balance = 0;
+                    try
+                    {
+                        balance = (double)data["balance"];
+                    }
+                    catch (Exception ex) { }
+                    labelBalance.Text = String.Format("{0:N6}", balance) + " ETH (" + String.Format("{0:N2}", (balance * USDETH)) + " USD)";
+
+                    labelPriceDay.Text = "-";
+                    labelPriceWeek.Text = "-";
+                    labelPriceMonth.Text = "-";
+                }
                 else
                 {
                     labelPriceDay.Text = "-";
@@ -484,7 +591,7 @@ namespace GatelessGateSharp
                     labelBalance.Text = "-";
                 }
             }
-            //catch (Exception _)
+            catch (Exception ex)
             {
             }
         }
@@ -780,6 +887,52 @@ namespace GatelessGateSharp
             }
         }
 
+        struct StratumServerInfo : IComparable<StratumServerInfo> {
+            public String name; 
+            public long delay;
+            public long time;
+
+            public StratumServerInfo(String aName, long aDelay)
+            {
+                name = aName;
+                delay = aDelay;
+                try
+                {
+                    time = Utilities.MeasurePingRoundtripTime(aName);
+                }
+                catch (Exception ex)
+                {
+                    time = -1;
+                }
+                if (time >= 0)
+                    time += delay;
+            }
+
+            public int CompareTo(StratumServerInfo other)
+            {
+                if (time == other.time)
+                {
+                    return 0;
+                }
+                else if (other.time < 0 && time >= 0)
+                {
+                    return -1;
+                }
+                else if (other.time >= 0 && time < 0)
+                {
+                    return 1;
+                }
+                else if (other.time > time)
+                {
+                    return -1;
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+        };
+
         private void buttonStart_Click(object sender, EventArgs e)
         {
             UpdateDatabase();
@@ -790,7 +943,7 @@ namespace GatelessGateSharp
                 return;
             if (textBoxBitcoinAddress.Text == "" && textBoxEthereumAddress.Text == "")
             {
-                MessageBox.Show("Please enter at least one valid wallet addresss.", appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Please enter at least one valid wallet address.", appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -798,6 +951,9 @@ namespace GatelessGateSharp
 
             if (appState == ApplicationGlobalState.Idle)
             {
+                mStratum = null;
+                mMiners = null;
+
                 String errorMessage = "";
                 foreach (String pool in listBoxPoolPriorities.Items)
                 {
@@ -806,23 +962,116 @@ namespace GatelessGateSharp
                         Logger("Launching miners...");
                         if (pool == "NiceHash")
                         {
-                            mStratum = new NiceHashEthashStratum("daggerhashimoto.usa.nicehash.com", 3353, textBoxBitcoinAddress.Text, "x", pool);
-                        }
+                            var hosts = new List<StratumServerInfo> {
+                                new StratumServerInfo("daggerhashimoto.usa.nicehash.com", 0),
+                                new StratumServerInfo("daggerhashimoto.eu.nicehash.com", 0),
+                                new StratumServerInfo("daggerhashimoto.hk.nicehash.com", 150),
+                                new StratumServerInfo("daggerhashimoto.jp.nicehash.com", 100),
+                                new StratumServerInfo("daggerhashimoto.in.nicehash.com", 200),
+                                new StratumServerInfo("daggerhashimoto.br.nicehash.com", 180)
+                            };
+                            hosts.Sort();
+                            foreach (StratumServerInfo host in hosts)
+                            {
+                                if (host.time >= 0)
+                                {
+                                    try 
+                                    { 
+                                        mStratum = new NiceHashEthashStratum(host.name, 3353, textBoxBitcoinAddress.Text, "x", pool); 
+                                        break; 
+                                    }
+                                    catch (Exception ex) { }
+                                }
+                            }
+                       }
                         else if (pool == "DwarfPool")
                         {
-                            mStratum = new NiceHashEthashStratum("eth-us2.dwarfpool.com", 8008, textBoxEthereumAddress.Text, "x", pool);
+                            var hosts = new List<StratumServerInfo> {
+                                new StratumServerInfo("eth-eu.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-us.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-us2.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-ru.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-asia.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-cn.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-cn2.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-sg.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-au.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-ru2.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-hk.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-br.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-ar.dwarfpool.com", 0)
+                            };
+                            hosts.Sort();
+                            foreach (StratumServerInfo host in hosts)
+                            {
+                                if (host.time >= 0)
+                                {
+                                    try
+                                    {
+                                        mStratum = new OpenEthereumPoolEthashStratum(host.name, 8008, textBoxEthereumAddress.Text, "x", pool);
+                                        break;
+                                    }
+                                    catch (Exception ex) 
+                                    {
+                                        MainForm.Logger("Exception: " + ex.Message + ex.StackTrace);
+                                    }
+                                }
+                            }
                         }
                         else if (pool == "ethermine.org")
                         {
-                            mStratum = new OpenEthereumPoolEthashStratum("us1.ethermine.org", 4444, textBoxEthereumAddress.Text, "x", pool);
+                            var hosts = new List<StratumServerInfo> {
+                                new StratumServerInfo("us1.ethermine.org", 0),
+                                new StratumServerInfo("us2.ethermine.org", 0),
+                                new StratumServerInfo("eu1.ethermine.org", 0),
+                                new StratumServerInfo("asia1.ethermine.org", 0)
+                            };
+                            hosts.Sort();
+                            foreach (StratumServerInfo host in hosts)
+                            {
+                                if (host.time >= 0)
+                                {
+                                    try
+                                    {
+                                        mStratum = new OpenEthereumPoolEthashStratum(host.name, 4444, textBoxEthereumAddress.Text, "x", pool);
+                                        break;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        MainForm.Logger("Exception: " + ex.Message + ex.StackTrace);
+                                    }
+                                }
+                            }
                         }
                         else if (pool == "ethpool.org")
                         {
-                            mStratum = new OpenEthereumPoolEthashStratum("us1.ethpool.org", 4444, textBoxEthereumAddress.Text, "x", pool);
+                            mStratum = new OpenEthereumPoolEthashStratum("us1.ethpool.org", 3333, textBoxEthereumAddress.Text, "x", pool);
                         }
                         else if (pool == "Nanopool")
                         {
-                            mStratum = new OpenEthereumPoolEthashStratum("eth-us-west1.nanopool.org", 9999, textBoxEthereumAddress.Text, "x", pool);
+                            var hosts = new List<StratumServerInfo> {
+                                new StratumServerInfo("eth-eu1.nanopool.org", 0),
+                                new StratumServerInfo("eth-eu2.nanopool.org", 0),
+                                new StratumServerInfo("eth-asia1.nanopool.org", 0),
+                                new StratumServerInfo("eth-us-east1.nanopool.org", 0),
+                                new StratumServerInfo("eth-us-west1.nanopool.org", 0)
+                            };
+                            hosts.Sort();
+                            foreach (StratumServerInfo host in hosts)
+                            {
+                                if (host.time >= 0)
+                                {
+                                    try
+                                    {
+                                        mStratum = new OpenEthereumPoolEthashStratum(host.name, 9999, textBoxEthereumAddress.Text, "x", pool);
+                                        break;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        MainForm.Logger("Exception: " + ex.Message + ex.StackTrace);
+                                    }
+                                }
+                            }
                         }
                         else
                         {
@@ -843,7 +1092,7 @@ namespace GatelessGateSharp
                         errorMessage = ex.Message;
                     }
                 }
-                if (mMiners == null)
+                if (mStratum == null || mMiners == null)
                     MessageBox.Show("Failed to launch miner(s):\n" + errorMessage, appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else if (appState == ApplicationGlobalState.Mining) {
@@ -867,9 +1116,9 @@ namespace GatelessGateSharp
                 appState = ApplicationGlobalState.Idle;
             }
 
-            UpdateControls();
             UpdateDeviceStatus();
             UpdateCurrencyStats();
+            UpdateControls();
         }
 
         private void UpdateControls()
@@ -878,6 +1127,7 @@ namespace GatelessGateSharp
             buttonBenchmark.Enabled = false;
 
             groupBoxCoinsToMine.Enabled = (appState == ApplicationGlobalState.Idle);
+            groupBoxPoolPriorities.Enabled = (appState == ApplicationGlobalState.Idle);
             textBoxBitcoinAddress.Enabled = (appState == ApplicationGlobalState.Idle);
             textBoxEthereumAddress.Enabled = (appState == ApplicationGlobalState.Idle);
             textBoxMoneroAddress.Enabled = (appState == ApplicationGlobalState.Idle);
@@ -924,6 +1174,34 @@ namespace GatelessGateSharp
         private void tabControlMainForm_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateDatabase();
+        }
+
+        private void buttonEthereumBalance_Click(object sender, EventArgs e)
+        {
+            if (!ValidateEthereumAddress())
+                return;
+            foreach (String poolName in listBoxPoolPriorities.Items) {
+                if (poolName == "Nanopool")
+                {
+                    System.Diagnostics.Process.Start("https://eth.nanopool.org/account/" + textBoxEthereumAddress.Text);
+                    return;
+                }
+                else if (poolName == "DwarfPool")
+                {
+                    System.Diagnostics.Process.Start("https://dwarfpool.com/eth/address?wallet=" + textBoxEthereumAddress.Text);
+                    return;
+                }
+                else if (poolName == "ethermine.org")
+                {
+                    System.Diagnostics.Process.Start("https://ethermine.org/miners/" + textBoxEthereumAddress.Text);
+                    return;
+                }
+                else if (poolName == "ethpool.org")
+                {
+                    System.Diagnostics.Process.Start("https://ethpool.org/miners/" + textBoxEthereumAddress.Text);
+                    return;
+                }
+            }
         }
     }
 }

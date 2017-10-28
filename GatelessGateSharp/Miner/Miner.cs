@@ -33,14 +33,17 @@ namespace GatelessGateSharp
         private int mDeviceIndex;
         private bool mStopped = false;
         protected double mSpeed = 0;
+        private String mAlgorithmName = "";
 
         public int DeviceIndex { get { return mDeviceIndex; } }
         public bool Stopped { get { return mStopped; } }
         public double Speed { get { return mSpeed; } }
+        public String AlgorithmName { get { return mAlgorithmName; } }
 
-        protected Miner(int aDeviceIndex)
+        protected Miner(int aDeviceIndex, String aAlgorithmName )
         {
             mDeviceIndex = aDeviceIndex;
+            mAlgorithmName = aAlgorithmName;
         }
 
         public void Stop()

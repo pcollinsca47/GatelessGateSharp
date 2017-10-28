@@ -43,7 +43,7 @@ namespace GatelessGateSharp
         private long mGlobalWorkSize;
 
         public OpenCLEthashMiner(ComputeDevice aDevice, int aDeviceIndex, EthashStratum aStratum)
-            : base(aDevice, aDeviceIndex)
+            : base(aDevice, aDeviceIndex, "Ethash")
         {
             mStratum = aStratum;
             mGlobalWorkSize = 4096 * mLocalWorkSize * Device.MaxComputeUnits;
@@ -71,13 +71,17 @@ namespace GatelessGateSharp
 
             // Wait for the first job to arrive.
             int timePassed = 0;
-            while (mStratum.CurrentJob == null && timePassed < 60000)
+            while ((mStratum == null || mStratum.CurrentJob == null) && timePassed < 5000)
             {
                 Thread.Sleep(10);
                 timePassed += 10;
             }
-            if (mStratum.CurrentJob == null)
-                throw new TimeoutException("Stratum server failed to send a new job.");
+            if (mStratum == null || mStratum.CurrentJob == null)
+            {
+                MainForm.Logger("Stratum server failed to send a new job.");
+                //throw new TimeoutException("Stratum server failed to send a new job.");
+                return;
+            }
 
             System.Diagnostics.Stopwatch consoleUpdateStopwatch = new System.Diagnostics.Stopwatch();
             EthashStratum.Work work;

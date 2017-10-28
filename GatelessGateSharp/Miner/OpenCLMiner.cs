@@ -38,7 +38,8 @@ namespace GatelessGateSharp
         public ComputeContext Context { get { return mContext; } }
         public ComputeCommandQueue Queue { get { return mQueue; } }
 
-        protected OpenCLMiner(ComputeDevice aDevice, int aDeviceIndex) : base(aDeviceIndex)
+        protected OpenCLMiner(ComputeDevice aDevice, int aDeviceIndex, String aAlgorithmName)
+            : base(aDeviceIndex, aAlgorithmName)
         {
             mDevice = aDevice;
             List<ComputeDevice> deviceList = new List<ComputeDevice>();

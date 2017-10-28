@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net;
+using System.Net.NetworkInformation;
 
 namespace GatelessGateSharp
 {
@@ -450,6 +452,19 @@ namespace GatelessGateSharp
             for (int i = 0; i < numChars; i += 2)
                 bytes[(numChars / 2) - (i / 2) - 1] = Convert.ToByte(hex.Substring(i, 2), 16);
             return bytes;
+        }
+
+        public static long MeasurePingRoundtripTime(string host)
+        {
+            Ping pingSender = new Ping();
+            PingOptions options = new PingOptions();
+
+            options.DontFragment = true;
+            string data = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+            byte[] buffer = Encoding.ASCII.GetBytes(data);
+            int timeout = 3;
+            PingReply reply = pingSender.Send(host, timeout, buffer, options);
+            return (reply.Status == IPStatus.Success) ? reply.RoundtripTime : -1;
         }
     }
 }

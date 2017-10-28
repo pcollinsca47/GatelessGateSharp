@@ -125,7 +125,11 @@
             this.label3 = new System.Windows.Forms.Label();
             this.labelCurrentAlgorithm = new System.Windows.Forms.Label();
             this.labelCurrentAlgorithmCaption = new System.Windows.Forms.Label();
-            this.tabPageCoins = new System.Windows.Forms.TabPage();
+            this.tabPageSettings = new System.Windows.Forms.TabPage();
+            this.groupBoxPoolPriorities = new System.Windows.Forms.GroupBox();
+            this.buttonPoolPrioritiesDown = new System.Windows.Forms.Button();
+            this.buttonPoolPrioritiesUp = new System.Windows.Forms.Button();
+            this.listBoxPoolPriorities = new System.Windows.Forms.ListBox();
             this.groupBoxCoinsToMine = new System.Windows.Forms.GroupBox();
             this.radioButton4 = new System.Windows.Forms.RadioButton();
             this.radioButton3 = new System.Windows.Forms.RadioButton();
@@ -134,7 +138,7 @@
             this.label17 = new System.Windows.Forms.Label();
             this.button5 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.buttonEthereumBalance = new System.Windows.Forms.Button();
             this.buttonViewBalancesAtNiceHash = new System.Windows.Forms.Button();
             this.textBoxZcashAddress = new System.Windows.Forms.TextBox();
             this.label16 = new System.Windows.Forms.Label();
@@ -144,12 +148,6 @@
             this.label14 = new System.Windows.Forms.Label();
             this.textBoxBitcoinAddress = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
-            this.tabPagePools = new System.Windows.Forms.TabPage();
-            this.groupBoxPoolPriorities = new System.Windows.Forms.GroupBox();
-            this.buttonPoolPrioritiesDown = new System.Windows.Forms.Button();
-            this.buttonPoolPrioritiesUp = new System.Windows.Forms.Button();
-            this.listBoxPoolPriorities = new System.Windows.Forms.ListBox();
-            this.tabPageDevices = new System.Windows.Forms.TabPage();
             this.tabPageLog = new System.Windows.Forms.TabPage();
             this.richTextBoxLog = new System.Windows.Forms.RichTextBox();
             this.buttonStart = new System.Windows.Forms.Button();
@@ -159,19 +157,16 @@
             this.tabControlMainForm.SuspendLayout();
             this.tabPageStatus.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            this.tabPageCoins.SuspendLayout();
-            this.groupBoxCoinsToMine.SuspendLayout();
-            this.tabPagePools.SuspendLayout();
+            this.tabPageSettings.SuspendLayout();
             this.groupBoxPoolPriorities.SuspendLayout();
+            this.groupBoxCoinsToMine.SuspendLayout();
             this.tabPageLog.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControlMainForm
             // 
             this.tabControlMainForm.Controls.Add(this.tabPageStatus);
-            this.tabControlMainForm.Controls.Add(this.tabPageCoins);
-            this.tabControlMainForm.Controls.Add(this.tabPagePools);
-            this.tabControlMainForm.Controls.Add(this.tabPageDevices);
+            this.tabControlMainForm.Controls.Add(this.tabPageSettings);
             this.tabControlMainForm.Controls.Add(this.tabPageLog);
             this.tabControlMainForm.Location = new System.Drawing.Point(11, 8);
             this.tabControlMainForm.Name = "tabControlMainForm";
@@ -1027,7 +1022,7 @@
             // 
             this.labelCurrentPool.Location = new System.Drawing.Point(96, 8);
             this.labelCurrentPool.Name = "labelCurrentPool";
-            this.labelCurrentPool.Size = new System.Drawing.Size(109, 17);
+            this.labelCurrentPool.Size = new System.Drawing.Size(306, 17);
             this.labelCurrentPool.TabIndex = 23;
             this.labelCurrentPool.Text = "-";
             // 
@@ -1104,7 +1099,7 @@
             // 
             this.labelCurrentAlgorithm.Location = new System.Drawing.Point(96, 25);
             this.labelCurrentAlgorithm.Name = "labelCurrentAlgorithm";
-            this.labelCurrentAlgorithm.Size = new System.Drawing.Size(109, 17);
+            this.labelCurrentAlgorithm.Size = new System.Drawing.Size(232, 17);
             this.labelCurrentAlgorithm.TabIndex = 6;
             this.labelCurrentAlgorithm.Text = "-";
             // 
@@ -1117,29 +1112,76 @@
             this.labelCurrentAlgorithmCaption.TabIndex = 5;
             this.labelCurrentAlgorithmCaption.Text = "Current Algorithm:";
             // 
-            // tabPageCoins
+            // tabPageSettings
             // 
-            this.tabPageCoins.Controls.Add(this.groupBoxCoinsToMine);
-            this.tabPageCoins.Controls.Add(this.label17);
-            this.tabPageCoins.Controls.Add(this.button5);
-            this.tabPageCoins.Controls.Add(this.button4);
-            this.tabPageCoins.Controls.Add(this.button3);
-            this.tabPageCoins.Controls.Add(this.buttonViewBalancesAtNiceHash);
-            this.tabPageCoins.Controls.Add(this.textBoxZcashAddress);
-            this.tabPageCoins.Controls.Add(this.label16);
-            this.tabPageCoins.Controls.Add(this.textBoxMoneroAddress);
-            this.tabPageCoins.Controls.Add(this.label15);
-            this.tabPageCoins.Controls.Add(this.textBoxEthereumAddress);
-            this.tabPageCoins.Controls.Add(this.label14);
-            this.tabPageCoins.Controls.Add(this.textBoxBitcoinAddress);
-            this.tabPageCoins.Controls.Add(this.label13);
-            this.tabPageCoins.Location = new System.Drawing.Point(4, 22);
-            this.tabPageCoins.Name = "tabPageCoins";
-            this.tabPageCoins.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageCoins.Size = new System.Drawing.Size(577, 369);
-            this.tabPageCoins.TabIndex = 0;
-            this.tabPageCoins.Text = "Coins";
-            this.tabPageCoins.UseVisualStyleBackColor = true;
+            this.tabPageSettings.Controls.Add(this.groupBoxPoolPriorities);
+            this.tabPageSettings.Controls.Add(this.groupBoxCoinsToMine);
+            this.tabPageSettings.Controls.Add(this.label17);
+            this.tabPageSettings.Controls.Add(this.button5);
+            this.tabPageSettings.Controls.Add(this.button4);
+            this.tabPageSettings.Controls.Add(this.buttonEthereumBalance);
+            this.tabPageSettings.Controls.Add(this.buttonViewBalancesAtNiceHash);
+            this.tabPageSettings.Controls.Add(this.textBoxZcashAddress);
+            this.tabPageSettings.Controls.Add(this.label16);
+            this.tabPageSettings.Controls.Add(this.textBoxMoneroAddress);
+            this.tabPageSettings.Controls.Add(this.label15);
+            this.tabPageSettings.Controls.Add(this.textBoxEthereumAddress);
+            this.tabPageSettings.Controls.Add(this.label14);
+            this.tabPageSettings.Controls.Add(this.textBoxBitcoinAddress);
+            this.tabPageSettings.Controls.Add(this.label13);
+            this.tabPageSettings.Location = new System.Drawing.Point(4, 22);
+            this.tabPageSettings.Name = "tabPageSettings";
+            this.tabPageSettings.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageSettings.Size = new System.Drawing.Size(577, 369);
+            this.tabPageSettings.TabIndex = 0;
+            this.tabPageSettings.Text = "Settings";
+            this.tabPageSettings.UseVisualStyleBackColor = true;
+            // 
+            // groupBoxPoolPriorities
+            // 
+            this.groupBoxPoolPriorities.Controls.Add(this.buttonPoolPrioritiesDown);
+            this.groupBoxPoolPriorities.Controls.Add(this.buttonPoolPrioritiesUp);
+            this.groupBoxPoolPriorities.Controls.Add(this.listBoxPoolPriorities);
+            this.groupBoxPoolPriorities.Location = new System.Drawing.Point(127, 6);
+            this.groupBoxPoolPriorities.Name = "groupBoxPoolPriorities";
+            this.groupBoxPoolPriorities.Size = new System.Drawing.Size(167, 134);
+            this.groupBoxPoolPriorities.TabIndex = 25;
+            this.groupBoxPoolPriorities.TabStop = false;
+            this.groupBoxPoolPriorities.Text = "Pool Priorities";
+            // 
+            // buttonPoolPrioritiesDown
+            // 
+            this.buttonPoolPrioritiesDown.Location = new System.Drawing.Point(109, 48);
+            this.buttonPoolPrioritiesDown.Name = "buttonPoolPrioritiesDown";
+            this.buttonPoolPrioritiesDown.Size = new System.Drawing.Size(51, 23);
+            this.buttonPoolPrioritiesDown.TabIndex = 25;
+            this.buttonPoolPrioritiesDown.Text = "Down";
+            this.buttonPoolPrioritiesDown.UseVisualStyleBackColor = true;
+            this.buttonPoolPrioritiesDown.Click += new System.EventHandler(this.buttonPoolPrioritiesDown_Click);
+            // 
+            // buttonPoolPrioritiesUp
+            // 
+            this.buttonPoolPrioritiesUp.Location = new System.Drawing.Point(109, 19);
+            this.buttonPoolPrioritiesUp.Name = "buttonPoolPrioritiesUp";
+            this.buttonPoolPrioritiesUp.Size = new System.Drawing.Size(51, 23);
+            this.buttonPoolPrioritiesUp.TabIndex = 24;
+            this.buttonPoolPrioritiesUp.Text = "Up";
+            this.buttonPoolPrioritiesUp.UseVisualStyleBackColor = true;
+            this.buttonPoolPrioritiesUp.Click += new System.EventHandler(this.buttonPoolPrioritiesUp_Click);
+            // 
+            // listBoxPoolPriorities
+            // 
+            this.listBoxPoolPriorities.FormattingEnabled = true;
+            this.listBoxPoolPriorities.Items.AddRange(new object[] {
+            "NiceHash",
+            "ethermine.org",
+            "ethpool.org",
+            "DwarfPool",
+            "Nanopool"});
+            this.listBoxPoolPriorities.Location = new System.Drawing.Point(6, 19);
+            this.listBoxPoolPriorities.Name = "listBoxPoolPriorities";
+            this.listBoxPoolPriorities.Size = new System.Drawing.Size(97, 108);
+            this.listBoxPoolPriorities.TabIndex = 23;
             // 
             // groupBoxCoinsToMine
             // 
@@ -1202,7 +1244,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(6, 124);
+            this.label17.Location = new System.Drawing.Point(6, 156);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(187, 13);
             this.label17.TabIndex = 19;
@@ -1210,54 +1252,55 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(369, 221);
+            this.button5.Location = new System.Drawing.Point(479, 253);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(202, 20);
+            this.button5.Size = new System.Drawing.Size(92, 20);
             this.button5.TabIndex = 17;
-            this.button5.Text = "View";
+            this.button5.Text = "View Balance";
             this.button5.UseVisualStyleBackColor = true;
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(369, 195);
+            this.button4.Location = new System.Drawing.Point(479, 227);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(202, 20);
+            this.button4.Size = new System.Drawing.Size(92, 20);
             this.button4.TabIndex = 16;
-            this.button4.Text = "View";
+            this.button4.Text = "View Balance";
             this.button4.UseVisualStyleBackColor = true;
             // 
-            // button3
+            // buttonEthereumBalance
             // 
-            this.button3.Location = new System.Drawing.Point(369, 170);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(202, 20);
-            this.button3.TabIndex = 15;
-            this.button3.Text = "View";
-            this.button3.UseVisualStyleBackColor = true;
+            this.buttonEthereumBalance.Location = new System.Drawing.Point(479, 202);
+            this.buttonEthereumBalance.Name = "buttonEthereumBalance";
+            this.buttonEthereumBalance.Size = new System.Drawing.Size(92, 20);
+            this.buttonEthereumBalance.TabIndex = 15;
+            this.buttonEthereumBalance.Text = "View Balance";
+            this.buttonEthereumBalance.UseVisualStyleBackColor = true;
+            this.buttonEthereumBalance.Click += new System.EventHandler(this.buttonEthereumBalance_Click);
             // 
             // buttonViewBalancesAtNiceHash
             // 
-            this.buttonViewBalancesAtNiceHash.Location = new System.Drawing.Point(369, 144);
+            this.buttonViewBalancesAtNiceHash.Location = new System.Drawing.Point(479, 176);
             this.buttonViewBalancesAtNiceHash.Name = "buttonViewBalancesAtNiceHash";
-            this.buttonViewBalancesAtNiceHash.Size = new System.Drawing.Size(202, 20);
+            this.buttonViewBalancesAtNiceHash.Size = new System.Drawing.Size(92, 20);
             this.buttonViewBalancesAtNiceHash.TabIndex = 14;
-            this.buttonViewBalancesAtNiceHash.Text = "View Balances at NiceHash";
+            this.buttonViewBalancesAtNiceHash.Text = "View Balance";
             this.buttonViewBalancesAtNiceHash.UseVisualStyleBackColor = true;
             this.buttonViewBalancesAtNiceHash.Click += new System.EventHandler(this.buttonViewBalancesAtNiceHash_Click);
             // 
             // textBoxZcashAddress
             // 
             this.textBoxZcashAddress.Enabled = false;
-            this.textBoxZcashAddress.Location = new System.Drawing.Point(97, 222);
+            this.textBoxZcashAddress.Location = new System.Drawing.Point(97, 254);
             this.textBoxZcashAddress.Name = "textBoxZcashAddress";
-            this.textBoxZcashAddress.Size = new System.Drawing.Size(266, 20);
+            this.textBoxZcashAddress.Size = new System.Drawing.Size(376, 20);
             this.textBoxZcashAddress.TabIndex = 13;
             this.textBoxZcashAddress.TextChanged += new System.EventHandler(this.textBoxZcashAddress_TextChanged);
             // 
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(6, 225);
+            this.label16.Location = new System.Drawing.Point(6, 257);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(70, 13);
             this.label16.TabIndex = 12;
@@ -1266,16 +1309,16 @@
             // textBoxMoneroAddress
             // 
             this.textBoxMoneroAddress.Enabled = false;
-            this.textBoxMoneroAddress.Location = new System.Drawing.Point(97, 196);
+            this.textBoxMoneroAddress.Location = new System.Drawing.Point(97, 228);
             this.textBoxMoneroAddress.Name = "textBoxMoneroAddress";
-            this.textBoxMoneroAddress.Size = new System.Drawing.Size(266, 20);
+            this.textBoxMoneroAddress.Size = new System.Drawing.Size(376, 20);
             this.textBoxMoneroAddress.TabIndex = 11;
             this.textBoxMoneroAddress.TextChanged += new System.EventHandler(this.textBoxMoneroAddress_TextChanged);
             // 
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(6, 199);
+            this.label15.Location = new System.Drawing.Point(6, 231);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(79, 13);
             this.label15.TabIndex = 10;
@@ -1283,16 +1326,16 @@
             // 
             // textBoxEthereumAddress
             // 
-            this.textBoxEthereumAddress.Location = new System.Drawing.Point(97, 170);
+            this.textBoxEthereumAddress.Location = new System.Drawing.Point(97, 202);
             this.textBoxEthereumAddress.Name = "textBoxEthereumAddress";
-            this.textBoxEthereumAddress.Size = new System.Drawing.Size(266, 20);
+            this.textBoxEthereumAddress.Size = new System.Drawing.Size(376, 20);
             this.textBoxEthereumAddress.TabIndex = 9;
             this.textBoxEthereumAddress.TextChanged += new System.EventHandler(this.textBoxEthereumAddress_TextChanged);
             // 
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(6, 173);
+            this.label14.Location = new System.Drawing.Point(6, 205);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(86, 13);
             this.label14.TabIndex = 8;
@@ -1300,85 +1343,20 @@
             // 
             // textBoxBitcoinAddress
             // 
-            this.textBoxBitcoinAddress.Location = new System.Drawing.Point(97, 144);
+            this.textBoxBitcoinAddress.Location = new System.Drawing.Point(97, 176);
             this.textBoxBitcoinAddress.Name = "textBoxBitcoinAddress";
-            this.textBoxBitcoinAddress.Size = new System.Drawing.Size(266, 20);
+            this.textBoxBitcoinAddress.Size = new System.Drawing.Size(376, 20);
             this.textBoxBitcoinAddress.TabIndex = 7;
             this.textBoxBitcoinAddress.TextChanged += new System.EventHandler(this.textBoxBitcoinAddress_TextChanged);
             // 
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(6, 147);
+            this.label13.Location = new System.Drawing.Point(6, 179);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(72, 13);
             this.label13.TabIndex = 6;
             this.label13.Text = "Bitcoin (BTC):";
-            // 
-            // tabPagePools
-            // 
-            this.tabPagePools.Controls.Add(this.groupBoxPoolPriorities);
-            this.tabPagePools.Location = new System.Drawing.Point(4, 22);
-            this.tabPagePools.Name = "tabPagePools";
-            this.tabPagePools.Size = new System.Drawing.Size(577, 369);
-            this.tabPagePools.TabIndex = 3;
-            this.tabPagePools.Text = "Pools";
-            this.tabPagePools.UseVisualStyleBackColor = true;
-            // 
-            // groupBoxPoolPriorities
-            // 
-            this.groupBoxPoolPriorities.Controls.Add(this.buttonPoolPrioritiesDown);
-            this.groupBoxPoolPriorities.Controls.Add(this.buttonPoolPrioritiesUp);
-            this.groupBoxPoolPriorities.Controls.Add(this.listBoxPoolPriorities);
-            this.groupBoxPoolPriorities.Location = new System.Drawing.Point(3, 3);
-            this.groupBoxPoolPriorities.Name = "groupBoxPoolPriorities";
-            this.groupBoxPoolPriorities.Size = new System.Drawing.Size(167, 134);
-            this.groupBoxPoolPriorities.TabIndex = 24;
-            this.groupBoxPoolPriorities.TabStop = false;
-            this.groupBoxPoolPriorities.Text = "Pool Priorities";
-            // 
-            // buttonPoolPrioritiesDown
-            // 
-            this.buttonPoolPrioritiesDown.Location = new System.Drawing.Point(109, 48);
-            this.buttonPoolPrioritiesDown.Name = "buttonPoolPrioritiesDown";
-            this.buttonPoolPrioritiesDown.Size = new System.Drawing.Size(51, 23);
-            this.buttonPoolPrioritiesDown.TabIndex = 25;
-            this.buttonPoolPrioritiesDown.Text = "Down";
-            this.buttonPoolPrioritiesDown.UseVisualStyleBackColor = true;
-            this.buttonPoolPrioritiesDown.Click += new System.EventHandler(this.buttonPoolPrioritiesDown_Click);
-            // 
-            // buttonPoolPrioritiesUp
-            // 
-            this.buttonPoolPrioritiesUp.Location = new System.Drawing.Point(109, 19);
-            this.buttonPoolPrioritiesUp.Name = "buttonPoolPrioritiesUp";
-            this.buttonPoolPrioritiesUp.Size = new System.Drawing.Size(51, 23);
-            this.buttonPoolPrioritiesUp.TabIndex = 24;
-            this.buttonPoolPrioritiesUp.Text = "Up";
-            this.buttonPoolPrioritiesUp.UseVisualStyleBackColor = true;
-            this.buttonPoolPrioritiesUp.Click += new System.EventHandler(this.buttonPoolPrioritiesUp_Click);
-            // 
-            // listBoxPoolPriorities
-            // 
-            this.listBoxPoolPriorities.FormattingEnabled = true;
-            this.listBoxPoolPriorities.Items.AddRange(new object[] {
-            "NiceHash",
-            "ethermine.org",
-            "ethpool.org",
-            "DwarfPool",
-            "Nanopool"});
-            this.listBoxPoolPriorities.Location = new System.Drawing.Point(6, 19);
-            this.listBoxPoolPriorities.Name = "listBoxPoolPriorities";
-            this.listBoxPoolPriorities.Size = new System.Drawing.Size(97, 108);
-            this.listBoxPoolPriorities.TabIndex = 23;
-            // 
-            // tabPageDevices
-            // 
-            this.tabPageDevices.Location = new System.Drawing.Point(4, 22);
-            this.tabPageDevices.Name = "tabPageDevices";
-            this.tabPageDevices.Size = new System.Drawing.Size(577, 369);
-            this.tabPageDevices.TabIndex = 4;
-            this.tabPageDevices.Text = "Devices";
-            this.tabPageDevices.UseVisualStyleBackColor = true;
             // 
             // tabPageLog
             // 
@@ -1452,12 +1430,11 @@
             this.tabPageStatus.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            this.tabPageCoins.ResumeLayout(false);
-            this.tabPageCoins.PerformLayout();
+            this.tabPageSettings.ResumeLayout(false);
+            this.tabPageSettings.PerformLayout();
+            this.groupBoxPoolPriorities.ResumeLayout(false);
             this.groupBoxCoinsToMine.ResumeLayout(false);
             this.groupBoxCoinsToMine.PerformLayout();
-            this.tabPagePools.ResumeLayout(false);
-            this.groupBoxPoolPriorities.ResumeLayout(false);
             this.tabPageLog.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -1468,15 +1445,13 @@
         private System.Windows.Forms.TabControl tabControlMainForm;
         private System.Windows.Forms.TabPage tabPageStatus;
         private System.Windows.Forms.TabPage tabPageLog;
-        private System.Windows.Forms.TabPage tabPageCoins;
-        private System.Windows.Forms.TabPage tabPagePools;
+        private System.Windows.Forms.TabPage tabPageSettings;
         private System.Windows.Forms.Label labelBalance;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label labelCurrentSpeed;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label labelCurrentAlgorithm;
         private System.Windows.Forms.Label labelCurrentAlgorithmCaption;
-        private System.Windows.Forms.TabPage tabPageDevices;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label labelPriceDay;
         private System.Windows.Forms.Button buttonStart;
@@ -1491,7 +1466,7 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button buttonEthereumBalance;
         private System.Windows.Forms.Button buttonViewBalancesAtNiceHash;
         private System.Windows.Forms.Button buttonBenchmark;
         private System.Windows.Forms.Label label17;

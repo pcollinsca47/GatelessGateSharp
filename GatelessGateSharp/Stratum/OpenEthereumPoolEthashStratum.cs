@@ -48,7 +48,6 @@ namespace GatelessGateSharp
         StreamWriter mStreamWriter;
         Thread mStreamReaderThread;
         int mJsonRPCMessageID = 1;
-        string mSubsciptionID;
         private Mutex mMutex = new Mutex();
 
         private void StreamReaderThread()
@@ -67,6 +66,8 @@ namespace GatelessGateSharp
                     MainForm.Logger("Failed to receive data from stratum server: " + ex.Message);
                     break;
                 }
+                if (line == "")
+                    continue;
 
                 Dictionary<String, Object> response = JsonConvert.DeserializeObject<Dictionary<string, Object>>(line);
                 if (response.ContainsKey("result")
