@@ -211,3 +211,6 @@ $RECYCLE.BIN/
 Win8.1Debug/phymem_wrapper.dll
 Win8.1Debug/phymem_wrapper.exp
 Win8.1Debug/phymem_wrapper.lib
+*.exe
+*.msi
+Setup/Sign.bat

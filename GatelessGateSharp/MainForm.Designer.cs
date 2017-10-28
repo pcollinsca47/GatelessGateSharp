@@ -154,6 +154,7 @@
             this.buttonBenchmark = new System.Windows.Forms.Button();
             this.timerDeviceStatusUpdates = new System.Windows.Forms.Timer(this.components);
             this.timerCurrencyStatUpdates = new System.Windows.Forms.Timer(this.components);
+            this.timerDevFee = new System.Windows.Forms.Timer(this.components);
             this.tabControlMainForm.SuspendLayout();
             this.tabPageStatus.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -1411,6 +1412,11 @@
             this.timerCurrencyStatUpdates.Interval = 60000;
             this.timerCurrencyStatUpdates.Tick += new System.EventHandler(this.timerCurrencyStatUpdates_Tick);
             // 
+            // timerDevFee
+            // 
+            this.timerDevFee.Interval = 60000;
+            this.timerDevFee.Tick += new System.EventHandler(this.timerDevFee_Tick);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1567,6 +1573,7 @@
         private System.Windows.Forms.Button buttonPoolPrioritiesDown;
         private System.Windows.Forms.Button buttonPoolPrioritiesUp;
         private System.Windows.Forms.ListBox listBoxPoolPriorities;
+        private System.Windows.Forms.Timer timerDevFee;
     }
 }
 

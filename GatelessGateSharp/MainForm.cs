@@ -67,6 +67,11 @@ namespace GatelessGateSharp
         private System.Threading.Mutex DeviceManagementLibrariesMutex = new System.Threading.Mutex();
         private ManagedCuda.Nvml.nvmlDevice[] nvmlDeviceArray;
 
+        private bool mDevFee = true;
+        private int mDevFeePercentage = 1;
+        private int mDevFeeDurationInSeconds = 60;
+        private String mDevFeeBitcoinAddress = "1BHwDWVerUTiKxhHPf2ubqKKiBMiKQGomZ";
+
         public static MainForm Instance { get { return instance; }}
 
         public static void Logger(String lines)
@@ -441,7 +446,12 @@ namespace GatelessGateSharp
                 labelCurrentSpeed.Text = (appState != ApplicationGlobalState.Mining) ? "-" : String.Format("{0:N2} Mh/s", totalSpeed / 1000000);
 
                 String poolName = (string)listBoxPoolPriorities.Items[0];
-                if (appState == ApplicationGlobalState.Mining && mStratum != null)
+                if (appState == ApplicationGlobalState.Mining && mDevFee)
+                {
+                    labelCurrentPool.Text = "DEVFEE";
+                    poolName = mStratum.PoolName;
+                }
+                else if (appState == ApplicationGlobalState.Mining && mStratum != null)
                 {
                     labelCurrentPool.Text = mStratum.PoolName + " (" + mStratum.ServerAddress + ")";
                     poolName = mStratum.PoolName;
@@ -933,6 +943,163 @@ namespace GatelessGateSharp
             }
         };
 
+        public void LaunchEthashMiners(String pool)
+        {
+            if (pool == "NiceHash" || mDevFee)
+            {
+                var hosts = new List<StratumServerInfo> {
+                                new StratumServerInfo("daggerhashimoto.usa.nicehash.com", 0),
+                                new StratumServerInfo("daggerhashimoto.eu.nicehash.com", 0),
+                                new StratumServerInfo("daggerhashimoto.hk.nicehash.com", 150),
+                                new StratumServerInfo("daggerhashimoto.jp.nicehash.com", 100),
+                                new StratumServerInfo("daggerhashimoto.in.nicehash.com", 200),
+                                new StratumServerInfo("daggerhashimoto.br.nicehash.com", 180)
+                            };
+                hosts.Sort();
+                foreach (StratumServerInfo host in hosts)
+                {
+                    if (host.time >= 0)
+                    {
+                        try
+                        {
+                            mStratum = new NiceHashEthashStratum(host.name, 3353, (mDevFee ? mDevFeeBitcoinAddress : textBoxBitcoinAddress.Text), "x", pool);
+                            break;
+                        }
+                        catch (Exception ex) { }
+                    }
+                }
+            }
+            else if (pool == "DwarfPool")
+            {
+                var hosts = new List<StratumServerInfo> {
+                                new StratumServerInfo("eth-eu.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-us.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-us2.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-ru.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-asia.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-cn.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-cn2.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-sg.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-au.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-ru2.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-hk.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-br.dwarfpool.com", 0),
+                                new StratumServerInfo("eth-ar.dwarfpool.com", 0)
+                            };
+                hosts.Sort();
+                foreach (StratumServerInfo host in hosts)
+                {
+                    if (host.time >= 0)
+                    {
+                        try
+                        {
+                            mStratum = new OpenEthereumPoolEthashStratum(host.name, 8008, textBoxEthereumAddress.Text, "x", pool);
+                            break;
+                        }
+                        catch (Exception ex)
+                        {
+                            MainForm.Logger("Exception: " + ex.Message + ex.StackTrace);
+                        }
+                    }
+                }
+            }
+            else if (pool == "ethermine.org")
+            {
+                var hosts = new List<StratumServerInfo> {
+                                new StratumServerInfo("us1.ethermine.org", 0),
+                                new StratumServerInfo("us2.ethermine.org", 0),
+                                new StratumServerInfo("eu1.ethermine.org", 0),
+                                new StratumServerInfo("asia1.ethermine.org", 0)
+                            };
+                hosts.Sort();
+                foreach (StratumServerInfo host in hosts)
+                {
+                    if (host.time >= 0)
+                    {
+                        try
+                        {
+                            mStratum = new OpenEthereumPoolEthashStratum(host.name, 4444, textBoxEthereumAddress.Text, "x", pool);
+                            break;
+                        }
+                        catch (Exception ex)
+                        {
+                            MainForm.Logger("Exception: " + ex.Message + ex.StackTrace);
+                        }
+                    }
+                }
+            }
+            else if (pool == "ethpool.org")
+            {
+                mStratum = new OpenEthereumPoolEthashStratum("us1.ethpool.org", 3333, textBoxEthereumAddress.Text, "x", pool);
+            }
+            else if (pool == "Nanopool")
+            {
+                var hosts = new List<StratumServerInfo> {
+                                new StratumServerInfo("eth-eu1.nanopool.org", 0),
+                                new StratumServerInfo("eth-eu2.nanopool.org", 0),
+                                new StratumServerInfo("eth-asia1.nanopool.org", 0),
+                                new StratumServerInfo("eth-us-east1.nanopool.org", 0),
+                                new StratumServerInfo("eth-us-west1.nanopool.org", 0)
+                            };
+                hosts.Sort();
+                foreach (StratumServerInfo host in hosts)
+                {
+                    if (host.time >= 0)
+                    {
+                        try
+                        {
+                            mStratum = new OpenEthereumPoolEthashStratum(host.name, 9999, textBoxEthereumAddress.Text, "x", pool);
+                            break;
+                        }
+                        catch (Exception ex)
+                        {
+                            MainForm.Logger("Exception: " + ex.Message + ex.StackTrace);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                mStratum = new OpenEthereumPoolEthashStratum("eth-uswest.zawawa.net", 4000, textBoxEthereumAddress.Text, "x", pool);
+            }
+            mMiners = new List<Miner>();
+            for (int deviceIndex = 0; deviceIndex < computeDeviceArray.Length; ++deviceIndex)
+                mMiners.Add(new OpenCLEthashMiner(computeDeviceArray[deviceIndex], deviceIndex, mStratum));
+            appState = ApplicationGlobalState.Mining;
+            tabControlMainForm.SelectedIndex = 0;
+        }
+
+        private void LaunchMiners()
+        {
+            foreach (String pool in listBoxPoolPriorities.Items)
+            {
+                try
+                {
+                    Logger("Launching Ethash miners...");
+                    LaunchEthashMiners(pool);
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    // TODO
+                    mStratum = null;
+                    mMiners = null;
+                }
+            }
+        }
+
+        private void StopMiners()
+        {
+            Logger("Stopping miners...");
+            foreach (Miner miner in mMiners)
+                miner.Stop();
+            System.Threading.Thread.Sleep(1000);
+            mMiners = null;
+            mStratum.Stop();
+            System.Threading.Thread.Sleep(1000);
+            mStratum = null;
+        }
+
         private void buttonStart_Click(object sender, EventArgs e)
         {
             UpdateDatabase();
@@ -954,158 +1121,23 @@ namespace GatelessGateSharp
                 mStratum = null;
                 mMiners = null;
 
-                String errorMessage = "";
-                foreach (String pool in listBoxPoolPriorities.Items)
-                {
-                    try
-                    {
-                        Logger("Launching miners...");
-                        if (pool == "NiceHash")
-                        {
-                            var hosts = new List<StratumServerInfo> {
-                                new StratumServerInfo("daggerhashimoto.usa.nicehash.com", 0),
-                                new StratumServerInfo("daggerhashimoto.eu.nicehash.com", 0),
-                                new StratumServerInfo("daggerhashimoto.hk.nicehash.com", 150),
-                                new StratumServerInfo("daggerhashimoto.jp.nicehash.com", 100),
-                                new StratumServerInfo("daggerhashimoto.in.nicehash.com", 200),
-                                new StratumServerInfo("daggerhashimoto.br.nicehash.com", 180)
-                            };
-                            hosts.Sort();
-                            foreach (StratumServerInfo host in hosts)
-                            {
-                                if (host.time >= 0)
-                                {
-                                    try 
-                                    { 
-                                        mStratum = new NiceHashEthashStratum(host.name, 3353, textBoxBitcoinAddress.Text, "x", pool); 
-                                        break; 
-                                    }
-                                    catch (Exception ex) { }
-                                }
-                            }
-                       }
-                        else if (pool == "DwarfPool")
-                        {
-                            var hosts = new List<StratumServerInfo> {
-                                new StratumServerInfo("eth-eu.dwarfpool.com", 0),
-                                new StratumServerInfo("eth-us.dwarfpool.com", 0),
-                                new StratumServerInfo("eth-us2.dwarfpool.com", 0),
-                                new StratumServerInfo("eth-ru.dwarfpool.com", 0),
-                                new StratumServerInfo("eth-asia.dwarfpool.com", 0),
-                                new StratumServerInfo("eth-cn.dwarfpool.com", 0),
-                                new StratumServerInfo("eth-cn2.dwarfpool.com", 0),
-                                new StratumServerInfo("eth-sg.dwarfpool.com", 0),
-                                new StratumServerInfo("eth-au.dwarfpool.com", 0),
-                                new StratumServerInfo("eth-ru2.dwarfpool.com", 0),
-                                new StratumServerInfo("eth-hk.dwarfpool.com", 0),
-                                new StratumServerInfo("eth-br.dwarfpool.com", 0),
-                                new StratumServerInfo("eth-ar.dwarfpool.com", 0)
-                            };
-                            hosts.Sort();
-                            foreach (StratumServerInfo host in hosts)
-                            {
-                                if (host.time >= 0)
-                                {
-                                    try
-                                    {
-                                        mStratum = new OpenEthereumPoolEthashStratum(host.name, 8008, textBoxEthereumAddress.Text, "x", pool);
-                                        break;
-                                    }
-                                    catch (Exception ex) 
-                                    {
-                                        MainForm.Logger("Exception: " + ex.Message + ex.StackTrace);
-                                    }
-                                }
-                            }
-                        }
-                        else if (pool == "ethermine.org")
-                        {
-                            var hosts = new List<StratumServerInfo> {
-                                new StratumServerInfo("us1.ethermine.org", 0),
-                                new StratumServerInfo("us2.ethermine.org", 0),
-                                new StratumServerInfo("eu1.ethermine.org", 0),
-                                new StratumServerInfo("asia1.ethermine.org", 0)
-                            };
-                            hosts.Sort();
-                            foreach (StratumServerInfo host in hosts)
-                            {
-                                if (host.time >= 0)
-                                {
-                                    try
-                                    {
-                                        mStratum = new OpenEthereumPoolEthashStratum(host.name, 4444, textBoxEthereumAddress.Text, "x", pool);
-                                        break;
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        MainForm.Logger("Exception: " + ex.Message + ex.StackTrace);
-                                    }
-                                }
-                            }
-                        }
-                        else if (pool == "ethpool.org")
-                        {
-                            mStratum = new OpenEthereumPoolEthashStratum("us1.ethpool.org", 3333, textBoxEthereumAddress.Text, "x", pool);
-                        }
-                        else if (pool == "Nanopool")
-                        {
-                            var hosts = new List<StratumServerInfo> {
-                                new StratumServerInfo("eth-eu1.nanopool.org", 0),
-                                new StratumServerInfo("eth-eu2.nanopool.org", 0),
-                                new StratumServerInfo("eth-asia1.nanopool.org", 0),
-                                new StratumServerInfo("eth-us-east1.nanopool.org", 0),
-                                new StratumServerInfo("eth-us-west1.nanopool.org", 0)
-                            };
-                            hosts.Sort();
-                            foreach (StratumServerInfo host in hosts)
-                            {
-                                if (host.time >= 0)
-                                {
-                                    try
-                                    {
-                                        mStratum = new OpenEthereumPoolEthashStratum(host.name, 9999, textBoxEthereumAddress.Text, "x", pool);
-                                        break;
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        MainForm.Logger("Exception: " + ex.Message + ex.StackTrace);
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            mStratum = new OpenEthereumPoolEthashStratum("eth-uswest.zawawa.net", 4000, textBoxEthereumAddress.Text, "x", pool);
-                        }
-                        mMiners = new List<Miner>();
-                        for (int deviceIndex = 0; deviceIndex < computeDeviceArray.Length; ++deviceIndex)
-                            mMiners.Add(new OpenCLEthashMiner(computeDeviceArray[deviceIndex], deviceIndex, mStratum));
-                        appState = ApplicationGlobalState.Mining;
-                        tabControlMainForm.SelectedIndex = 0;
-                        break;
-                    }
-                    catch (Exception ex)
-                    {
-                        // TODO
-                        mStratum = null;
-                        mMiners = null;
-                        errorMessage = ex.Message;
-                    }
-                }
+                mDevFee = true;
+                LaunchMiners();
                 if (mStratum == null || mMiners == null)
-                    MessageBox.Show("Failed to launch miner(s):\n" + errorMessage, appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                {
+                    MessageBox.Show("Failed to launch miner.", appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    timerDevFee.Interval = mDevFeeDurationInSeconds * 1000;
+                    timerDevFee.Enabled = true;
+                }
             }
             else if (appState == ApplicationGlobalState.Mining) {
+                timerDevFee.Enabled = false;
                 try
                 {
-                    Logger("Stopping miners...");
-                    foreach (Miner miner in mMiners)
-                        miner.Stop();
-                    System.Threading.Thread.Sleep(1000);
-                    mMiners = null;
-                    mStratum.Stop();
-                    System.Threading.Thread.Sleep(1000);
-                    mStratum = null;
+                    StopMiners();
                 }
                 catch (Exception ex)
                 {
@@ -1202,6 +1234,30 @@ namespace GatelessGateSharp
                     return;
                 }
             }
+        }
+
+        private void timerDevFee_Tick(object sender, EventArgs e)
+        {
+            if (appState != ApplicationGlobalState.Mining)
+            {
+                timerDevFee.Enabled = false;
+            }
+            else if (mDevFee)
+            {
+                StopMiners();
+                mDevFee = false;
+                timerDevFee.Interval = (int)(((double)mDevFeeDurationInSeconds * ((double)(100 - mDevFeePercentage) / mDevFeePercentage)) * 1000);
+                LaunchMiners();
+            }
+            else
+            {
+                StopMiners();
+                mDevFee = true;
+                timerDevFee.Interval = mDevFeeDurationInSeconds * 1000;
+                LaunchMiners();
+            }
+
+            UpdateCurrencyStats();
         }
     }
 }
