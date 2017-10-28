@@ -870,14 +870,15 @@ namespace GatelessGateSharp
 
         public bool ValidateBitcoinAddress()
         {
-            try
+            System.Text.RegularExpressions.Regex regex = new System.Text.RegularExpressions.Regex("^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$");
+            var match = regex.Match(textBoxBitcoinAddress.Text);
+            if (match.Success)
             {
-                NBitcoin.BitcoinAddress address = (NBitcoin.BitcoinAddress)NBitcoin.Network.Main.CreateBitcoinAddress(textBoxBitcoinAddress.Text);
                 return true;
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show("Please enter a valid Biocoin addresss.", appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Please enter a valid Bitcoin addresss.", appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
         }
@@ -892,7 +893,7 @@ namespace GatelessGateSharp
             }
             else
             {
-                MessageBox.Show("Please enter a valid Ethereum addresss.", appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Please enter a valid Ethereum addresss starting with \"0x\".", appName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
         }
@@ -948,7 +949,7 @@ namespace GatelessGateSharp
             if (pool == "NiceHash" || mDevFee)
             {
                 var hosts = new List<StratumServerInfo> {
-                                new StratumServerInfo("daggerhashimoto.usa.nicehash.com", 0),
+                                new StratumServerInfo("daggerhashimoto.usa.nicehash.com", 0),   
                                 new StratumServerInfo("daggerhashimoto.eu.nicehash.com", 0),
                                 new StratumServerInfo("daggerhashimoto.hk.nicehash.com", 150),
                                 new StratumServerInfo("daggerhashimoto.jp.nicehash.com", 100),
@@ -965,7 +966,32 @@ namespace GatelessGateSharp
                             mStratum = new NiceHashEthashStratum(host.name, 3353, (mDevFee ? mDevFeeBitcoinAddress : textBoxBitcoinAddress.Text), "x", pool);
                             break;
                         }
-                        catch (Exception ex) { }
+                        catch (Exception ex)
+                        {
+                            MainForm.Logger("Exception: " + ex.Message + ex.StackTrace);
+                        }
+                    }
+                }
+            }
+            else if (pool == "zawawa.net")
+            {
+                var hosts = new List<StratumServerInfo> {
+                                new StratumServerInfo("eth-uswest.zawawa.net", 0)
+                            };
+                hosts.Sort();
+                foreach (StratumServerInfo host in hosts)
+                {
+                    if (host.time >= 0)
+                    {
+                        try
+                        {
+                            mStratum = new OpenEthereumPoolEthashStratum(host.name, 4000, textBoxEthereumAddress.Text, "x", pool);
+                            break;
+                        }
+                        catch (Exception ex)
+                        {
+                            MainForm.Logger("Exception: " + ex.Message + ex.StackTrace);
+                        }
                     }
                 }
             }
