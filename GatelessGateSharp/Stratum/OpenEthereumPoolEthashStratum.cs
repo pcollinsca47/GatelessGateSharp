@@ -66,6 +66,8 @@ namespace GatelessGateSharp
                     MainForm.Logger("Failed to receive data from stratum server: " + ex.Message);
                     break;
                 }
+                if (Stopped)
+                    break;
                 if (line == "")
                     continue;
 
@@ -103,7 +105,11 @@ namespace GatelessGateSharp
                     {
                         MainForm.Logger("Share #" + response["id"].ToString() + " rejected: " + ((JArray)response["error"])["message"]);
                     }
-                    else
+                    else if (!(bool)response["result"])
+                    {
+                        MainForm.Logger("Share #" + response["id"].ToString() + " rejected.");
+                    }
+                    else 
                     {
                         MainForm.Logger("Unknown JSON message: " + line);
                     }
@@ -150,6 +156,9 @@ namespace GatelessGateSharp
 
         override protected void Connect()
         {
+            if (Stopped)
+                return;
+
             mMutex.WaitOne();
 
             mClient = new TcpClient(ServerAddress, ServerPort);
@@ -192,6 +201,9 @@ namespace GatelessGateSharp
 
         public override void Submit(EthashStratum.Job job, UInt64 output)
         {
+            if (Stopped)
+                return;
+
             mMutex.WaitOne();
             try
             {

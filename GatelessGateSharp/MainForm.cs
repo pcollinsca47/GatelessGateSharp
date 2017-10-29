@@ -46,7 +46,7 @@ namespace GatelessGateSharp
         extern public static void UnloadPhyMemDriver();
 
         private static MainForm instance;
-        public static String appName = "Gateless Gate #";
+        public static String appName = "Gateless Gate Sharp 0.0.3 alpha";
         private static String databaseFileName = "GatelessGateSharp.sqlite";
         private static String logFileName = "GatelessGateSharp.log";
         private System.Threading.Mutex loggerMutex = new System.Threading.Mutex();
@@ -1091,8 +1091,6 @@ namespace GatelessGateSharp
             mMiners = new List<Miner>();
             for (int deviceIndex = 0; deviceIndex < computeDeviceArray.Length; ++deviceIndex)
                 mMiners.Add(new OpenCLEthashMiner(computeDeviceArray[deviceIndex], deviceIndex, mStratum));
-            appState = ApplicationGlobalState.Mining;
-            tabControlMainForm.SelectedIndex = 0;
         }
 
         private void LaunchMiners()
@@ -1107,7 +1105,11 @@ namespace GatelessGateSharp
                 }
                 catch (Exception ex)
                 {
-                    // TODO
+                    if (mStratum != null)
+                        mStratum.Stop();
+                    if (mMiners != null)
+                        foreach (Miner miner in mMiners)
+                            miner.Stop();
                     mStratum = null;
                     mMiners = null;
                 }
@@ -1119,10 +1121,8 @@ namespace GatelessGateSharp
             Logger("Stopping miners...");
             foreach (Miner miner in mMiners)
                 miner.Stop();
-            System.Threading.Thread.Sleep(1000);
-            mMiners = null;
             mStratum.Stop();
-            System.Threading.Thread.Sleep(1000);
+            mMiners = null;
             mStratum = null;
         }
 
@@ -1155,6 +1155,8 @@ namespace GatelessGateSharp
                 }
                 else
                 {
+                    appState = ApplicationGlobalState.Mining;
+                    tabControlMainForm.SelectedIndex = 0;
                     timerDevFee.Interval = mDevFeeDurationInSeconds * 1000;
                     timerDevFee.Enabled = true;
                 }
